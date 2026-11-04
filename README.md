@@ -4,7 +4,7 @@
 
 ## Install on Android
 
-Download **[MindGym.apk](https://github.com/anasezz/mind-gym/releases/latest/download/MindGym.apk)** on your phone, open it, and allow installs from your browser or Files app when asked. Needs Android 7.0 or newer.
+Download **[MindGym.apk](https://github.com/anasezz/mind-gym/raw/main/MindGym.apk)** on your phone, open it, and allow installs from your browser or Files app when asked. Needs Android 7.0 or newer.
 
 ## What's here
 
