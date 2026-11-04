@@ -1,0 +1,550 @@
+<title>Mind Gym</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&display=swap">
+<style>
+/* Layout: one-column phone app. Home lists the 29 exercises by training area; an exercise fills the screen with a thin timer bar on top. */
+:root{
+  --bg:#eef3f1; --surface:#ffffff; --ink:#13201e; --mute:#5b6d69; --line:#d3dedb;
+  --accent:#0e8575; --good:#1f9d55; --bad:#d64545;
+  --c-att:#d0561c; --c-spd:#a87a00; --c-mem:#2f65cf; --c-ppl:#c4376f; --c-int:#7c43c4; --c-nav:#00798c;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1614; --surface:#17231f; --ink:#e6f0ed; --mute:#8fa59f; --line:#2b3d36;
+  --accent:#2fc4ae; --good:#4cd081; --bad:#f2706e;
+  --c-att:#f08a55; --c-spd:#e5b53a; --c-mem:#6d9cf0; --c-ppl:#ee74a6; --c-int:#b58af0; --c-nav:#4cc3d9; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1614; --surface:#17231f; --ink:#e6f0ed; --mute:#8fa59f; --line:#2b3d36;
+  --accent:#2fc4ae; --good:#4cd081; --bad:#f2706e;
+  --c-att:#f08a55; --c-spd:#e5b53a; --c-mem:#6d9cf0; --c-ppl:#ee74a6; --c-int:#b58af0; --c-nav:#4cc3d9; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#app{max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding-block:12px 16px;min-height:0}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.scroll{overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:24px;padding-bottom:8px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-top:6px}
+.head h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
+.head p{margin:2px 0 0;color:var(--mute);font-size:.9rem}
+.badge{font-variant-numeric:tabular-nums;text-align:right;font-size:.8rem;color:var(--mute);line-height:1.3}
+.badge b{display:block;font-family:var(--f-display);font-size:1.5rem;color:var(--ink)}
+.cat h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--cc);margin-bottom:4px}
+.cat p.sub{margin:0 0 10px;color:var(--mute);font-size:.88rem}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:100px}
+.tile:active{transform:scale(.98)}
+.tile b{font-family:var(--f-display);font-size:1.02rem}
+.tile span{font-size:.8rem;color:var(--mute);flex:1}
+.tile i{font-style:normal;font-size:.78rem;font-weight:700;color:var(--cc);font-variant-numeric:tabular-nums}
+.top{display:flex;align-items:center;gap:10px}
+.top h2{flex:1;font-size:1.15rem;font-weight:800;min-width:0}
+.top #st{font-family:var(--f-display);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums;color:var(--cc)}
+.ib{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:1.4rem;line-height:1;flex:none}
+#bar{height:6px;border-radius:3px;background:var(--line);margin:10px 0 6px;overflow:hidden}
+#bar i{display:block;height:100%;width:100%;background:var(--cc);transform-origin:left}
+#hint{margin:0 0 8px;color:var(--mute);font-size:.95rem;min-height:1.4em;text-align:center}
+#stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative}
+#v{width:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:10px}
+#k{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+.intro{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center;align-items:center}
+.intro h1{font-size:2.1rem;font-weight:800;color:var(--cc)}
+.intro p{margin:0;max-width:36ch;color:var(--mute);line-height:1.5}
+.tag{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cc)}
+.cta{background:var(--cc);color:var(--bg);border:0;border-radius:16px;font-weight:700;font-size:1.1rem;padding:15px 36px;font-family:var(--f-display)}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:16px;padding:13px 28px;font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.score{font-family:var(--f-display);font-weight:800;font-size:5rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--cc)}
+.btn{min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:1.1rem;padding:0 12px}
+.btn:active{background:var(--line)}
+.btn.on{background:var(--cc);color:var(--bg);border-color:var(--cc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.big{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,14vw,5rem);line-height:1.1;text-align:center}
+.pad{width:100%;min-height:96px;border-radius:20px;border:1px solid var(--line);background:var(--surface);font-family:var(--f-display);font-weight:800;font-size:1.5rem}
+.pad:active{background:var(--cc);color:var(--bg)}
+.box{position:relative;width:min(100%,340px);aspect-ratio:1;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}
+.box>*{position:absolute;transform:translate(-50%,-50%);line-height:1}
+.box>.noise{inset:0;width:100%;height:100%;transform:none;image-rendering:pixelated}
+.slot{width:46px;height:46px;border-radius:50%;border:2px dashed var(--mute);background:transparent;padding:0}
+.slot.lit{background:var(--cc);border-style:solid;border-color:var(--cc)}
+.slot.ok{background:var(--good);border-color:var(--good);border-style:solid}
+.slot.no{background:var(--bad);border-color:var(--bad);border-style:solid}
+.arena{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden;touch-action:none;max-width:100%}
+.orb{position:absolute;width:40px;height:40px;border-radius:50%;background:var(--c-att);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;color:var(--bg);cursor:pointer}
+.orb.tgt{box-shadow:0 0 0 5px var(--good)}.orb.sel{box-shadow:0 0 0 5px var(--ink)}.orb.no{background:var(--bad)}
+.g{display:grid;gap:8px;width:min(100%,340px)}
+.cell{aspect-ratio:1;border:1px solid var(--line);background:var(--surface);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:0;font-size:1.8rem}
+.cell.lit{background:var(--cc);border-color:var(--cc)}.cell.ok{background:var(--good);border-color:var(--good)}.cell.no{background:var(--bad);border-color:var(--bad)}
+.mcard{aspect-ratio:1;border-radius:14px;border:1px solid var(--line);background:var(--cc);font-size:1.5rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0;color:var(--bg)}
+.mcard.up{background:var(--surface);color:var(--ink)}.mcard.done{background:var(--surface);color:var(--ink);opacity:.4}
+.card{width:120px;height:170px;border-radius:14px;border:1px solid var(--line);background:#fffdf8;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:800;font-size:2.6rem;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.card small{font-size:2.2rem}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(100%,360px)}
+.faces button{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:4px;display:flex;justify-content:center}
+.faces button svg{width:100%;height:auto}
+.road{position:relative;width:100%;height:min(52vh,380px);border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.road>div{position:absolute;transform:translate(-50%,-50%);line-height:1;cursor:pointer}
+canvas.sw{width:min(100%,300px);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--surface)}
+.rt{display:flex;gap:16px;justify-content:center}
+.rt div{width:130px;height:130px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:18px;background:var(--surface);font-family:var(--f-display);font-weight:800;font-size:5rem}
+.rhy{position:relative;width:min(100%,340px);height:40px;border-bottom:2px solid var(--line)}
+.rhy b{position:absolute;bottom:6px;width:16px;height:16px;border-radius:50%;background:var(--cc);transform:translateX(-50%)}
+.rhy b.u{background:var(--ink);bottom:24px;width:10px;height:10px}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;line-height:1.5;max-width:40ch}
+.fb{position:absolute;inset:0;pointer-events:none;border-radius:20px;opacity:0;transition:opacity .25s;z-index:5}
+.fb.good{background:var(--good)}.fb.bad{background:var(--bad)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div id="app"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<pattern id="st0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#e5483d"/></pattern>
+<pattern id="st1" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#2f7de1"/></pattern>
+<pattern id="st2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#2fa84f"/></pattern>
+</defs></svg>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const rnd=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rnd(a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const mk=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
+let store={};try{store=JSON.parse(localStorage.getItem('mindgym2')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('mindgym2',JSON.stringify(store))}catch(e){}};
+const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+
+/* ---------- sound ---------- */
+let actx=null;
+function AC(){if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;actx=new A()}if(actx.state==='suspended')actx.resume();return actx}
+function tone(f1,f2,ms,vol=.22,type='sine'){const a=AC();if(!a)return;const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type;
+  o.frequency.setValueAtTime(f1,t);o.frequency.linearRampToValueAtTime(f2,t+ms/1000);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.005);
+  g.gain.setValueAtTime(vol,t+Math.max(.006,ms/1000-.01));g.gain.linearRampToValueAtTime(0,t+ms/1000);o.connect(g).connect(a.destination);o.start(t);o.stop(t+ms/1000+.02)}
+const NATIVE=typeof window.AndroidTTS!=='undefined';
+const hasSpeech=NATIVE||('speechSynthesis' in window&&'SpeechSynthesisUtterance' in window);
+const ttsWait={};let ttsN=0;window.__ttsDone=id=>{const f=ttsWait[id];if(f){delete ttsWait[id];f()}};
+function say(t,rate=1){return new Promise(res=>{if(!hasSpeech){res();return}let done=false;const fin=()=>{if(!done){done=true;res()}};
+  if(NATIVE){const id='u'+(++ttsN);ttsWait[id]=fin;try{window.AndroidTTS.speak(t,rate,id)}catch(e){fin()}}
+  else{try{const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=rate;u.onend=fin;u.onerror=fin;speechSynthesis.speak(u)}catch(e){fin()}}
+  setTimeout(fin,1500+t.length*120/rate)})}
+function hush(){try{if(NATIVE)window.AndroidTTS.stop();else if('speechSynthesis' in window)speechSynthesis.cancel()}catch(e){}}
+
+/* ---------- shared helpers ---------- */
+const stair=(start,min,max,f=.85)=>{let v=start,ok=0;return{get v(){return Math.round(v)},hit(){if(++ok>=2){ok=0;v=Math.max(min,v*f)}},miss(){ok=0;v=Math.min(max,v/f)}}};
+function options(el,labels,cb,cls='grid2'){const w=mk('div',cls);labels.forEach(l=>{const b=mk('button','btn',l);b.onclick=()=>cb(l,b);w.append(b)});el.append(w);return w}
+const ask=(k,labels,cls)=>new Promise(res=>{k.replaceChildren();options(k,labels,l=>{k.replaceChildren();res(l)},cls)});
+function flash(c,ok){const f=$('.fb',c.stage);if(f){f.className='fb '+(ok?'good':'bad');f.style.opacity=.28;setTimeout(()=>{f.style.opacity=0},170)}buzz(ok?10:40)}
+function lay(c){c.stage.innerHTML='<div class="fb"></div><div id="v"></div><div id="k"></div>';return[$('#v',c.stage),$('#k',c.stage)]}
+function keypad(el,onKey,okLabel='✓'){const k=mk('div','grid3');k.style.width='min(100%,320px)';
+  ['1','2','3','4','5','6','7','8','9','⌫','0',okLabel].forEach(x=>{const b=mk('button','btn',x);b.onclick=()=>onKey(x===okLabel?'ok':x==='⌫'?'del':x);k.append(b)});el.append(k);return k}
+const ringXY=(i,n,r,off=-Math.PI/2)=>{const a=i/n*Math.PI*2+off;return[50+r*Math.cos(a),50+r*Math.sin(a)]};
+function put(b,html,x,y,fs=2,rot=0){const e=mk('div');e.innerHTML=html;e.style.left=x+'%';e.style.top=y+'%';e.style.fontSize=fs+'rem';if(rot)e.style.transform=`translate(-50%,-50%) rotate(${rot}deg)`;b.append(e);return e}
+function noise(b){const cv=mk('canvas','noise');cv.width=cv.height=72;const x=cv.getContext('2d'),d=x.createImageData(72,72);
+  for(let i=0;i<d.data.length;i+=4){const v=rnd(256);d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);b.append(cv);return cv}
+function slots(b,n,r){return [...Array(n)].map((_,i)=>{const[x,y]=ringXY(i,n,r);const s=mk('button','slot');s.style.left=x+'%';s.style.top=y+'%';s.setAttribute('aria-label','Position '+(i+1));b.append(s);return s})}
+const tapOne=els=>new Promise(res=>els.forEach((e,i)=>e.onclick=()=>{els.forEach(x=>x.onclick=null);res(i)}));
+function scatter(n,minD,pad=10){const p=[];let g=0;while(p.length<n&&g++<3000){const x=pad+Math.random()*(100-2*pad),y=pad+Math.random()*(100-2*pad);if(p.every(q=>Math.hypot(q[0]-x,q[1]-y)>minD))p.push([x,y])}return p}
+const arenaSize=()=>[Math.min(innerWidth-32,480),Math.max(240,Math.min(innerHeight-300,420))];
+function spawnOrbs(ar,n,W,H){const o=[];const pos=scatter(n,14,6);for(let i=0;i<n;i++){const e=mk('div','orb');ar.append(e);
+  const q={e,x:(pos[i]?pos[i][0]:rnd(90))/100*(W-40),y:(pos[i]?pos[i][1]:rnd(90))/100*(H-40),a:Math.random()*6.283};e.style.left=q.x+'px';e.style.top=q.y+'px';o.push(q)}return o}
+function drift(c,o,W,H,ms,sp){return new Promise(res=>{let last=performance.now();const end=last+ms;const f=t=>{if(!c.alive)return;const dt=Math.min(50,Math.max(0,t-last))/1000;last=t;
+  o.forEach(q=>{q.x+=Math.cos(q.a)*sp*dt;q.y+=Math.sin(q.a)*sp*dt;
+    if(q.x<0||q.x>W-40){q.a=Math.PI-q.a;q.x=Math.max(0,Math.min(W-40,q.x))}
+    if(q.y<0||q.y>H-40){q.a=-q.a;q.y=Math.max(0,Math.min(H-40,q.y))}
+    if(Math.random()<.015)q.a+=(Math.random()-.5)*1.2;q.e.style.left=q.x+'px';q.e.style.top=q.y+'px'});
+  if(t<end)requestAnimationFrame(f);else res()};requestAnimationFrame(f)})}
+const NUMW=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+
+/* ---------- faces (drawn, not photos) ---------- */
+const SK=['#f3d2b3','#e0ac81','#c68642','#8d5524','#f6dcc6','#d9a066'],HC=['#2b1b12','#6a3b1a','#b5651d','#d8b25c','#8a8a8a','#111111','#a23b1c'];
+function rface(){return{skin:pick(SK),hair:pick(HC),hs:rnd(4),ew:11+rnd(8),es:3+rnd(3),nose:rnd(3),rx:27+rnd(9),gl:rnd(4)===0,mu:rnd(5)===0}}
+function varyFace(p,n){const q={...p};shuffle(['skin','hair','hs','ew','nose','rx','gl','mu','es']).slice(0,n).forEach(k=>{let t=0;do{q[k]=rface()[k]}while(q[k]===p[k]&&t++<30)});return q}
+const EMO={happy:[0,0,'smile'],sad:[-7,1,'frown'],angry:[8,-2,'tight'],surprised:[0,7,'o'],afraid:[-6,6,'wave'],disgusted:[6,-1,'sneer'],neutral:[0,0,'flat'],contempt:[2,0,'smirk'],tired:[0,-3,'flat'],proud:[-1,2,'smile2'],confused:[5,3,'tilt']};
+function faceSVG(p,emo='neutral',k=1,shift=0){const E=EMO[emo]||EMO.neutral,tilt=E[0]*k,raise=E[1]*k,m=E[2],sq=1-Math.abs(shift)*.28,ey=54,ex=p.ew;
+  const back=p.hs===1?`<ellipse cx="50" cy="70" rx="${p.rx+7}" ry="46" fill="${p.hair}"/>`:'';
+  const cap=p.hs===2?'':p.hs===3?[...Array(9)].map((_,i)=>`<circle cx="${50-p.rx+i*p.rx/4}" cy="${30+Math.abs(i-4)*3}" r="9" fill="${p.hair}"/>`).join(''):`<path d="M${48-p.rx} 56 Q50 6 ${52+p.rx} 56 Q50 32 ${48-p.rx} 56Z" fill="${p.hair}"/>`;
+  const lid=emo==='tired'?`<path d="M${50-ex-6} ${ey} h12 M${50+ex-6} ${ey} h12" stroke="${p.skin}" stroke-width="5"/>`:'';
+  const er=p.es+Math.max(0,raise)*.25;
+  const eyes=[50-ex,50+ex].map(x=>`<ellipse cx="${x}" cy="${ey}" rx="${er+2.5}" ry="${er+1.5}" fill="#fff"/><circle cx="${x+shift*2}" cy="${ey}" r="${er-.5}" fill="#1d1d1d"/>`).join('');
+  const by=ey-11-raise*.9;
+  const brows=`<path d="M${50-ex-8} ${by} L${50-ex+7} ${by+tilt*.6}" stroke="#2a1d16" stroke-width="2.6" stroke-linecap="round"/><path d="M${50+ex-7} ${by+tilt*.6+(emo==='confused'?-5*k:0)} L${50+ex+8} ${by}" stroke="#2a1d16" stroke-width="2.6" stroke-linecap="round"/>`;
+  const ny=66+p.nose*3,nose=`<path d="M50 ${ny-10} L47 ${ny} L53 ${ny}" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.8" stroke-linejoin="round"/>`;
+  const my=86,M={smile:`M39 ${my} Q50 ${my+14*k} 61 ${my}`,smile2:`M42 ${my+1} Q50 ${my+7*k} 58 ${my+1}`,frown:`M40 ${my+5} Q50 ${my+5-12*k} 60 ${my+5}`,tight:`M42 ${my+3} Q50 ${my+3-4*k} 58 ${my+3}`,
+    wave:`M40 ${my+3} Q45 ${my+3-5*k} 50 ${my+3} T60 ${my+3}`,sneer:`M40 ${my+3} Q48 ${my+3} 60 ${my-4*k}`,flat:`M42 ${my+2} L58 ${my+2}`,smirk:`M42 ${my+2} Q52 ${my+2} 59 ${my-3*k}`,tilt:`M42 ${my+3} L58 ${my+3-4*k}`};
+  const mouth=m==='o'?`<ellipse cx="50" cy="${my+3}" rx="${4+2*k}" ry="${3+6*k}" fill="#5a1f1f"/>`:`<path d="${M[m]}" fill="none" stroke="#7a2b2b" stroke-width="3" stroke-linecap="round"/>`;
+  const mu=p.mu?`<path d="M41 ${my-5} Q50 ${my-10} 59 ${my-5}" stroke="${p.hair}" stroke-width="4" fill="none" stroke-linecap="round"/>`:'';
+  const gl=p.gl?`<g fill="none" stroke="#333" stroke-width="2"><circle cx="${50-ex}" cy="${ey}" r="${p.es+6}"/><circle cx="${50+ex}" cy="${ey}" r="${p.es+6}"/><path d="M${50-ex+p.es+6} ${ey} L${50+ex-p.es-6} ${ey}"/></g>`:'';
+  return `<svg viewBox="0 0 100 120" width="96" height="115" aria-hidden="true">${back}<ellipse cx="50" cy="64" rx="${p.rx}" ry="40" fill="${p.skin}"/>${cap}<g transform="translate(${shift*14} 0) translate(50 0) scale(${sq} 1) translate(-50 0)">${eyes}${lid}${brows}${nose}${mu}${mouth}${gl}</g></svg>`}
+
+const CATS={
+  att:{name:'Attention',sub:'Focus on what matters and filter out distractions.',c:'var(--c-att)'},
+  spd:{name:'Brain Speed',sub:'Take in sights and sounds faster and more accurately.',c:'var(--c-spd)'},
+  mem:{name:'Memory',sub:'Hold more in mind and recall it accurately.',c:'var(--c-mem)'},
+  ppl:{name:'People Skills',sub:'Faces, names, emotions and conversation.',c:'var(--c-ppl)'},
+  int:{name:'Intelligence',sub:'Working memory and switching between rules.',c:'var(--c-int)'},
+  nav:{name:'Navigation',sub:'Rotate, map and find your way.',c:'var(--c-nav)'}
+};
+
+/* ---------- the 29 exercises ---------- */
+const GAMES=[
+/* ===== ATTENTION ===== */
+{id:'tracker',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
+  let t=2,score=0;const[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
+  for(let r=0;r<8;r++){ar.replaceChildren();const o=spawnOrbs(ar,t+3,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
+    c.hint(`Remember these ${t}`);await c.sleep(1800);o.forEach(q=>q.e.classList.remove('tgt'));c.hint('Keep your eyes on them…');
+    await drift(c,o,W,H,3200+r*250,80+r*16);c.hint(`Tap the ${t} you tracked`);let sel=0;
+    await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;q.e.classList.add('sel');if(++sel===t)res()}));
+    const ok=o.every(q=>!!q.s===q.t);o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});
+    flash(c,ok);if(ok){score+=t;t=Math.min(7,t+1)}else t=Math.max(1,t-1);c.stat(score);await c.sleep(1100)}
+  c.finish(score,'Most bubbles tracked at once: '+t);
+}},
+{id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. The flash gets shorter as you improve.',async run(c){
+  const T=stair(500,30,1500);let ok=0;
+  for(let r=0;r<20;r++){const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8),rad=r<7?33:42;
+    c.hint('Watch the centre');await c.sleep(600);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
+    if(r>=10)for(let i=0;i<8;i++)if(i!==pos&&Math.random()<.7)put(b,'🚧',...ringXY(i,8,rad),1.9);
+    await c.sleep(T.v);b.replaceChildren();noise(b);await c.sleep(300);b.replaceChildren();
+    c.hint('Which car was in the centre?');const pc=await ask(k,['🚗','🚙']);
+    c.hint('Where was the 🚸 sign?');const sp=await tapOne(slots(b,8,rad));
+    const good=pc===car&&sp===pos;if(good){ok++;T.hit()}else T.miss();flash(c,good);c.stat(T.v+' ms');await c.sleep(500)}
+  c.finish(ok*10,'Final flash time: '+T.v+' ms');
+}},
+{id:'divided',cat:'att',name:'Divided Attention',desc:'Two shapes flash. Tap Match only when they follow the rule on screen (same colour, same shape, same fill, or a combination). The rule keeps changing.',async run(c){
+  const SH=['circle','square','triangle'],CO=['#e5483d','#2f7de1','#2fa84f'],FI=['solid','striped','empty'];
+  const RULES=[['Same colour',(a,b)=>a.c===b.c],['Same shape',(a,b)=>a.s===b.s],['Same fill',(a,b)=>a.f===b.f],['Same colour AND same shape',(a,b)=>a.c===b.c&&a.s===b.s],['Same colour but different shape',(a,b)=>a.c===b.c&&a.s!==b.s]];
+  const rs=()=>({s:pick(SH),c:pick(CO),f:pick(FI)});
+  const svg=o=>{const fill=o.f==='solid'?o.c:o.f==='empty'?'none':`url(#st${CO.indexOf(o.c)})`;const d={circle:'<circle cx="30" cy="30" r="24"',square:'<rect x="7" y="7" width="46" height="46"',triangle:'<polygon points="30,6 55,53 5,53"'}[o.s];return `<svg viewBox="0 0 60 60" width="90" height="90">${d} fill="${fill}" stroke="${o.c}" stroke-width="4"/></svg>`};
+  const T=stair(800,100,1500);let hits=0,fa=0;const[v,k]=lay(c);const rule=mk('div','tag');rule.style.fontSize='1rem';const show=mk('div','row');show.style.minHeight='96px';v.append(rule,show);
+  const pad=mk('button','pad','Match');k.append(pad);let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
+  for(let r=0;r<30;r++){const R=RULES[Math.min(4,Math.floor(r/6))];rule.textContent='Rule: '+R[0];c.hint('Tap Match only if the pair follows the rule');
+    const a=rs(),want=Math.random()<.5;let b,t=0;do{b=rs()}while(R[1](a,b)!==want&&t++<300);const match=R[1](a,b);
+    pressed=false;pad.classList.remove('on');await c.sleep(500);show.innerHTML=svg(a)+svg(b);live=true;await c.sleep(T.v);show.innerHTML='';await c.sleep(1300);live=false;
+    const good=pressed===match;if(match&&pressed)hits++;if(!match&&pressed)fa++;good?T.hit():T.miss();flash(c,good);c.stat(Math.max(0,hits-fa))}
+  c.finish(Math.max(0,hits-fa)*10,'Final flash time: '+T.v+' ms');
+}},
+{id:'mixed',cat:'att',name:'Mixed Signals',needsAudio:1,desc:'You see a row of letters and hear one letter. Tap Match only when the letter you hear is the same as the middle letter on screen.',async run(c){
+  const L=['A','E','O','U','I'];let hits=0,fa=0,n=0;const[v,k]=lay(c);const w=mk('div','big');w.style.letterSpacing='.1em';v.append(w);
+  const pad=mk('button','pad','Match');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
+  c.hint(hasSpeech?'Listen. Does the sound match the MIDDLE letter?':'Speech is not available on this device, so the letter is written under the row.');
+  for(let r=0;r<30;r++){const mid=pick(L),flank=Math.random()<.5?mid:pick(L.filter(x=>x!==mid)),match=Math.random()<.5,heard=match?mid:pick(L.filter(x=>x!==mid));
+    w.textContent=flank+flank+mid+flank+flank;pressed=false;pad.classList.remove('on');
+    if(hasSpeech)say(heard.toLowerCase(),1.1);else c.hint('Heard: '+heard);
+    await c.sleep(Math.max(1300,2200-r*25));const good=pressed===match;if(pressed){match?hits++:fa++}flash(c,good);c.stat(Math.max(0,hits-fa));w.textContent='';await c.sleep(300)}
+  c.finish(Math.max(0,hits-fa)*10);
+}},
+{id:'freeze',cat:'att',name:'Freeze Frame',desc:'First you see a target picture. Then pictures stream past. Tap for every picture that is NOT the target, and freeze when the target appears.',async run(c){
+  const SETS=[['⭐',['🍎','🐟','🚲','🌂','🎈','🔑']],['🐱',['🐶','🐰','🦊','🐼','🐻']],['🔺',['🔻','🔶','🔷','◀️','▶️']]];
+  let right=0,wrong=0;const[v,k]=lay(c);const w=mk('div','big');w.style.fontSize='6rem';v.append(w);const pad=mk('button','pad','Tap');k.append(pad);
+  let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
+  for(let s=0;s<3;s++){const[tg,ds]=SETS[s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(2200);c.hint('Tap for everything except '+tg);
+    let since=0;for(let i=0;i<14;i++){since++;const isT=since>3+rnd(4+s*2)&&Math.random()<.5;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
+      await c.sleep(Math.max(650,1000-s*120));live=false;w.textContent='';const good=isT?!pressed:pressed;good?right++:wrong++;if(!good||isT)flash(c,good);c.stat(right);await c.sleep(180)}}
+  c.finish(Math.max(0,right-wrong)*3,`${right} right, ${wrong} wrong`);
+}},
+/* ===== BRAIN SPEED ===== */
+{id:'hawk',cat:'spd',name:'Hawk Eye',desc:'Birds flash around the screen for a split second. One bird is different. Tap where it was. The flash gets shorter as you improve.',async run(c){
+  const T=stair(600,30,1500);let ok=0;
+  for(let r=0;r<20;r++){const[v]=lay(c),b=mk('div','box');v.append(b);const lvl=Math.floor(r/7),rad=[30,37,43][lvl],dis=['🐟','🐦','🕊️'][lvl],pos=rnd(8);
+    c.hint('Find the 🦅 hawk');await c.sleep(600);for(let i=0;i<8;i++)put(b,i===pos?'🦅':dis,...ringXY(i,8,rad),1.9);
+    if(lvl>0)for(let i=0;i<6+lvl*4;i++)put(b,pick(['🌿','🍃','☁️']),10+rnd(80),10+rnd(80),1.1).style.opacity=.5;
+    await c.sleep(T.v);b.replaceChildren();noise(b);await c.sleep(300);b.replaceChildren();c.hint('Where was the hawk?');
+    const sp=await tapOne(slots(b,8,rad)),good=sp===pos;good?(ok++,T.hit()):T.miss();flash(c,good);c.stat(T.v+' ms');await c.sleep(400)}
+  c.finish(ok*10,'Final flash time: '+T.v+' ms');
+}},
+{id:'detail',cat:'spd',name:'Eye for Detail',desc:'Arrows flash one after another in different places. Exactly two are identical. Tap the two spots where the identical ones appeared.',async run(c){
+  let ok=0;const T=stair(500,60,900);
+  for(let r=0;r<14;r++){const[v]=lay(c),b=mk('div','box');v.append(b);const n=r<5?3:r<10?4:5,delta=Math.max(8,40-r*2.5),rad=[24,32,40][Math.min(2,Math.floor(r/5))];
+    const A=rnd(360),angs=[A,A];let g=0;while(angs.length<n&&g++<500){const x=A+(Math.random()<.5?-1:1)*(delta+rnd(25));if(angs.every(y=>Math.abs(((x-y)%360+540)%360-180)>=delta*.9))angs.push(x)}
+    const order=shuffle(angs.map((a,i)=>({a,same:i<2})));const pos=shuffle([...Array(8).keys()]).slice(0,n);const sl=slots(b,8,rad);sl.forEach((s,i)=>{if(!pos.includes(i))s.style.visibility='hidden'});
+    c.hint('Watch closely');await c.sleep(600);
+    for(let i=0;i<n;i++){const[x,y]=ringXY(pos[i],8,rad);const e=put(b,'➤',x,y,2.2,order[i].a);await c.sleep(T.v);e.remove();await c.sleep(150)}
+    c.hint('Tap the TWO spots that showed the same arrow');const sel=[];
+    await new Promise(res=>pos.forEach((p,i)=>sl[p].onclick=()=>{if(sel.includes(i))return;sel.push(i);sl[p].classList.add('lit');if(sel.length===2)res()}));
+    const good=sel.every(i=>order[i].same);pos.forEach((p,i)=>{if(order[i].same)sl[p].classList.add('ok');else if(sel.includes(i))sl[p].classList.add('no')});
+    good?(ok++,T.hit()):T.miss();flash(c,good);c.stat(ok);await c.sleep(900)}
+  c.finish(ok*10,'Final flash time: '+T.v+' ms');
+}},
+{id:'sweeps',cat:'spd',name:'Sound Sweeps',needsAudio:1,desc:'You hear two quick sounds. Each one glides up or down in pitch. Report the direction of the first, then the second. The sounds get shorter as you improve.',async run(c){
+  const T=stair(300,25,600);let ok=0;
+  for(let r=0;r<20;r++){const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint('Listen…');await c.sleep(700);
+    const d=[rnd(2),rnd(2)];for(const x of d){x?tone(700,1300,T.v):tone(1300,700,T.v);await c.sleep(T.v+Math.max(120,T.v))}
+    c.hint('First sound?');const a1=await ask(k,['⬆ Up','⬇ Down']);c.hint('Second sound?');const a2=await ask(k,['⬆ Up','⬇ Down']);
+    const good=(a1==='⬆ Up')===!!d[0]&&(a2==='⬆ Up')===!!d[1];good?(ok++,T.hit()):T.miss();flash(c,good);c.stat(T.v+' ms')}
+  c.finish(ok*10,'Shortest sweep: '+T.v+' ms');
+}},
+{id:'vsweeps',cat:'spd',name:'Visual Sweeps',desc:'Striped rings move twice, each time either outward or inward. Report the direction of the first move, then the second. The moves get faster as you improve.',async run(c){
+  const T=stair(700,60,1200);let ok=0;const COLS=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'];
+  for(let r=0;r<20;r++){const[v,k]=lay(c),cv=mk('canvas','sw');cv.width=cv.height=300;v.append(cv);const x=cv.getContext('2d'),col=pick(COLS),sp=14+rnd(14);
+    const draw=ph=>{x.clearRect(0,0,300,300);x.strokeStyle=col;x.lineWidth=sp/2;for(let rr=((ph%sp)+sp)%sp;rr<150;rr+=sp){x.beginPath();x.arc(150,150,rr,0,6.283);x.stroke()}};
+    const d=[rnd(2),rnd(2)];let ph=0;draw(ph);c.hint('Watch the rings');await c.sleep(700);
+    for(const dir of d){await new Promise(res=>{const t0=performance.now(),s=ph;const f=t=>{if(!c.alive)return;const p=Math.min(1,(t-t0)/T.v);ph=s+(dir?1:-1)*sp*.42*p;draw(ph);p<1?requestAnimationFrame(f):res()};requestAnimationFrame(f)});await c.sleep(350)}
+    x.clearRect(0,0,300,300);c.hint('First move?');const a1=await ask(k,['Outward','Inward']);c.hint('Second move?');const a2=await ask(k,['Outward','Inward']);
+    const good=(a1==='Outward')===!!d[0]&&(a2==='Outward')===!!d[1];good?(ok++,T.hit()):T.miss();flash(c,good);c.stat(T.v+' ms')}
+  c.finish(ok*10,'Fastest move: '+T.v+' ms');
+}},
+{id:'tuning',cat:'spd',name:'Fine Tuning',needsAudio:1,desc:'You hear one word from a pair that sounds alike, like "bee" and "pea". Pick the one you heard. Speech starts slow and speeds up as you improve.',async run(c){
+  const P=[['bee','pea'],['bay','day'],['tea','key'],['bit','pit'],['bat','pat'],['dip','tip'],['gap','cap'],['bark','park'],['dune','tune'],['goat','coat'],['fan','van'],['sip','zip'],['bun','done'],['gum','come']];
+  let rate=.55,ok=0;if(!hasSpeech){c.hint('This exercise needs speech, which this device does not support.');await c.sleep(2500);c.finish(0);return}
+  for(let r=0;r<20;r++){const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint('Listen…');await c.sleep(500);await c.say(w,rate);
+    c.hint('Which did you hear?');const a=await ask(k,shuffle(pr)),good=a===w;if(good){ok++;rate=Math.min(1.6,rate+.07)}else rate=Math.max(.5,rate-.1);flash(c,good);c.stat('speed '+rate.toFixed(2)+'×')}
+  c.finish(ok*10,'Final speech speed: '+rate.toFixed(2)+'×');
+}},
+/* ===== MEMORY ===== */
+{id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one.',async run(c){
+  let n=5,score=0;const T=stair(1500,250,2500);const KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'];
+  for(let r=0;r<12;r++){const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[Math.floor(r/2)%KINDS.length],pos=scatter(n+1,15,9);if(pos.length<n+1){n--;r--;continue}
+    c.hint('Memorise the scene');await c.sleep(500);pos.slice(0,n).forEach(([x,y])=>put(b,kind,x,y,1.9));await c.sleep(T.v);
+    b.replaceChildren();noise(b);await c.sleep(600);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.9));els.forEach(e=>e.style.cursor='pointer');
+    c.hint('Tap the new one');const i=await tapOne(els),good=i===n;els[n].style.filter='drop-shadow(0 0 6px var(--good))';if(!good)els[i].style.opacity=.3;
+    if(good){score+=n;n=Math.min(14,n+1);T.hit()}else{n=Math.max(3,n-1);T.miss()}flash(c,good);c.stat(score);await c.sleep(900)}
+  c.finish(score,'Largest scene: '+n+' objects');
+}},
+{id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a sound when you turn it over. Find all the pairs of cards that play the same syllable.',async run(c){
+  const SY=['ba','da','ga','pa','ta','ka','ma','na'];let moves=0,score=0;
+  for(let lv=0;lv<2;lv++){const pairs=lv?8:6,sy=shuffle(SY).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false;
+    const[v]=lay(c),g=mk('div','g');g.style.gridTemplateColumns='repeat(4,1fr)';v.append(g);c.hint(hasSpeech?'Tap cards to hear them. Match the pairs.':'Speech unavailable: syllables are written on the cards.');
+    await new Promise(done=>cards.forEach(s=>{const b=mk('button','mcard','?');b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');b.textContent=hasSpeech?'🔊':s;say(s,.8);open.push([b,s]);
+      if(open.length===2){moves++;c.stat(moves+' moves');const[[b1,s1],[b2,s2]]=open;open=[];
+        if(s1===s2){lock=true;setTimeout(()=>{b1.classList.add('done');b2.classList.add('done');b1.textContent=b2.textContent=s1;lock=false;if(++found===pairs)setTimeout(done,500)},500)}
+        else{lock=true;c.after(()=>{[b1,b2].forEach(x=>{x.classList.remove('up');x.textContent='?'});lock=false},900)}}};g.append(b)}));
+    score+=pairs*20;}
+  c.finish(Math.max(0,score-moves*4),moves+' moves for 14 pairs');
+}},
+{id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. The series gets longer and faster as you improve.',async run(c){
+  const SY=['ba','da','ga','pa','ta','ka','ma','na'];let L=2,best=0,rate=.7;
+  for(let r=0;r<10;r++){const[v,k]=lay(c);const shown=shuffle(SY).slice(0,Math.min(8,L+2+(r>4?2:0))),seq=[...Array(L)].map(()=>pick(shown.slice(0,Math.max(2,Math.min(shown.length,L+1)))));
+    v.innerHTML='<div class="big">🔊</div>';c.hint('Listen…');await c.sleep(600);
+    for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(700);v.innerHTML='<div class="big">·</div>'}await c.sleep(Math.max(60,350-r*30))}
+    v.innerHTML=`<div class="disp big" style="font-size:2rem" id="d"></div>`;c.hint('Tap them in order');const typed=[];
+    await new Promise(res=>{const w=mk('div','grid3');shown.forEach(s=>{const b=mk('button','btn',s);b.onclick=()=>{typed.push(s);$('#d',v).textContent=typed.join(' ');if(typed.length===L)res()};w.append(b)});k.append(w)});
+    const good=typed.join()===seq.join();flash(c,good);if(good){best=Math.max(best,L);L++;rate=Math.min(1.4,rate+.08)}else L=Math.max(2,L-1);c.stat('Best '+best);await c.sleep(700)}
+  c.finish(best*10,'Longest series: '+best);
+}},
+{id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects.',async run(c){
+  const OBJ=[['🔴','red circle'],['🔵','blue circle'],['🟢','green circle'],['🟡','yellow circle'],['🟥','red square'],['🟦','blue square'],['🟩','green square'],['🟨','yellow square'],['⭐','star'],['❤️','heart'],['🔺','red triangle'],['🌙','moon']];
+  let k2=2,best=0;
+  for(let r=0;r<8;r++){const[v,k]=lay(c),items=shuffle(OBJ).slice(0,9),seq=shuffle(items).slice(0,k2);
+    const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint('Listen to the list…');
+    const g=mk('div','g');g.style.gridTemplateColumns='repeat(3,1fr)';const cells=items.map(it=>{const b=mk('button','cell',it[0]);g.append(b);return b});v.append(g);
+    if(hasSpeech)await c.say(text,.9);else{c.hint(text);await c.sleep(1500+k2*1200);}
+    c.hint('Now do it');const got=[];
+    await new Promise(res=>cells.forEach((b,i)=>b.onclick=()=>{got.push(items[i]);b.classList.add('lit');if(got.length===k2)res()}));
+    const good=got.every((x,i)=>x===seq[i]);flash(c,good);if(good){best=Math.max(best,k2);k2=Math.min(7,k2+1)}else k2=Math.max(2,k2-1);c.stat('Best '+best);await c.sleep(800)}
+  c.finish(best*10,'Longest list: '+best+' steps');
+}},
+{id:'mindseye',cat:'mem',name:"Mind's Eye",desc:'A target shape is shown, then hidden. Then find it among look-alikes that differ in colour, shape or tilt. (Built from a short description, so it may differ from the original.)',async run(c){
+  const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90];let ok=0;
+  const html=o=>`<span style="display:inline-block;color:${o.c};transform:rotate(${o.r}deg)">${o.s}</span>`;
+  for(let r=0;r<12;r++){const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)},n=Math.min(9,4+Math.floor(r/2));
+    v.innerHTML=`<div class="big" style="font-size:6rem">${html(T)}</div>`;c.hint('Remember this one');await c.sleep(Math.max(700,1800-r*90));v.innerHTML='';await c.sleep(600);
+    const set=[T];let g=0;while(set.length<n&&g++<400){const d={...T},keys=['s','c','r'],ch=r<6?2:1;shuffle(keys).slice(0,ch).forEach(k=>{d[k]=pick(k==='s'?SH:k==='c'?CO:RO)});if(set.every(x=>x.s!==d.s||x.c!==d.c||x.r!==d.r))set.push(d)}
+    const opts=shuffle(set),w=mk('div','g');w.style.gridTemplateColumns='repeat(3,1fr)';const els=opts.map(o=>{const b=mk('button','cell');b.innerHTML=html(o);b.style.fontSize='2.6rem';w.append(b);return b});v.append(w);
+    c.hint('Tap the one you saw');const i=await tapOne(els),good=opts[i]===T;els[opts.indexOf(T)].classList.add('ok');if(!good)els[i].classList.add('no');if(good)ok++;flash(c,good);c.stat(ok);await c.sleep(800)}
+  c.finish(ok*10);
+}},
+{id:'hearhear',cat:'mem',name:'Hear, Hear',needsAudio:1,desc:'Learn a target sound, then listen to a stream of sounds. Tap only when you hear the target. (Built from a short description, so it may differ from the original.)',async run(c){
+  const play=s=>s===0?tone(600,950,220):s===1?tone(950,600,220):s===2?tone(780,780,220):tone(600,950,220,.22,'square');
+  const[v,k]=lay(c);v.innerHTML='<div class="big">🎧</div>';c.hint('This is the target sound');for(let i=0;i<3;i++){play(0);await c.sleep(700)}
+  const pad=mk('button','pad','That’s it!');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};let hits=0,fa=0;
+  c.hint('Tap only for the target sound');
+  for(let i=0;i<36;i++){const isT=Math.random()<.3,s=isT?0:(i<12?pick([1,2]):pick([1,2,3]));pressed=false;pad.classList.remove('on');play(s);
+    await c.sleep(Math.max(800,1300-i*12));if(pressed){isT?hits++:fa++}if(pressed||isT)flash(c,pressed===isT);c.stat(Math.max(0,hits-fa))}
+  c.finish(Math.max(0,hits*2-fa)*5,`${hits} hits, ${fa} false alarms`);
+}},
+{id:'rhythm',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad. Only the timing counts, not the notes.',async run(c){
+  let n=3,best=0;const IV=[300,600,900];
+  for(let r=0;r<8;r++){const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
+    c.hint('Listen and watch');await c.sleep(600);let t=0;const marks=[0,...gaps.map(g=>t+=g)];
+    for(let i=0;i<n;i++){const d=mk('b');d.style.left=(5+marks[i]/tot*90)+'%';line.append(d);{const f=pick([392,440,523,587,659]);tone(f,f,140,.25,'triangle')}if(i<n-1)await c.sleep(gaps[i])}
+    await c.sleep(700);c.hint('Now tap it back');const pad=mk('button','pad','Tap');pad.style.minHeight='140px';k.append(pad);const taps=[];
+    await new Promise(res=>pad.onpointerdown=()=>{taps.push(performance.now());tone(523,523,90,.2,'triangle');const u=mk('b','u');u.style.left=(5+(taps[taps.length-1]-taps[0])/tot*90)+'%';line.append(u);if(taps.length===n)res()});
+    const got=taps.slice(1).map((x,i)=>x-taps[i]),good=got.every((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*.35+90);flash(c,good);
+    if(good){best=Math.max(best,n);n=Math.min(9,n+1)}else n=Math.max(3,n-1);c.stat('Best '+best);await c.sleep(900)}
+  c.finish(best*10,'Longest rhythm: '+best+' notes');
+}},
+/* ===== PEOPLE SKILLS ===== */
+{id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job.',async run(c){
+  const NAMES=[['Ann','Anna','Hanna','Amy'],['Ben','Ken','Len','Glen'],['Tom','Tim','Tod','Ted'],['Sara','Zara','Clara','Kara'],['Jon','Joan','Jan','Jean'],['Mia','Nia','Leah','Maya'],['Rob','Bob','Rod','Ron'],['Lily','Lucy','Lola','Luna']];
+  const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'];let k=2,score=0;
+  for(let r=0;r<5;r++){const fam=shuffle(NAMES),ppl=[...Array(k)].map((_,i)=>({f:rface(),name:pick(fam[i%fam.length].slice(0,r<2?1:4)),job:JOBS[(i*5+r*3)%JOBS.length]}));
+    for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint('Meet…');await c.sleep(2600)}
+    let right=0;for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
+      const nm=shuffle([p.name,...shuffle([...ppl.map(x=>x.name),...fam.flat()].filter(x=>x!==p.name)).filter((x,i,a)=>a.indexOf(x)===i).slice(0,3)]);
+      const a=await ask(kk,nm);c.hint('And their job?');const jb=shuffle([p.job,...shuffle([...ppl.map(x=>x.job),...JOBS].filter(x=>x!==p.job)).filter((x,i,a)=>a.indexOf(x)===i).slice(0,3)]);
+      const b=await ask(kk,jb),good=a===p.name&&b===p.job;if(a===p.name)score++;if(b===p.job)score++;if(good)right++;flash(c,good);c.stat(score)}
+    if(right===k)k=Math.min(6,k+1);else if(right<k-1)k=Math.max(2,k-1)}
+  c.finish(score*5);
+}},
+{id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Stories get longer and the speech gets faster.',async run(c){
+  const NM=['Maria','Tom','Elena','Jack','Priya','Omar','Grace','Leo'],PL=['market','library','beach','station','farm','museum','bakery'],IT=['apples','books','candles','tickets','scarves','plates'],CL=['red','blue','green','yellow','white'],DY=['Monday','Tuesday','Friday','Saturday','Sunday'],TH=['umbrella','guitar','basket','camera','kite'],FD=['sandwiches','cookies','oranges','pancakes'];
+  let score=0,rate=.85;
+  for(let r=0;r<4;r++){const A=pick(NM),B=pick(NM.filter(x=>x!==A)),p=pick(PL),p2=pick(PL.filter(x=>x!==p)),n=2+rnd(7),it=pick(IT),cl=pick(CL),d=pick(DY),th=pick(TH),n2=2+rnd(5),fd=pick(FD);
+    const S=[[`${A} went to the ${p} on ${d}.`,[['Where did '+A+' go?',p,PL],['On which day?',d,DY]]],[`${A} bought ${n} ${cl} ${it}.`,[['How many '+it+'?',String(n),['2','3','4','5','6','7','8']],['What colour were they?',cl,CL]]],
+      [`There, ${A} met ${B}, who was carrying a ${th}.`,[['Who did '+A+' meet?',B,NM],['What was '+B+' carrying?',th,TH]]],[`Together they walked to the ${p2} and shared ${n2} ${fd}.`,[['Where did they walk to?',p2,PL],['What did they share?',fd,FD]]]].slice(0,Math.min(4,2+r));
+    const story=S.map(s=>s[0]).join(' ');const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint('Listen to the story');await c.sleep(500);
+    if(hasSpeech)await c.say(story,rate);else{v.innerHTML=`<div class="story">${story}</div>`;await c.sleep(2500+story.length*45);v.innerHTML=''}
+    for(const[q,a,pool]of shuffle(S.map(s=>pick(s[1])))){c.hint(q);const opts=shuffle([a,...shuffle(pool.filter(x=>x!==a)).slice(0,3)]);const ans=await ask(k,opts),good=ans===a;if(good)score++;flash(c,good);c.stat(score)}
+    rate=Math.min(1.35,rate+.15)}
+  c.finish(score*10);
+}},
+{id:'recog',cat:'ppl',name:'Recognition',desc:'See a face, then pick the same person out of a group. Later the group is shown from an angle, the choices grow, and the faces look more alike.',async run(c){
+  let ok=0;
+  for(let r=0;r<14;r++){const[v]=lay(c),p=rface(),n=Math.min(6,3+Math.floor(r/3)),diff=r<5?3:r<10?2:1,ang=r>=5?(Math.random()<.5?-.8:.8):0;
+    v.innerHTML=faceSVG(p,'neutral');c.hint('Remember this face');await c.sleep(Math.max(900,2600-r*120));v.innerHTML='';await c.sleep(500);
+    const set=[p];while(set.length<n)set.push(varyFace(p,diff));const opts=shuffle(set),w=mk('div','faces');const els=opts.map(o=>{const b=mk('button');b.innerHTML=faceSVG(o,'neutral',1,ang);w.append(b);return b});v.append(w);
+    c.hint('Which one is the same person?');const i=await tapOne(els),good=opts[i]===p;els[opts.indexOf(p)].style.outline='4px solid var(--good)';if(good)ok++;flash(c,good);c.stat(ok);await c.sleep(900)}
+  c.finish(ok*10);
+}},
+{id:'face2face',cat:'ppl',name:'Face to Face',desc:'A face flashes briefly. Then pick the face showing the same emotion. The expressions get subtler and the choices grow.',async run(c){
+  const ALL=['happy','sad','angry','surprised','afraid','disgusted','neutral','contempt','tired','proud','confused'];let ok=0;const T=stair(1500,250,2500);
+  for(let r=0;r<16;r++){const[v]=lay(c),pool=ALL.slice(0,Math.min(11,5+Math.floor(r/2))),n=Math.min(6,3+Math.floor(r/4)),kk=Math.max(.45,1-r*.04),e=pick(pool);
+    v.innerHTML=faceSVG(rface(),e,kk);c.hint('What is this person feeling?');await c.sleep(T.v);v.innerHTML='';await c.sleep(400);
+    const em=shuffle([e,...shuffle(pool.filter(x=>x!==e)).slice(0,n-1)]),w=mk('div','faces');const els=em.map(x=>{const b=mk('button');b.innerHTML=faceSVG(rface(),x,kk);w.append(b);return b});v.append(w);
+    c.hint('Tap the face with the same emotion');const i=await tapOne(els),good=em[i]===e;els[em.indexOf(e)].style.outline='4px solid var(--good)';good?(ok++,T.hit()):T.miss();flash(c,good);c.stat(ok);await c.sleep(900)}
+  c.finish(ok*10);
+}},
+/* ===== INTELLIGENCE ===== */
+{id:'bender',cat:'int',name:'Mind Bender',desc:'Two numbers appear. If they are digits, tap the HIGHER one. If they are written as words, tap the LOWER one. Answer before time runs out.',async run(c){
+  let ok=0,win=3000;const[v,k]=lay(c);const rule=mk('p','tag');rule.innerHTML='Digits → tap higher · Words → tap lower';v.append(rule);
+  for(let r=0;r<30;r++){const a=rnd(20)+1;let b;do{b=rnd(20)+1}while(b===a);const words=Math.random()<.5,lab=x=>words?NUMW[x]:String(x),want=words?Math.min(a,b):Math.max(a,b);
+    c.hint(words?'Words: pick the LOWER':'Digits: pick the HIGHER');
+    const got=await new Promise(res=>{k.replaceChildren();const w=mk('div','grid2');[a,b].forEach(x=>{const bt=mk('button','btn',lab(x));bt.style.minHeight='110px';bt.style.fontSize=words?'1.4rem':'2.6rem';bt.onclick=()=>res(x);w.append(bt)});k.append(w);c.after(()=>res(null),win)});
+    k.replaceChildren();const good=got===want;if(good){ok++;win=Math.max(1100,win-80)}else win=Math.min(3500,win+200);flash(c,good);c.stat(ok);await c.sleep(250)}
+  c.finish(ok*10,'Answer window at the end: '+(win/1000).toFixed(1)+' s');
+}},
+{id:'cardshark',cat:'int',name:'Card Shark',desc:'Cards appear one at a time. Say whether each card matches the one shown N cards earlier, starting at 2 back. Matching switches between suit, number, or both.',async run(c){
+  const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9'],MODES=['suit','number','both'];let n=2,mi=0,streak=0,ok=0,hist=[];
+  const same=(x,y,m)=>m==='suit'?x.s===y.s:m==='number'?x.r===y.r:x.s===y.s&&x.r===y.r;const[v,k]=lay(c);
+  for(let r=0;r<36;r++){const m=MODES[mi],prev=hist.length>=n?hist[hist.length-n]:null;let cd;
+    if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&same(cd,prev,m)&&g++<50)}
+    hist.push(cd);c.hint(`${n}-back · match the ${m==='both'?'suit AND number':m}`);
+    v.innerHTML=`<div class="card" style="color:${'♥♦'.includes(cd.s)?'#d23b3b':'#1b1b1b'}">${cd.r}<small>${cd.s}</small></div>`;
+    if(!prev){await c.sleep(1400);v.innerHTML='';await c.sleep(300);continue}
+    const truth=same(cd,prev,m),a=await Promise.race([ask(k,['Match','No match']),c.sleep(Math.max(1500,3000-r*30)).then(()=>null)]);k.replaceChildren();
+    const good=(a==='Match')===truth&&a!==null;flash(c,good);if(good){ok++;if(++streak>=5){streak=0;mi++;if(mi>=MODES.length){mi=0;n=Math.min(5,n+1);hist=[]}}}else{streak=0}
+    c.stat(ok);v.innerHTML='';await c.sleep(300)}
+  c.finish(ok*10+(n-2)*50,'Reached '+n+'-back');
+}},
+{id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked: forward, backward, or a mixed order.',async run(c){
+  let k=3,score=0;const[W,H]=arenaSize();
+  for(let r=0;r<9;r++){const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
+    const o=spawnOrbs(ar,k+(r>=6?2:0),W,H),nums=shuffle([...Array(k)].map((_,i)=>i+1));o.forEach((q,i)=>{q.n=nums[i]||0;q.e.textContent=q.n||'';q.e.style.background=q.n?'var(--c-int)':'var(--mute)'});
+    c.hint('Remember the numbers');await c.sleep(1800+k*300);o.forEach(q=>{q.e.textContent='';q.e.style.background='var(--c-int)'});
+    await drift(c,o,W,H,2500+r*200,70+r*15);const mode=r<3?'fwd':r<6?'back':'mix',order=mode==='fwd'?nums.slice().sort((a,b)=>a-b):mode==='back'?nums.slice().sort((a,b)=>b-a):shuffle(nums);
+    c.hint('Tap in this order: '+order.join(' → '));const got=[];
+    await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;got.push(q.n);q.e.textContent=q.n||'✕';q.e.classList.add('sel');if(got.length===k)res()}));
+    const good=got.every((x,i)=>x===order[i]);flash(c,good);if(good){score+=k;k=Math.min(7,k+1)}else k=Math.max(2,k-1);c.stat(score);await c.sleep(1000)}
+  c.finish(score*5);
+}},
+{id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier.',async run(c){
+  const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'];let n=2,streak=0,ok=0,hist=[];const[v,k]=lay(c);
+  for(let r=0;r<30;r++){const prev=hist.length>=n?hist[hist.length-n]:null;let cd;if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&cd.s===prev.s&&cd.r===prev.r&&g++<50)}
+    hist.push(cd);c.hint(`${n}-back · does this card match the one ${n} before?`);v.innerHTML='<div class="big">🔊</div>';
+    const text=cd.r+' of '+cd.s;if(hasSpeech)await c.say(text,1.05);else{v.innerHTML=`<div class="big" style="font-size:2rem">${text}</div>`;await c.sleep(1200)}
+    if(!prev){await c.sleep(500);continue}
+    const truth=cd.s===prev.s&&cd.r===prev.r,a=await Promise.race([ask(k,['Match','No match']),c.sleep(3500).then(()=>null)]);k.replaceChildren();
+    const good=(a==='Match')===truth&&a!==null;flash(c,good);if(good){ok++;if(++streak>=6){streak=0;n=Math.min(5,n+1);hist=[]}}else streak=0;c.stat(ok);await c.sleep(300)}
+  c.finish(ok*10+(n-2)*50,'Reached '+n+'-back');
+}},
+/* ===== NAVIGATION ===== */
+{id:'rightturn',cat:'nav',name:'Right Turn',desc:'Two rotated shapes are shown. Decide whether they are the same shape turned, or a mirror image. Answer before time runs out.',async run(c){
+  const G=['F','R','G','J','L','P','Q','4','7','k','h','y'];let ok=0,win=4000;
+  for(let r=0;r<24;r++){const[v,k]=lay(c),ch=pick(r<8?G.slice(0,6):G),mir=Math.random()<.5,a1=rnd(12)*30,a2=rnd(12)*30;
+    v.innerHTML=`<div class="rt"><div><span style="display:inline-block;transform:rotate(${a1}deg)">${ch}</span></div><div><span style="display:inline-block;transform:rotate(${a2}deg) scaleX(${mir?-1:1})">${ch}</span></div></div>`;
+    c.hint('Same shape, or a mirror image?');const a=await Promise.race([ask(k,['Same','Mirror']),c.sleep(win).then(()=>null)]);k.replaceChildren();
+    const good=a!==null&&(a==='Mirror')===mir;if(good){ok++;win=Math.max(1500,win-120)}else win=Math.min(5000,win+300);flash(c,good);c.stat(ok);await c.sleep(300)}
+  c.finish(ok*10,'Answer window at the end: '+(win/1000).toFixed(1)+' s');
+}},
+{id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory in its new position.',async run(c){
+  const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓'];let score=0;
+  const TF=[['rotated 90° clockwise',(r,cc,n)=>[cc,n-1-r]],['rotated 90° anticlockwise',(r,cc,n)=>[n-1-cc,r]],['flipped left to right',(r,cc,n)=>[r,n-1-cc]],['flipped top to bottom',(r,cc,n)=>[n-1-r,cc]],['shifted one column right (wrapping around)',(r,cc,n)=>[r,(cc+1)%n]]];
+  for(let rd=0;rd<6;rd++){const n=rd<3?3:4,k=Math.min(n*n-2,3+rd),cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k),tf=rd<1?TF[4]:rd<3?pick(TF.slice(2)):pick(TF);
+    const[v,kk]=lay(c);const grid=()=>{const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${n},1fr)`;const cs=[...Array(n*n)].map(()=>{const b=mk('button','cell');g.append(b);return b});v.replaceChildren(g);return cs};
+    let cs=grid();cells.forEach((p,i)=>cs[p].textContent=objs[i]);c.hint('Memorise the grid');await c.sleep(2500+k*700);cs.forEach(b=>b.textContent='');
+    c.hint('Now the grid is '+tf[0]+'. Rebuild it: pick an object, then a cell.');await c.sleep(1200);cs=grid();const placed={};let cur=null;
+    const pal=mk('div','row');objs.forEach(o=>{const b=mk('button','btn',o);b.onclick=()=>{cur=o;pal.querySelectorAll('.btn').forEach(x=>x.classList.toggle('on',x===b))};pal.append(b)});
+    const done=mk('button','cta','Done');kk.append(pal,done);
+    cs.forEach((b,i)=>b.onclick=()=>{if(placed[i]){delete placed[i];b.textContent='';return}if(!cur)return;Object.keys(placed).forEach(j=>{if(placed[j]===cur){delete placed[j];cs[j].textContent=''}});placed[i]=cur;b.textContent=cur});
+    await new Promise(res=>done.onclick=res);let right=0;
+    cells.forEach((p,i)=>{const[r2,c2]=tf[1](Math.floor(p/n),p%n,n),q=r2*n+c2;if(placed[q]===objs[i]){right++;cs[q].classList.add('ok')}else{cs[q].classList.add('no');cs[q].textContent=objs[i]}});
+    kk.replaceChildren();score+=right;flash(c,right===k);c.stat(score);await c.sleep(1800)}
+  c.finish(score*5);
+}},
+{id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, turns, and which stop to get off at. Then answer where you got off and which way you are facing.',async run(c){
+  const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'];let L=2,best=0,rate=.9;
+  for(let r=0;r<8;r++){const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,4),off=rnd(4);
+    const parts=[`You board the train facing ${start}.`,`The stops are ${stops.join(', ')}.`,`Get off at ${stops[off]}.`];steps.forEach(s=>{parts.push(s==='around'?'Turn around.':`Turn ${s}.`);f=(f+(s==='left'?3:s==='right'?1:2))%4});
+    const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint('Listen carefully');await c.sleep(500);
+    if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="story">${text}</div>`;await c.sleep(3000+text.length*40);v.innerHTML='<div class="big">🚆</div>'}
+    c.hint('Which stop did you get off at?');const a1=await ask(k,shuffle(stops));c.hint('Which way are you facing now?');const a2=await ask(k,['North','East','South','West']);
+    const good=a1===stops[off]&&a2.toLowerCase()===D[f];flash(c,good);if(good){best=Math.max(best,L);L=Math.min(8,L+1);rate=Math.min(1.3,rate+.06)}else L=Math.max(1,L-1);c.stat('Best '+best);await c.sleep(600)}
+  c.finish(best*10,'Most turns followed: '+best);
+}},
+{id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. The road gets busier and faster.',async run(c){
+  const IT=['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']];const T=stair(4200,1400,6000,.9);let ok=0;
+  for(let r=0;r<18;r++){const[v,k]=lay(c),sc=SC[Math.min(2,Math.floor(r/6))],road=mk('div','road');road.style.background=`linear-gradient(${sc[0]} 0 35%,${sc[1]} 35%)`;
+    road.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="47,35 53,35 95,100 5,100" fill="#555"/><polygon points="49.6,35 50.4,35 51.5,100 48.5,100" fill="#eee"/></svg>';v.append(road);
+    const target=pick(IT),batch=shuffle([target,...shuffle(IT.filter(x=>x!==target)).slice(0,3+Math.min(2,Math.floor(r/6)))]),lanes=shuffle([-1,-.55,-.15,.25,.6,1]).slice(0,batch.length);
+    c.hint('Tap the '+target);const els=batch.map((e,i)=>{const d=mk('div');d.textContent=e;road.append(d);return{d,e,l:lanes[i],delay:Math.random()*.25}});
+    const res=await new Promise(done=>{let fin=false;els.forEach(o=>o.d.onpointerdown=()=>{if(!fin){fin=true;done(o.e===target)}});const t0=performance.now();
+      const f=t=>{if(!c.alive||fin)return;const p=(t-t0)/T.v;els.forEach(o=>{const q=Math.max(0,Math.min(1,(p-o.delay)/(1-o.delay)));const y=35+q*q*70,x=50+o.l*q*q*55;o.d.style.top=y+'%';o.d.style.left=x+'%';o.d.style.fontSize=(.5+q*q*3.6)+'rem';o.d.style.opacity=q>0?1:0});
+        if(p>=1.05){fin=true;done(false)}else requestAnimationFrame(f)};requestAnimationFrame(f)});
+    res?(ok++,T.hit()):T.miss();flash(c,res);c.stat(ok);await c.sleep(500)}
+  c.finish(ok*10,'Fastest approach: '+(T.v/1000).toFixed(1)+' s');
+}}
+];
+
+/* ---------- screens ---------- */
+const app=$('#app');
+let live=null;
+function total(){return Object.values(store).reduce((a,g)=>a+(g.plays||0),0)}
+function stopLive(){if(live){live.alive=false;live.clear();live=null}hush()}
+let atHome=true;window.__back=()=>{if(atHome)return false;home();return true};
+function home(){
+  stopLive();atHome=true;app.style.removeProperty('--cc');
+  app.innerHTML=`<div class="scroll"><div class="head"><div><h1>Mind Gym</h1><p>${GAMES.length} exercises in six training areas</p></div>
+    <div class="badge"><b>${total()}</b>sessions played</div></div></div>`;
+  const sc=$('.scroll',app);
+  Object.entries(CATS).forEach(([k,cat])=>{
+    const sec=mk('section','cat');sec.style.setProperty('--cc',cat.c);
+    sec.innerHTML=`<h3>${cat.name}</h3><p class="sub">${cat.sub}</p>`;const t=mk('div','tiles');
+    GAMES.filter(g=>g.cat===k).forEach(g=>{const b=mk('button','tile');const best=store[g.id]?.best;
+      b.innerHTML=`<b>${g.name}</b><span>${g.needsAudio?'🔊 Sound on · ':''}${g.desc.split('. ')[0].replace(/\.$/,'')}.</span><i>${best!=null?'Best '+best:'Not played yet'}</i>`;b.onclick=()=>intro(g);t.append(b)});
+    sec.append(t);sc.append(sec)});
+}
+function intro(g){
+  atHome=false;const cat=CATS[g.cat];app.style.setProperty('--cc',cat.c);
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">‹</button><h2>${cat.name}</h2></div>
+   <div class="intro"><span class="tag">${cat.name}</span><h1>${g.name}</h1><p>${g.desc}</p>${g.needsAudio?'<p><b>Turn your sound on.</b></p>':''}
+   <p>${store[g.id]?.best!=null?'Your best: <b>'+store[g.id].best+'</b>':'First time here. Good luck.'}</p>
+   <button class="cta" id="go">Start</button></div>`;
+  $('#bk').onclick=home;$('#go').onclick=()=>{AC();if(!NATIVE&&hasSpeech&&g.needsAudio){try{speechSynthesis.speak(new SpeechSynthesisUtterance(' '))}catch(e){}}play(g)};
+}
+function play(g){
+  stopLive();atHome=false;const cat=CATS[g.cat];app.style.setProperty('--cc',cat.c);
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Quit">✕</button><h2>${g.name}</h2><span id="st"></span></div>
+   <div id="bar"><i></i></div><p id="hint"></p><div id="stage"></div>`;
+  const timers=new Set();let done=false;
+  const c={alive:true,stage:$('#stage'),
+    clear(){timers.forEach(clearTimeout);timers.clear()},
+    after(fn,ms){const id=setTimeout(()=>{timers.delete(id);if(c.alive)fn()},ms);timers.add(id);return id},
+    sleep(ms){return new Promise(r=>c.after(r,ms))},
+    say(t,rate){return say(t,rate).then(()=>new Promise(r=>{if(c.alive)r()}))},
+    stat(t){const s=$('#st');if(s)s.textContent=t},
+    hint(t){const h=$('#hint');if(h)h.textContent=t},
+    timer(sec,cb){const i=$('#bar i');i.style.transition=`transform ${sec}s linear`;requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.transform='scaleX(0)'}));c.after(cb,sec*1000)},
+    finish(score,note){if(done||!c.alive)return;done=true;c.alive=false;c.clear();score=Math.max(0,Math.round(score));
+      const e=store[g.id]||(store[g.id]={plays:0});const isBest=e.best==null||score>e.best;if(isBest)e.best=score;e.plays++;save();result(g,score,note,isBest)}
+  };
+  live=c;$('#bk').onclick=home;c.stat('');
+  Promise.resolve().then(()=>g.run(c)).catch(err=>{console.error(err);if(c.alive){c.hint('Something went wrong. Tap ✕ to go back.')}});
+}
+function result(g,score,note,isBest){
+  live=null;app.innerHTML=`<div class="intro"><span class="tag">${g.name}</span>
+   <div class="score">${score}</div><p>${isBest?'<b style="color:var(--cc)">New personal best!</b>':'Your best: <b>'+store[g.id].best+'</b>'}</p>${note?'<p>'+note+'</p>':''}
+   <div class="row"><button class="cta" id="again">Play again</button><button class="ghost" id="hm">All exercises</button></div></div>`;
+  $('#again').onclick=()=>play(g);$('#hm').onclick=home;
+}
+home();
+</script>
