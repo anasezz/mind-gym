@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
         Window w = getWindow();
         boolean night = (getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
                 == android.content.res.Configuration.UI_MODE_NIGHT_YES;
-        int bg = night ? Color.rgb(14, 22, 20) : Color.rgb(238, 243, 241);
+        int bg = night ? Color.rgb(20, 17, 42) : Color.rgb(244, 242, 251);
         w.setStatusBarColor(bg);
         w.setNavigationBarColor(bg);
         w.getDecorView().setBackgroundColor(bg);

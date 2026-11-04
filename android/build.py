@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 TOOLS, OUT = sys.argv[1], sys.argv[2]
 PKG = "com.mindgym.app"
-VERSION_CODE, VERSION_NAME = 2, "2.0"
+VERSION_CODE, VERSION_NAME = 3, "3.0"
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 
 # ---------- Android binary XML (AXML) ----------
