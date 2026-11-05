@@ -50,7 +50,9 @@ public class MainActivity extends Activity {
         web.setWebChromeClient(new WebChromeClient());
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         web.addJavascriptInterface(new Bridge(), "AndroidTTS");
+        web.addJavascriptInterface(new AppBridge(), "AndroidApp");
         setContentView(web);
+        ReminderReceiver.schedule(this);
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -70,6 +72,40 @@ public class MainActivity extends Activity {
         String html = readAsset("index.html").replace("<html lang=\"en\">",
                 "<html lang=\"en\" data-theme=\"" + (night ? "dark" : "light") + "\">");
         web.loadDataWithBaseURL("https://mindgym.app/", html, "text/html", "utf-8", null);
+    }
+
+    /** Daily reminder settings, called from the page. */
+    public class AppBridge {
+        @JavascriptInterface
+        public String getReminder() {
+            android.content.SharedPreferences p = ReminderReceiver.prefs(MainActivity.this);
+            return (p.getBoolean("on", false) ? "1" : "0") + "," + p.getInt("h", 19) + "," + p.getInt("m", 0);
+        }
+
+        @JavascriptInterface
+        public void setReminder(boolean on, int h, int m) {
+            ReminderReceiver.prefs(MainActivity.this).edit().putBoolean("on", on).putInt("h", h).putInt("m", m).apply();
+            ReminderReceiver.schedule(MainActivity.this);
+            if (on && android.os.Build.VERSION.SDK_INT >= 33 && !notificationsAllowed()) {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 7);
+                    }
+                });
+            }
+        }
+
+        @JavascriptInterface
+        public boolean notificationsAllowed() {
+            if (android.os.Build.VERSION.SDK_INT >= 33)
+                return checkSelfPermission("android.permission.POST_NOTIFICATIONS") == android.content.pm.PackageManager.PERMISSION_GRANTED;
+            return true;
+        }
+
+        @JavascriptInterface
+        public void markWorkoutDone(String date) {
+            ReminderReceiver.prefs(MainActivity.this).edit().putString("lastWorkout", date).apply();
+        }
     }
 
     private void done(final String id) {

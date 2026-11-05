@@ -200,6 +200,60 @@ canvas.sw{width:min(100%,300px);aspect-ratio:1;border-radius:50%;border:2px soli
 .srow{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 3px 0 var(--line)}
 .sgo{background:var(--cc);color:var(--on);font-family:var(--f-display);font-weight:800;padding:10px 18px;border-radius:999px;box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .sgo:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+
+/* workout, check, charts, settings */
+.wcard{display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--accent);color:#fff;border-radius:26px;padding:18px;box-shadow:0 6px 0 rgba(0,0,0,.22);transition:transform .08s}
+.wcard:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.22)}
+.wcard .eyebrow{color:inherit;opacity:.85}
+.wcard>b{font-family:var(--f-display);font-size:1.5rem;line-height:1.1}
+.wdots{display:flex;gap:8px;margin:4px 0}
+.wd{width:42px;height:42px;border-radius:14px;background:var(--cc);color:var(--on);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(255,255,255,.55)}
+.wd.ok{background:#fff;color:var(--accent)}
+.wmeta{font-size:.86rem;opacity:.92}
+.wcard .play{align-self:flex-start;background:#fff;color:var(--accent);font-weight:800;font-family:var(--f-display);padding:10px 22px;border-radius:999px;margin-top:4px}
+.pdots{display:flex;gap:6px}
+.pdots i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.pdots i.ok{background:var(--good)}.pdots i.cur{background:var(--cc)}
+.why{margin:0;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px;line-height:1.45;font-size:.95rem}
+.chart{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:8px 6px 2px}
+.chart svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.tip{position:absolute;top:6px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:10px;padding:6px 10px;font-size:.78rem;display:flex;flex-direction:column;gap:1px;white-space:nowrap;pointer-events:none}
+.tip b{font-weight:800}
+.arow2{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.arow2 p{flex:1;min-width:0}
+.spark{flex:none}
+.cbar{position:relative;height:12px;border-radius:6px;background:var(--line);margin:8px 0 2px}
+.cbar i{display:block;height:100%;border-radius:6px;background:var(--accent)}
+.cbar s{position:absolute;top:-4px;width:3px;height:20px;border-radius:2px;background:var(--ink);transform:translateX(-50%)}
+.cval{color:var(--ink)!important}
+.cval em{font-style:normal;font-size:.8rem;margin-left:4px}
+.cval em.up{color:var(--good)}.cval em.down{color:var(--bad)}
+.legend-bar{display:inline-block;width:18px;height:8px;border-radius:4px;background:var(--accent)}
+.legend-tick{display:inline-block;width:3px;height:14px;border-radius:2px;background:var(--ink);margin-left:10px}
+.wres{font-family:var(--f-display);font-weight:800;font-variant-numeric:tabular-nums}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:14px 16px;cursor:pointer}
+.toggle span{display:flex;flex-direction:column;gap:2px}
+.toggle em{font-style:normal;font-size:.8rem;color:var(--mute)}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle i{width:52px;height:30px;border-radius:15px;background:var(--line);position:relative;flex:none;transition:background .15s}
+.toggle i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.toggle input:checked+i{background:var(--accent)}
+.toggle input:checked+i::after{transform:translateX(22px)}
+.toggle input:focus-visible+i{outline:3px solid var(--accent);outline-offset:2px}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px}
+.field input{font:inherit;font-family:var(--f-display);font-weight:800;font-size:1.3rem;background:transparent;color:var(--ink);border:0}
+
+/* level ladder, toast, cleared chips, pressed state */
+.ladder{display:flex;gap:4px;margin-top:12px}
+.ladder i{flex:1;height:7px;border-radius:4px;background:var(--line);transition:background .2s}
+.ladder i.done{background:var(--cc);opacity:.45}.ladder i.cur{background:var(--cc)}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 92px);transform:translateX(-50%);z-index:20;font-family:var(--f-display);font-weight:800;font-size:1.1rem;padding:10px 20px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);animation:pop .3s ease-out;white-space:nowrap}
+.toast.up{background:var(--good);color:#fff}.toast.down{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
+.clr{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.cchip{display:inline-flex;gap:6px;align-items:center;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.85rem;color:var(--c-spd)}
+.cchip b{color:var(--ink);font-family:var(--f-display)}
+.cchip.new{border-color:var(--cc)}
+button.pressed{transform:translateY(3px);filter:brightness(.93)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <div id="app"></div>
@@ -237,7 +291,7 @@ function hush(){try{if(NATIVE)window.AndroidTTS.stop();else if('speechSynthesis'
 const stair=(start,min,max,f=.85)=>{let v=start,ok=0;return{get v(){return Math.round(v)},hit(){if(++ok>=2){ok=0;v=Math.max(min,v*f)}},miss(){ok=0;v=Math.min(max,v/f)}}};
 function options(el,labels,cb,cls='grid2'){const w=mk('div',cls);labels.forEach(l=>{const b=mk('button','btn',l);b.onclick=()=>cb(l,b);w.append(b)});el.append(w);return w}
 const ask=(k,labels,cls)=>new Promise(res=>{k.replaceChildren();options(k,labels,l=>{k.replaceChildren();res(l)},cls)});
-function flash(c,ok,count=true){if(count&&c.tally)c.tally(ok);const f=$('.fb',c.stage);if(f){f.className='fb '+(ok?'good':'bad');f.style.opacity=.28;setTimeout(()=>{f.style.opacity=0},170)}buzz(ok?10:40)}
+function flash(c,ok,count=true,step=true){if(count&&c.tally)c.tally(ok);if(step&&c.trial)c.trial(ok);const f=$('.fb',c.stage);if(f){f.className='fb '+(ok?'good':'bad');f.style.opacity=.28;setTimeout(()=>{f.style.opacity=0},170)}buzz(ok?10:40)}
 function lay(c){c.stage.innerHTML='<div class="fb"></div><div id="v"></div><div id="k"></div>';return[$('#v',c.stage),$('#k',c.stage)]}
 function keypad(el,onKey,okLabel='✓'){const k=mk('div','grid3');k.style.width='min(100%,320px)';
   ['1','2','3','4','5','6','7','8','9','⌫','0',okLabel].forEach(x=>{const b=mk('button','btn',x);b.onclick=()=>onKey(x===okLabel?'ok':x==='⌫'?'del':x);k.append(b)});el.append(k);return k}
@@ -289,327 +343,329 @@ const CATS={
   nav:{name:'Navigation',sub:'Rotate, map and find your way.',c:'var(--c-nav)',on:'#ffffff'}
 };
 
-/* ---------- the 29 exercises (9 levels each: 1-3 Beginner, 4-6 Medium, 7-9 Advanced) ---------- */
-const lerp=(c,a,b)=>a+(b-a)*c.t, ilerp=(c,a,b)=>Math.round(lerp(c,a,b)), glerp=(c,a,b)=>Math.round(a*Math.pow(b/a,c.t)), tier=c=>c.L<=3?0:c.L<=6?1:2;
+/* ---------- the 29 exercises ----------
+   Difficulty is read from c.L at the start of EVERY round. Two correct rounds in a row move c.L up one level,
+   two misses in a row move it down one (see c.trial in play()). Level 1 = easiest, 9 = hardest. */
+const lerp=(c,a,b)=>a+(b-a)*(c.L-1)/8, ilerp=(c,a,b)=>Math.round(lerp(c,a,b)), glerp=(c,a,b)=>Math.round(a*Math.pow(b/a,(c.L-1)/8)), tier=c=>c.L<=3?0:c.L<=6?1:2;
 const GAMES=[
 /* ===== ATTENTION ===== */
 {id:'tracker',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
-  const t=ilerp(c,2,6),d=ilerp(c,3,8),sp=lerp(c,70,260),dur=lerp(c,3000,7000),show=glerp(c,2200,1000),N=6;
-  const[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
-  for(let r=0;r<N;r++){ar.replaceChildren();const o=spawnOrbs(ar,t+d,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
+  const N=12,[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
+  for(let r=0;r<N;r++){const t=Math.min(7,1+Math.ceil(c.L/1.5)),d=ilerp(c,3,8),sp=lerp(c,70,250),dur=lerp(c,2800,6000),show=glerp(c,2000,1000);
+    ar.replaceChildren();const o=spawnOrbs(ar,t+d,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
     c.hint(`Round ${r+1}/${N} · remember these ${t}`);await c.sleep(show);o.forEach(q=>q.e.classList.remove('tgt'));c.hint('Keep your eyes on them…');
     await drift(c,o,W,H,dur,sp);c.hint(`Tap the ${t} you tracked`);let sel=0;
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;q.e.classList.add('sel');if(++sel===t)res()}));
     o.forEach(q=>{if(q.s)c.tally(q.t)});const ok=o.every(q=>!!q.s===q.t);
-    o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});flash(c,ok,false);await c.sleep(1100)}
-  c.finish(`${t} targets among ${t+d} bubbles`);
+    o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});flash(c,ok,false);await c.sleep(700)}
+  c.finish(`Last round: ${Math.min(7,1+Math.ceil(c.L/1.5))} targets among ${Math.min(7,1+Math.ceil(c.L/1.5))+ilerp(c,3,8)} bubbles`);
 }},
-{id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. Higher levels flash faster and add decoy signs.',async run(c){
-  const T=glerp(c,520,45),rad=lerp(c,30,44),nd=ilerp(c,0,7),N=16;
-  for(let r=0;r<N;r++){const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
-    c.hint(`${r+1}/${N} · watch the centre`);await c.sleep(600);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
+{id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. Each level up flashes faster and adds decoy signs.',async run(c){
+  const N=20;
+  for(let r=0;r<N;r++){const T=glerp(c,520,40),rad=lerp(c,30,44),nd=ilerp(c,0,7);const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
+    c.hint(`${r+1}/${N} · watch the centre`);await c.sleep(450);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
     shuffle([...Array(8).keys()].filter(i=>i!==pos)).slice(0,nd).forEach(i=>put(b,c.L>=7?pick(['🚧','⚠️','⛔']):'🚧',...ringXY(i,8,rad),1.9));
-    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(300);b.replaceChildren();
+    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();
     c.hint('Which car was in the centre?');const pc=await ask(k,['🚗','🚙']);c.hint('Where was the 🚸 sign?');const sp=await tapOne(slots(b,8,rad));
-    flash(c,pc===car&&sp===pos);await c.sleep(450)}
-  c.finish(`Flash time ${T} ms`);
+    flash(c,pc===car&&sp===pos);await c.sleep(250)}
+  c.finish(`Last flash: ${glerp(c,520,40)} ms`);
 }},
 {id:'divided',cat:'att',name:'Divided Attention',desc:'Two shapes flash. Tap Match only when they follow the rule on screen (same colour, same shape, same fill, or a combination). The rule keeps changing.',async run(c){
   const SH=['circle','square','triangle'],CO=['#e5483d','#2f7de1','#2fa84f'],FI=['solid','striped','empty'];
   const RULES=[['Same colour',(a,b)=>a.c===b.c],['Same shape',(a,b)=>a.s===b.s],['Same fill',(a,b)=>a.f===b.f],['Same colour AND same shape',(a,b)=>a.c===b.c&&a.s===b.s],['Same colour but different shape',(a,b)=>a.c===b.c&&a.s!==b.s]];
   const rs=()=>({s:pick(SH),c:pick(CO),f:pick(FI)});
   const svg=o=>{const fill=o.f==='solid'?o.c:o.f==='empty'?'none':`url(#st${CO.indexOf(o.c)})`;const d={circle:'<circle cx="30" cy="30" r="24"',square:'<rect x="7" y="7" width="46" height="46"',triangle:'<polygon points="30,6 55,53 5,53"'}[o.s];return `<svg viewBox="0 0 60 60" width="90" height="90">${d} fill="${fill}" stroke="${o.c}" stroke-width="4"/></svg>`};
-  const T=glerp(c,900,150),win=Math.max(T+450,glerp(c,1800,900)),nr=[3,3,3,4,4,4,5,5,5][c.L-1],blk=c.L<=3?8:c.L<=6?6:4,N=24;
-  const[v,k]=lay(c);const rule=mk('div','tag');rule.style.fontSize='1rem';const show=mk('div','row');show.style.cssText='min-height:96px;display:flex;gap:14px;justify-content:center';v.append(rule,show);
+  const N=28;const[v,k]=lay(c);const rule=mk('div','tag');rule.style.fontSize='1rem';const show=mk('div','row');show.style.cssText='min-height:96px;display:flex;gap:14px;justify-content:center';v.append(rule,show);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
-  for(let r=0;r<N;r++){const R=RULES[Math.floor(r/blk)%nr];rule.textContent='Rule: '+R[0];c.hint('Tap Match only if the pair follows the rule');
+  for(let r=0;r<N;r++){const T=glerp(c,900,150),win=Math.max(T+450,glerp(c,1700,850)),nr=[3,3,3,4,4,4,5,5,5][c.L-1],blk=c.L<=3?7:c.L<=6?5:4;
+    const R=RULES[Math.floor(r/blk)%nr];rule.textContent='Rule: '+R[0];c.hint('Tap Match only if the pair follows the rule');
     const a=rs(),want=Math.random()<.5;let b,t=0;do{b=rs()}while(R[1](a,b)!==want&&t++<300);const match=R[1](a,b);
-    pressed=false;pad.classList.remove('on');await c.sleep(450);show.innerHTML=svg(a)+svg(b);live=true;await c.sleep(T);show.innerHTML='';await c.sleep(win-T);live=false;
+    pressed=false;pad.classList.remove('on');await c.sleep(350);show.innerHTML=svg(a)+svg(b);live=true;await c.sleep(T);show.innerHTML='';await c.sleep(win-T);live=false;
     flash(c,pressed===match)}
-  c.finish(`Flash time ${T} ms, ${nr} rules`);
+  c.finish(`Last flash: ${glerp(c,900,150)} ms`);
 }},
 {id:'mixed',cat:'att',name:'Mixed Signals',needsAudio:1,desc:'You see a row of letters and hear one letter. Tap Match only when the letter you hear is the same as the middle letter on screen.',async run(c){
-  const L=c.L<=3?['A','O','I']:c.L<=6?['A','E','O','U','I']:['B','D','P','T','E','V'],inc=lerp(c,.3,.85),gap=glerp(c,2400,1100),N=24;
-  const[v,k]=lay(c);const w=mk('div','big');w.style.letterSpacing='.1em';v.append(w);
+  const N=28;const[v,k]=lay(c);const w=mk('div','big');w.style.letterSpacing='.1em';v.append(w);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint(hasSpeech?'Tap Match only if the sound is the MIDDLE letter':'Speech is not available, so the letter heard is written here.');
-  for(let r=0;r<N;r++){const mid=pick(L),flank=Math.random()<inc?pick(L.filter(x=>x!==mid)):mid,match=Math.random()<.5,heard=match?mid:pick(L.filter(x=>x!==mid));
+  for(let r=0;r<N;r++){const L=c.L<=3?['A','O','I']:c.L<=6?['A','E','O','U','I']:['B','D','P','T','E','V'],inc=lerp(c,.3,.85),gap=glerp(c,2300,1100);
+    const mid=pick(L),flank=Math.random()<inc?pick(L.filter(x=>x!==mid)):mid,match=Math.random()<.5,heard=match?mid:pick(L.filter(x=>x!==mid));
     w.textContent=flank+flank+mid+flank+flank;pressed=false;pad.classList.remove('on');
     if(hasSpeech)say(heard,1.05);else c.hint('Heard: '+heard);
-    await c.sleep(gap);flash(c,pressed===match);w.textContent='';await c.sleep(250)}
-  c.finish(`${(gap/1000).toFixed(1)} s per letter`);
+    await c.sleep(gap);flash(c,pressed===match);w.textContent='';await c.sleep(200)}
+  c.finish(`Last pace: ${(glerp(c,2300,1100)/1000).toFixed(1)} s per letter`);
 }},
 {id:'freeze',cat:'att',name:'Freeze Frame',desc:'First you see a target picture. Then pictures stream past. Tap for every picture that is NOT the target, and freeze when the target appears.',async run(c){
   const SETS=[[['⭐',['🍎','🐟','🚲','🌂','🎈','🔑']],['🐱',['🚗','🌵','🍩','📚','⚽']],['🔔',['🍌','🧦','🪁','🌻','🧲']]],
     [['🐱',['🐶','🐰','🦊','🐼','🐻']],['🔺',['🔷','🟢','🟨','⬛','🟣']],['🍎',['🍐','🍊','🍑','🍒','🍋']]],
-    [['🔺',['🔻','🔶','🔸','◀️','▶️']],['🐱',['🐯','🦁','🐈','😺','🐆']],['🌕',['🌖','🌔','🌝','🟡','🌓']]]][tier(c)];
-  const dur=glerp(c,1150,430),minGap=ilerp(c,2,7);const[v,k]=lay(c);const w=mk('div','big');w.style.fontSize='6rem';v.append(w);const pad=mk('button','pad','Tap');k.append(pad);
+    [['🔺',['🔻','🔶','🔸','◀️','▶️']],['🐱',['🐯','🦁','🐈','😺','🐆']],['🌕',['🌖','🌔','🌝','🟡','🌓']]]];
+  const[v,k]=lay(c);const w=mk('div','big');w.style.fontSize='6rem';v.append(w);const pad=mk('button','pad','Tap');k.append(pad);
   let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
-  for(let s=0;s<3;s++){const[tg,ds]=SETS[s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(2200);c.hint('Tap for everything except '+tg);
-    let since=0;for(let i=0;i<14;i++){since++;const isT=since>minGap&&Math.random()<.45;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
-      await c.sleep(dur);live=false;w.textContent='';const good=isT?!pressed:pressed;if(!good||isT)flash(c,good);else c.tally(true);await c.sleep(160)}}
-  c.finish(`${dur} ms per picture`);
+  for(let s=0;s<3;s++){const[tg,ds]=SETS[tier(c)][s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(1800);c.hint('Tap for everything except '+tg);
+    let since=0;for(let i=0;i<16;i++){const dur=glerp(c,1100,420),minGap=ilerp(c,2,6);since++;const isT=since>minGap&&Math.random()<.5;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
+      await c.sleep(dur);live=false;w.textContent='';const good=isT?!pressed:pressed;if(!good||isT)flash(c,good);else c.tally(true);await c.sleep(140)}}
+  c.finish(`Last pace: ${glerp(c,1100,420)} ms per picture`);
 }},
 /* ===== BRAIN SPEED ===== */
-{id:'hawk',cat:'spd',name:'Hawk Eye',desc:'Birds flash around the screen for a split second. One of them is the hawk. Tap where it was. Higher levels flash faster with more birds and clutter.',async run(c){
-  const n=c.L<=3?8:c.L<=6?10:12,T=glerp(c,650,40),rad=lerp(c,28,43),dis=['🐟','🐟','🐦','🐦','🐦','🦆','🦆','🕊️','🕊️'][c.L-1],cl=ilerp(c,0,22),N=16;
-  for(let r=0;r<N;r++){const[v]=lay(c),b=mk('div','box');v.append(b);const pos=rnd(n);
-    c.hint(`${r+1}/${N} · find the 🦅 hawk`);await c.sleep(600);for(let i=0;i<n;i++)put(b,i===pos?'🦅':dis,...ringXY(i,n,rad),n>8?1.6:1.9);
+{id:'hawk',cat:'spd',name:'Hawk Eye',desc:'Birds flash around the screen for a split second. One of them is the hawk. Tap where it was. Each level up flashes faster, with more birds and clutter.',async run(c){
+  const N=20;
+  for(let r=0;r<N;r++){const n=c.L<=3?8:c.L<=6?10:12,T=glerp(c,650,40),rad=lerp(c,28,43),dis=['🐟','🐟','🐦','🐦','🐦','🦆','🦆','🕊️','🕊️'][c.L-1],cl=ilerp(c,0,22);
+    const[v]=lay(c),b=mk('div','box');v.append(b);const pos=rnd(n);
+    c.hint(`${r+1}/${N} · find the 🦅 hawk`);await c.sleep(450);for(let i=0;i<n;i++)put(b,i===pos?'🦅':dis,...ringXY(i,n,rad),n>8?1.6:1.9);
     for(let j=0;j<cl;j++)put(b,pick(['🌿','🍃','☁️','🌱']),8+rnd(84),8+rnd(84),1.1).style.opacity=.55;
-    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(300);b.replaceChildren();c.hint('Where was the hawk?');
-    const sp=await tapOne(slots(b,n,rad));flash(c,sp===pos);await c.sleep(400)}
-  c.finish(`Flash time ${T} ms, ${n} birds`);
+    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();c.hint('Where was the hawk?');
+    const sp=await tapOne(slots(b,n,rad));flash(c,sp===pos);await c.sleep(250)}
+  c.finish(`Last flash: ${glerp(c,650,40)} ms`);
 }},
 {id:'detail',cat:'spd',name:'Eye for Detail',desc:'Arrows flash one after another in different places. Exactly two are identical. Tap the two spots where the identical ones appeared.',async run(c){
-  const n=ilerp(c,3,5),delta=lerp(c,40,8),T=glerp(c,650,90),rad=lerp(c,22,40),N=12;
-  for(let r=0;r<N;r++){const[v]=lay(c),b=mk('div','box');v.append(b);
+  const N=16;
+  for(let r=0;r<N;r++){const n=ilerp(c,3,5),delta=lerp(c,40,8),T=glerp(c,650,90),rad=lerp(c,22,40);const[v]=lay(c),b=mk('div','box');v.append(b);
     const A=rnd(360),angs=[A,A];let g=0;while(angs.length<n&&g++<800){const x=A+(Math.random()<.5?-1:1)*(delta+rnd(30));if(angs.every(y=>Math.abs(((x-y)%360+540)%360-180)>=delta*.9))angs.push(x)}
     const order=shuffle(angs.map((a,i)=>({a,same:i<2}))),pos=shuffle([...Array(8).keys()]).slice(0,order.length),sl=slots(b,8,rad);sl.forEach((s,i)=>{if(!pos.includes(i))s.style.visibility='hidden'});
-    c.hint(`${r+1}/${N} · watch closely`);await c.sleep(600);
-    for(let i=0;i<order.length;i++){const[x,y]=ringXY(pos[i],8,rad);const e=put(b,'➤',x,y,2.2,order[i].a);await c.sleep(T);e.remove();await c.sleep(150)}
+    c.hint(`${r+1}/${N} · watch closely`);await c.sleep(450);
+    for(let i=0;i<order.length;i++){const[x,y]=ringXY(pos[i],8,rad);const e=put(b,'➤',x,y,2.2,order[i].a);await c.sleep(T);e.remove();await c.sleep(130)}
     c.hint('Tap the TWO spots that showed the same arrow');const sel=[];
     await new Promise(res=>pos.forEach((p,i)=>sl[p].onclick=()=>{if(sel.includes(i))return;sel.push(i);sl[p].classList.add('lit');if(sel.length===2)res()}));
     const good=sel.every(i=>order[i].same);pos.forEach((p,i)=>{if(order[i].same)sl[p].classList.add('ok');else if(sel.includes(i))sl[p].classList.add('no')});
-    flash(c,good);await c.sleep(900)}
-  c.finish(`${n} arrows, ${T} ms each, ${Math.round(delta)}° apart`);
+    flash(c,good);await c.sleep(550)}
+  c.finish(`Last round: ${ilerp(c,3,5)} arrows, ${glerp(c,650,90)} ms each`);
 }},
-{id:'sweeps',cat:'spd',name:'Sound Sweeps',needsAudio:1,desc:'You hear quick sounds that glide up or down in pitch. Report the direction of each one, in order. Higher levels play shorter sweeps and more of them.',async run(c){
-  const dur=glerp(c,350,25),n=c.L<=4?2:3,N=14,ORD=['First','Second','Third'];
-  for(let r=0;r<N;r++){const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(650);
+{id:'sweeps',cat:'spd',name:'Sound Sweeps',needsAudio:1,desc:'You hear quick sounds that glide up or down in pitch. Report the direction of each one, in order. Each level up plays shorter sweeps, then more of them.',async run(c){
+  const N=18,ORD=['First','Second','Third'];
+  for(let r=0;r<N;r++){const dur=glerp(c,350,25),n=c.L<=4?2:3;const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(450);
     const d=[...Array(n)].map(()=>rnd(2));for(const x of d){x?tone(700,1300,dur):tone(1300,700,dur);await c.sleep(dur+Math.max(90,dur))}
     let all=true;for(let i=0;i<n;i++){c.hint(ORD[i]+' sound?');const a=await ask(k,['⬆ Up','⬇ Down']);if((a==='⬆ Up')!==!!d[i])all=false}
     flash(c,all)}
-  c.finish(`${n} sweeps of ${dur} ms`);
+  c.finish(`Last sweeps: ${glerp(c,350,25)} ms`);
 }},
-{id:'vsweeps',cat:'spd',name:'Visual Sweeps',desc:'Striped rings move twice, each time either outward or inward. Report the direction of the first move, then the second. Higher levels move faster.',async run(c){
-  const dur=glerp(c,850,60),N=14,COLS=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'];
-  for(let r=0;r<N;r++){const[v,k]=lay(c),cv=mk('canvas','sw');cv.width=cv.height=300;v.append(cv);const x=cv.getContext('2d'),col=pick(COLS),sp=14+rnd(14);
+{id:'vsweeps',cat:'spd',name:'Visual Sweeps',desc:'Striped rings move twice, each time either outward or inward. Report the direction of the first move, then the second. Each level up moves faster.',async run(c){
+  const N=18,COLS=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'];
+  for(let r=0;r<N;r++){const dur=glerp(c,850,60);const[v,k]=lay(c),cv=mk('canvas','sw');cv.width=cv.height=300;v.append(cv);const x=cv.getContext('2d'),col=pick(COLS),sp=14+rnd(14);
     const draw=ph=>{x.clearRect(0,0,300,300);x.strokeStyle=col;x.lineWidth=sp/2;for(let rr=((ph%sp)+sp)%sp;rr<150;rr+=sp){x.beginPath();x.arc(150,150,rr,0,6.283);x.stroke()}};
-    const d=[rnd(2),rnd(2)];let ph=0;draw(ph);c.hint(`${r+1}/${N} · watch the rings`);await c.sleep(700);
-    for(const dir of d){await new Promise(res=>{const t0=performance.now(),s=ph;const f=t=>{if(!c.alive)return;const p=Math.min(1,(t-t0)/dur);ph=s+(dir?1:-1)*sp*.42*p;draw(ph);p<1?requestAnimationFrame(f):res()};requestAnimationFrame(f)});await c.sleep(350)}
+    const d=[rnd(2),rnd(2)];let ph=0;draw(ph);c.hint(`${r+1}/${N} · watch the rings`);await c.sleep(550);
+    for(const dir of d){await new Promise(res=>{const t0=performance.now(),s=ph;const f=t=>{if(!c.alive)return;const p=Math.min(1,(t-t0)/dur);ph=s+(dir?1:-1)*sp*.42*p;draw(ph);p<1?requestAnimationFrame(f):res()};requestAnimationFrame(f)});await c.sleep(300)}
     x.clearRect(0,0,300,300);c.hint('First move?');const a1=await ask(k,['Outward','Inward']);c.hint('Second move?');const a2=await ask(k,['Outward','Inward']);
     flash(c,(a1==='Outward')===!!d[0]&&(a2==='Outward')===!!d[1])}
-  c.finish(`Each move lasts ${dur} ms`);
+  c.finish(`Last move: ${glerp(c,850,60)} ms`);
 }},
-{id:'tuning',cat:'spd',name:'Fine Tuning',needsAudio:1,desc:'You hear one word from a pair that sounds alike, like "bee" and "pea". Pick the one you heard. Higher levels speak faster and use closer pairs.',async run(c){
+{id:'tuning',cat:'spd',name:'Fine Tuning',needsAudio:1,desc:'You hear one word from a pair that sounds alike, like "bee" and "pea". Pick the one you heard. Each level up speaks faster and uses closer pairs.',async run(c){
   const P0=[['bee','pea'],['bay','day'],['tea','key'],['bit','pit'],['goat','coat'],['fan','van']],P2=[['fin','thin'],['sip','ship'],['vat','that'],['bun','done'],['gum','come'],['dune','tune'],['bark','park'],['zip','sip']];
-  const P=[P0,P0.concat(P2),P2][tier(c)],rate=lerp(c,.6,1.5),N=16;
-  if(!hasSpeech){c.hint('This exercise needs speech, which this device does not support.');await c.sleep(2500);c.finish('No speech on this device',0);return}
-  for(let r=0;r<N;r++){const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(500);await c.say(w,rate);
+  const N=20;if(!hasSpeech){c.hint('This exercise needs speech, which this device does not support.');await c.sleep(2500);c.finish('No speech on this device',0);return}
+  for(let r=0;r<N;r++){const P=[P0,P0.concat(P2),P2][tier(c)],rate=lerp(c,.6,1.5);const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(350);await c.say(w,rate);
     c.hint('Which did you hear?');const a=await ask(k,shuffle(pr));flash(c,a===w)}
-  c.finish(`Speech speed ${rate.toFixed(2)}×`);
+  c.finish(`Last speed: ${lerp(c,.6,1.5).toFixed(2)}×`);
 }},
 /* ===== MEMORY ===== */
-{id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one.',async run(c){
-  const n=ilerp(c,4,13),T=glerp(c,2200,350),minD=lerp(c,16,11),KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'],N=10;
-  for(let r=0;r<N;r++){const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
-    c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(500);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.sleep(T);
-    b.replaceChildren();noise(b);await c.sleep(600);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.8));els.forEach(e=>e.style.cursor='pointer');
-    c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m);await c.sleep(900)}
-  c.finish(`${n} objects, ${T} ms look`);
+{id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one. Each level up adds an object and shortens the look.',async run(c){
+  const KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'],N=16;
+  for(let r=0;r<N;r++){const n=ilerp(c,4,13),T=glerp(c,2200,350),minD=lerp(c,16,11);const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
+    c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(400);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.sleep(T);
+    b.replaceChildren();noise(b);await c.sleep(500);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.8));els.forEach(e=>e.style.cursor='pointer');
+    c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m);await c.sleep(550)}
+  c.finish(`Last scene: ${ilerp(c,4,13)} objects`);
 }},
-{id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a syllable when you turn it over. Find all the pairs of cards that play the same syllable, in as few moves as you can.',async run(c){
-  const pairs=[4,4,5,6,6,8,8,9,10][c.L-1],cols={4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=lerp(c,.75,1.2);
-  const SY=[['ma','so','ki','lu','be','ro','fa','ti','zo','ne'],['ba','so','ki','da','me','ro','fa','ti','go','ne'],['ba','pa','da','ta','ga','ka','ma','na','fa','va']][tier(c)];
-  const sy=shuffle(SY).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false,moves=0;
-  const[v]=lay(c),g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;v.append(g);
-  c.hint(hasSpeech?'Tap cards to hear them. Match the pairs.':'Speech unavailable: syllables are written on the cards.');
-  await new Promise(done=>cards.forEach(s=>{const b=mk('button','mcard','?');b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');b.textContent=hasSpeech?'🔊':s;say(s,rate);open.push([b,s]);
-    if(open.length===2){moves++;const[[b1,s1],[b2,s2]]=open;open=[];
-      if(s1===s2){c.tally(true);lock=true;setTimeout(()=>{b1.classList.add('done');b2.classList.add('done');b1.textContent=b2.textContent=s1;lock=false;if(++found===pairs)setTimeout(done,500)},500)}
-      else{c.tally(false);lock=true;c.after(()=>{[b1,b2].forEach(x=>{x.classList.remove('up');x.textContent='?'});lock=false},900)}}};g.append(b)}));
-  c.finish(`${pairs} pairs in ${moves} moves`,Math.min(1,pairs*1.8/moves));
+{id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a syllable when you turn it over. Find all the pairs. Clear a board in few moves twice in a row and the next board gets bigger.',async run(c){
+  const SY=[['ma','so','ki','lu','be','ro','fa','ti','zo','ne'],['ba','so','ki','da','me','ro','fa','ti','go','ne'],['ba','pa','da','ta','ga','ka','ma','na','fa','va']],N=5;
+  for(let r=0;r<N;r++){const pairs=[3,4,4,5,6,6,8,9,10][c.L-1],cols={3:3,4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=lerp(c,.75,1.2),limit=Math.ceil(pairs*1.7);
+    const sy=shuffle(SY[tier(c)]).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false,moves=0;
+    const[v]=lay(c),g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;v.append(g);
+    c.hint(`Board ${r+1}/${N} · ${pairs} pairs · finish in ${limit} moves or fewer`);
+    await new Promise(done=>cards.forEach(s=>{const b=mk('button','mcard','?');b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');b.textContent=hasSpeech?'🔊':s;say(s,rate);open.push([b,s]);
+      if(open.length===2){moves++;const[[b1,s1],[b2,s2]]=open;open=[];c.hint(`Board ${r+1}/${N} · moves: ${moves} of ${limit}`);
+        if(s1===s2){c.tally(true);lock=true;setTimeout(()=>{b1.classList.add('done');b2.classList.add('done');b1.textContent=b2.textContent=s1;lock=false;if(++found===pairs)setTimeout(done,350)},400)}
+        else{c.tally(false);lock=true;c.after(()=>{[b1,b2].forEach(x=>{x.classList.remove('up');x.textContent='?'});lock=false},800)}}};g.append(b)}));
+    flash(c,moves<=limit,false);await c.sleep(500)}
+  c.finish(`Last board: ${[3,4,4,5,6,6,8,9,10][c.L-1]} pairs`);
 }},
-{id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. Higher levels play longer, faster series of similar sounds.',async run(c){
-  const Ls=ilerp(c,2,7),rate=lerp(c,.7,1.45),gap=glerp(c,400,40),nb=Math.min(8,Ls+2),N=8;
-  const SY=[['ma','so','ki','lu','be','ro','fa','ti'],['ba','so','ki','da','me','ro','fa','ti'],['ba','pa','da','ta','ga','ka','ma','na']][tier(c)];
-  for(let r=0;r<N;r++){const[v,k]=lay(c),shown=shuffle(SY).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
-    v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(600);
-    for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(700);v.innerHTML='<div class="big">·</div>'}await c.sleep(gap)}
+{id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. Get it right twice in a row and the next series is one longer.',async run(c){
+  const SY=[['ma','so','ki','lu','be','ro','fa','ti'],['ba','so','ki','da','me','ro','fa','ti'],['ba','pa','da','ta','ga','ka','ma','na']],N=16;
+  for(let r=0;r<N;r++){const Ls=c.L+1,rate=lerp(c,.7,1.45),gap=glerp(c,400,40),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[tier(c)]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
+    v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen to ${Ls} syllables`);await c.sleep(450);
+    for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(650);v.innerHTML='<div class="big">·</div>'}await c.sleep(gap)}
     v.innerHTML='<div class="disp" style="font-size:2rem" id="d"></div>';c.hint('Tap them in order');const typed=[];
     await new Promise(res=>{const w=mk('div','grid3');shown.forEach(s=>{const b=mk('button','btn',s);b.onclick=()=>{typed.push(s);$('#d',v).textContent=typed.join(' ');if(typed.length===Ls)res()};w.append(b)});k.append(w)});
-    seq.forEach((s,i)=>c.tally(typed[i]===s));flash(c,typed.join()===seq.join(),false);await c.sleep(700)}
-  c.finish(`${Ls} syllables per series`);
+    seq.forEach((s,i)=>c.tally(typed[i]===s));const ok=typed.join()===seq.join();flash(c,ok,false);await c.sleep(450)}
+  c.finish(`Longest series: ${c.peak+1} syllables`);
 }},
-{id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects.',async run(c){
+{id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects. Get it right twice in a row and the next list is one step longer.',async run(c){
   const OBJ=[['🔴','red circle'],['🔵','blue circle'],['🟢','green circle'],['🟡','yellow circle'],['🟥','red square'],['🟦','blue square'],['🟩','green square'],['🟨','yellow square'],['🟠','orange circle'],['🟧','orange square'],['🟣','purple circle'],['🟪','purple square']];
-  const k2=ilerp(c,2,7),rate=lerp(c,.85,1.3),cols=c.L<=3?3:4,N=8;
-  for(let r=0;r<N;r++){const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,k2);
-    const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint(`${r+1}/${N} · listen to the list…`);
+  const N=14;
+  for(let r=0;r<N;r++){const k2=c.L+1,rate=lerp(c,.85,1.3),cols=c.L<=3?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
+    const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint(`${r+1}/${N} · listen to ${seq.length} steps…`);
     const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;const cells=items.map(it=>{const b=mk('button','cell',it[0]);g.append(b);return b});v.append(g);
     if(hasSpeech)await c.say(text,rate);else{c.hint(text);await c.sleep(1500+k2*1100)}
     c.hint('Now do it');const got=[];
-    await new Promise(res=>cells.forEach((b,i)=>b.onclick=()=>{got.push(items[i]);b.classList.add('lit');if(got.length===k2)res()}));
-    seq.forEach((x,i)=>c.tally(got[i]===x));flash(c,got.every((x,i)=>x===seq[i]),false);await c.sleep(800)}
-  c.finish(`${k2} steps per list`);
+    await new Promise(res=>cells.forEach((b,i)=>b.onclick=()=>{got.push(items[i]);b.classList.add('lit');if(got.length===seq.length)res()}));
+    seq.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===seq[i]);flash(c,ok,false);await c.sleep(450)}
+  c.finish(`Longest list: ${c.peak+1} steps`);
 }},
 {id:'mindseye',cat:'mem',name:"Mind's Eye",desc:'A target shape is shown, then hidden. Then find it among look-alikes that differ in colour, shape or tilt. (Built from a short description, so it may differ from the original.)',async run(c){
-  const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90];
-  const n=ilerp(c,4,9),ch=c.L<=3?2:1,view=glerp(c,2000,500),hold=glerp(c,500,2200),N=12;
+  const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90],N=18;
   const html=o=>`<span style="display:inline-block;color:${o.c};transform:rotate(${o.r}deg)">${o.s}</span>`;
-  for(let r=0;r<N;r++){const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
+  for(let r=0;r<N;r++){const n=ilerp(c,4,9),ch=c.L<=3?2:1,view=glerp(c,2000,500),hold=glerp(c,500,2200);const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
     v.innerHTML=`<div class="big" style="font-size:6rem">${html(T)}</div>`;c.hint(`${r+1}/${N} · remember this one`);await c.sleep(view);v.innerHTML='';c.hint('Hold it in mind…');await c.sleep(hold);
     const set=[T];let g=0;while(set.length<n&&g++<500){const d={...T};shuffle(['s','c','r']).slice(0,ch).forEach(k=>{d[k]=pick(k==='s'?SH:k==='c'?CO:RO)});if(set.every(x=>x.s!==d.s||x.c!==d.c||x.r!==d.r))set.push(d)}
     const opts=shuffle(set),w=mk('div','g');w.style.gridTemplateColumns='repeat(3,1fr)';const els=opts.map(o=>{const b=mk('button','cell');b.innerHTML=html(o);b.style.fontSize='2.6rem';w.append(b);return b});v.append(w);
-    c.hint('Tap the one you saw');const i=await tapOne(els),good=opts[i]===T;els[opts.indexOf(T)].classList.add('ok');if(!good)els[i].classList.add('no');flash(c,good);await c.sleep(800)}
-  c.finish(`${n} choices, ${(hold/1000).toFixed(1)} s delay`);
+    c.hint('Tap the one you saw');const i=await tapOne(els),good=opts[i]===T;els[opts.indexOf(T)].classList.add('ok');if(!good)els[i].classList.add('no');flash(c,good);await c.sleep(500)}
+  c.finish(`Last round: ${ilerp(c,4,9)} choices after ${(glerp(c,500,2200)/1000).toFixed(1)} s`);
 }},
-{id:'hearhear',cat:'mem',name:'Hear, Hear',needsAudio:1,desc:'Learn a target sound, then listen to a stream of sounds. Tap only when you hear the target. Higher levels use decoys that sound almost the same. (Built from a short description, so it may differ from the original.)',async run(c){
-  const near=lerp(c,350,70),gap=glerp(c,1400,700),N=36;
-  const S={tgt:()=>tone(600,950,220),down:()=>tone(950,600,220),flat:()=>tone(780,780,220),near:()=>tone(600,950-near,220),nearlo:()=>tone(600+near*.6,950,220),sq:()=>tone(600,950,220,.16,'square')};
-  const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq']][tier(c)];
-  const[v,k]=lay(c);v.innerHTML='<div class="big">🎧</div>';c.hint('This is the target sound');for(let i=0;i<3;i++){S.tgt();await c.sleep(700)}
+{id:'hearhear',cat:'mem',name:'Hear, Hear',needsAudio:1,desc:'Learn a target sound, then listen to a stream of sounds. Tap only when you hear the target. Each level up uses decoys that sound closer to it. (Built from a short description, so it may differ from the original.)',async run(c){
+  const N=40,S={tgt:()=>tone(600,950,220),down:()=>tone(950,600,220),flat:()=>tone(780,780,220),near:()=>tone(600,950-lerp(c,350,70),220),nearlo:()=>tone(600+lerp(c,350,70)*.6,950,220),sq:()=>tone(600,950,220,.16,'square')};
+  const[v,k]=lay(c);v.innerHTML='<div class="big">🎧</div>';c.hint('This is the target sound');for(let i=0;i<3;i++){S.tgt();await c.sleep(650)}
   const pad=mk('button','pad','That’s it!');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint('Tap only for the target sound');
-  for(let i=0;i<N;i++){const isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
+  for(let i=0;i<N;i++){const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq']][tier(c)],gap=glerp(c,1400,700),isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
     await c.sleep(gap);if(pressed||isT)flash(c,pressed===isT);else c.tally(true)}
-  c.finish(`Closest decoy ${Math.round(near)} Hz away`);
+  c.finish(`Closest decoy: ${Math.round(lerp(c,350,70))} Hz away`);
 }},
-{id:'rhythm',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad. Only the timing counts, not the notes.',async run(c){
-  const n=ilerp(c,3,8),tol=lerp(c,.4,.15),IV=[[400,800],[300,600,900],[200,300,450,600,900]][tier(c)],N=8;
-  for(let r=0;r<N;r++){const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
-    c.hint(`${r+1}/${N} · listen and watch`);await c.sleep(600);let t=0;const marks=[0,...gaps.map(g=>t+=g)];
+{id:'rhythm',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad. Get it right twice in a row and the next rhythm has one more note.',async run(c){
+  const N=14;
+  for(let r=0;r<N;r++){const n=c.L+2,tol=lerp(c,.4,.18),IV=[[400,800],[300,600,900],[200,300,450,600,900]][tier(c)];const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
+    c.hint(`${r+1}/${N} · ${n} notes · listen and watch`);await c.sleep(450);let t=0;const marks=[0,...gaps.map(g=>t+=g)];
     for(let i=0;i<n;i++){const d=mk('b');d.style.left=(5+marks[i]/tot*90)+'%';line.append(d);{const f=pick([392,440,523,587,659]);tone(f,f,140,.25,'triangle')}if(i<n-1)await c.sleep(gaps[i])}
-    await c.sleep(700);c.hint('Now tap it back');const pad=mk('button','pad','Tap');pad.style.minHeight='140px';k.append(pad);const taps=[];
+    await c.sleep(500);c.hint('Now tap it back');const pad=mk('button','pad','Tap');pad.style.minHeight='140px';k.append(pad);const taps=[];
     await new Promise(res=>pad.onpointerdown=()=>{taps.push(performance.now());tone(523,523,90,.2,'triangle');const u=mk('b','u');u.style.left=(5+(taps[taps.length-1]-taps[0])/tot*90)+'%';line.append(u);if(taps.length===n)res()});
-    const got=taps.slice(1).map((x,i)=>x-taps[i]),oks=got.map((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*tol+60);oks.forEach(o=>c.tally(o));flash(c,oks.every(Boolean),false);await c.sleep(900)}
-  c.finish(`${n} notes, ±${Math.round(tol*100)}% timing`);
+    const got=taps.slice(1).map((x,i)=>x-taps[i]),oks=got.map((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*tol+60);oks.forEach(o=>c.tally(o));const ok=oks.every(Boolean);flash(c,ok,false);await c.sleep(550)}
+  c.finish(`Longest rhythm: ${c.peak+2} notes`);
 }},
 /* ===== PEOPLE SKILLS ===== */
-{id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job.',async run(c){
+{id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job. Remember everyone twice in a row and the next group is one person bigger.',async run(c){
   const NAMES=[['Ann','Anna','Hanna','Amy'],['Ben','Ken','Len','Glen'],['Tom','Tim','Tod','Ted'],['Sara','Zara','Clara','Kara'],['Jon','Joan','Jan','Jean'],['Mia','Nia','Leah','Maya'],['Rob','Bob','Rod','Ron'],['Lily','Lucy','Lola','Luna']];
-  const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'];
-  const k=ilerp(c,2,6),show=glerp(c,3200,1500),sim=c.L>=4,N=3;
-  for(let r=0;r<N;r++){const fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
+  const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'],N=8;
+  for(let r=0;r<N;r++){const k=Math.min(8,c.L+1),show=glerp(c,3000,1400),sim=c.L>=4,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
     const names=pool.slice(0,k),jobs=shuffle(JOBS).slice(0,k),ppl=names.map((nm,i)=>({f:rface(),name:nm,job:jobs[i]}));
-    for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint(`Round ${r+1}/${N} · meet…`);await c.sleep(show)}
-    for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
+    for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint(`Group ${r+1}/${N} · meet ${k} people`);await c.sleep(show)}
+    let all=true;for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
       const nm=shuffle([p.name,...shuffle([...new Set([...pool,...fam.flat()])].filter(x=>x!==p.name)).slice(0,3)]);
-      const a=await ask(kk,nm);flash(c,a===p.name);c.hint('And their job?');
-      const jb=shuffle([p.job,...shuffle([...new Set([...jobs,...JOBS])].filter(x=>x!==p.job)).slice(0,3)]);const b=await ask(kk,jb);flash(c,b===p.job)}}
-  c.finish(`${k} people per round`);
+      const a=await ask(kk,nm);flash(c,a===p.name,true,false);c.hint('And their job?');
+      const jb=shuffle([p.job,...shuffle([...new Set([...jobs,...JOBS])].filter(x=>x!==p.job)).slice(0,3)]);const b=await ask(kk,jb);flash(c,b===p.job,true,false);if(a!==p.name||b!==p.job)all=false}
+    c.trial(all)}
+  c.finish(`Largest group: ${Math.min(8,c.peak+1)} people`);
 }},
-{id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Higher levels tell longer stories, faster.',async run(c){
+{id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Answer them all right twice in a row and the next story is longer and faster.',async run(c){
   const NM=['Maria','Tom','Elena','Jack','Priya','Omar','Grace','Leo'],PL=['market','library','beach','station','farm','museum','bakery'],IT=['apples','books','candles','tickets','scarves','plates'],CL=['red','blue','green','yellow','white'],DY=['Monday','Tuesday','Friday','Saturday','Sunday'],TH=['umbrella','guitar','basket','camera','kite'],FD=['sandwiches','cookies','oranges','pancakes'];
-  const ns=ilerp(c,2,5),rate=lerp(c,.8,1.4),nq=c.L<=3?2:3,N=3;
-  for(let r=0;r<N;r++){const A=pick(NM),B=pick(NM.filter(x=>x!==A)),p=pick(PL),p2=pick(PL.filter(x=>x!==p)),n=2+rnd(7),it=pick(IT),cl=pick(CL),d=pick(DY),th=pick(TH),n2=2+rnd(5),fd=pick(FD),n3=3+rnd(6);
+  const N=7;
+  for(let r=0;r<N;r++){const ns=ilerp(c,2,5),rate=lerp(c,.8,1.4),nq=c.L<=3?2:3;
+    const A=pick(NM),B=pick(NM.filter(x=>x!==A)),p=pick(PL),p2=pick(PL.filter(x=>x!==p)),n=2+rnd(7),it=pick(IT),cl=pick(CL),d=pick(DY),th=pick(TH),n2=2+rnd(5),fd=pick(FD),n3=3+rnd(6);
     const S=[[`${A} went to the ${p} on ${d}.`,[['Where did '+A+' go?',p,PL],['On which day?',d,DY]]],[`${A} bought ${n} ${cl} ${it}.`,[['How many '+it+'?',String(n),['2','3','4','5','6','7','8']],['What colour were they?',cl,CL]]],
       [`There, ${A} met ${B}, who was carrying a ${th}.`,[['Who did '+A+' meet?',B,NM],['What was '+B+' carrying?',th,TH]]],[`Together they walked to the ${p2} and shared ${n2} ${fd}.`,[['Where did they walk to?',p2,PL],['What did they share?',fd,FD]]],
       [`On the way home, ${B} lost ${n3} coins.`,[['How many coins were lost?',String(n3),['3','4','5','6','7','8']],['Who lost the coins?',B,NM]]]].slice(0,ns);
-    const story=S.map(s=>s[0]).join(' ');const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`Story ${r+1}/${N} · listen`);await c.sleep(500);
+    const story=S.map(s=>s[0]).join(' ');const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`Story ${r+1}/${N} · ${ns} sentences`);await c.sleep(400);
     if(hasSpeech)await c.say(story,rate);else{v.innerHTML=`<div class="story">${story}</div>`;await c.sleep(2500+story.length*40);v.innerHTML=''}
-    const qs=shuffle(S.flatMap(s=>s[1])).slice(0,nq);
-    for(const[q,a,pool]of qs){c.hint(q);const ans=await ask(k,shuffle([a,...shuffle(pool.filter(x=>x!==a)).slice(0,3)]));flash(c,ans===a)}}
-  c.finish(`${ns}-sentence stories at ${rate.toFixed(2)}×`);
+    let all=true;for(const[q,a,pool]of shuffle(S.flatMap(s=>s[1])).slice(0,nq)){c.hint(q);const ans=await ask(k,shuffle([a,...shuffle(pool.filter(x=>x!==a)).slice(0,3)]));flash(c,ans===a,true,false);if(ans!==a)all=false}
+    c.trial(all)}
+  c.finish(`Longest story: ${ilerp({L:c.peak},2,5)} sentences`);
 }},
-{id:'recog',cat:'ppl',name:'Recognition',desc:'See a face, then pick the same person out of a group. Higher levels show the group from an angle, add more faces, and make them look more alike.',async run(c){
-  const n=ilerp(c,3,6),diff=c.L<=3?3:c.L<=6?2:1,angled=c.L>=4,view=glerp(c,2600,700),N=12;
-  for(let r=0;r<N;r++){const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
-    v.innerHTML=faceSVG(p,'neutral');c.hint(`${r+1}/${N} · remember this face`);await c.sleep(view);v.innerHTML='';await c.sleep(500);
+{id:'recog',cat:'ppl',name:'Recognition',desc:'See a face, then pick the same person out of a group. Each level up shows the group from an angle, adds faces, and makes them look more alike.',async run(c){
+  const N=18;
+  for(let r=0;r<N;r++){const n=ilerp(c,3,6),diff=c.L<=3?3:c.L<=6?2:1,angled=c.L>=4,view=glerp(c,2600,700);const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
+    v.innerHTML=faceSVG(p,'neutral');c.hint(`${r+1}/${N} · remember this face`);await c.sleep(view);v.innerHTML='';await c.sleep(400);
     const set=[p];while(set.length<n)set.push(varyFace(p,diff));const opts=shuffle(set),w=mk('div','faces');const els=opts.map(o=>{const b=mk('button');b.innerHTML=faceSVG(o,'neutral',1,ang);w.append(b);return b});v.append(w);
-    c.hint('Which one is the same person?');const i=await tapOne(els);els[opts.indexOf(p)].style.outline='4px solid var(--good)';flash(c,opts[i]===p);await c.sleep(900)}
-  c.finish(`${n} faces, ${(view/1000).toFixed(1)} s look`);
+    c.hint('Which one is the same person?');const i=await tapOne(els);els[opts.indexOf(p)].style.outline='4px solid var(--good)';flash(c,opts[i]===p);await c.sleep(550)}
+  c.finish(`Last round: ${ilerp(c,3,6)} faces`);
 }},
-{id:'face2face',cat:'ppl',name:'Face to Face',desc:'A face flashes briefly. Then pick the face showing the same emotion. Higher levels flash faster, with subtler expressions and more choices.',async run(c){
-  const ALL=['happy','sad','angry','surprised','afraid','disgusted','neutral','contempt','tired','proud','confused'];
-  const pool=ALL.slice(0,ilerp(c,5,11)),n=ilerp(c,3,6),kk=lerp(c,1,.35),T=glerp(c,1800,250),N=12;
-  for(let r=0;r<N;r++){const[v]=lay(c),e=pick(pool);
-    v.innerHTML=faceSVG(rface(),e,kk);c.hint(`${r+1}/${N} · what is this person feeling?`);await c.sleep(T);v.innerHTML='';await c.sleep(400);
+{id:'face2face',cat:'ppl',name:'Face to Face',desc:'A face flashes briefly. Then pick the face showing the same emotion. Each level up flashes faster, with subtler expressions and more choices.',async run(c){
+  const ALL=['happy','sad','angry','surprised','afraid','disgusted','neutral','contempt','tired','proud','confused'],N=18;
+  for(let r=0;r<N;r++){const pool=ALL.slice(0,ilerp(c,5,11)),n=ilerp(c,3,6),kk=lerp(c,1,.35),T=glerp(c,1800,250);const[v]=lay(c),e=pick(pool);
+    v.innerHTML=faceSVG(rface(),e,kk);c.hint(`${r+1}/${N} · what is this person feeling?`);await c.sleep(T);v.innerHTML='';await c.sleep(350);
     const em=shuffle([e,...shuffle(pool.filter(x=>x!==e)).slice(0,n-1)]),w=mk('div','faces');const els=em.map(x=>{const b=mk('button');b.innerHTML=faceSVG(rface(),x,kk);w.append(b);return b});v.append(w);
-    c.hint('Tap the face with the same emotion');const i=await tapOne(els);els[em.indexOf(e)].style.outline='4px solid var(--good)';flash(c,em[i]===e);await c.sleep(900)}
-  c.finish(`${pool.length} emotions, ${T} ms flash`);
+    c.hint('Tap the face with the same emotion');const i=await tapOne(els);els[em.indexOf(e)].style.outline='4px solid var(--good)';flash(c,em[i]===e);await c.sleep(550)}
+  c.finish(`Last round: ${ilerp(c,5,11)} emotions, ${glerp(c,1800,250)} ms flash`);
 }},
 /* ===== INTELLIGENCE ===== */
-{id:'bender',cat:'int',name:'Mind Bender',desc:'Two numbers appear. If they are digits, tap the HIGHER one. If they are written as words, tap the LOWER one. Answer before time runs out.',async run(c){
-  const win=glerp(c,3200,900),max=c.L<=3?10:20,close=c.L>=7,N=24;const[v,k]=lay(c);const rule=mk('p','tag');rule.textContent='Digits → tap higher · Words → tap lower';v.append(rule);
-  for(let r=0;r<N;r++){const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
-    const words=Math.random()<.5,lab=x=>words?NUMW[x]:String(x),want=words?Math.min(a,b):Math.max(a,b);c.hint(`${r+1}/${N}`);
+{id:'bender',cat:'int',name:'Mind Bender',desc:'Two numbers appear. If they are digits, tap the HIGHER one. If they are written as words, tap the LOWER one. Each level up gives you less time.',async run(c){
+  const N=30;const[v,k]=lay(c);const rule=mk('p','tag');rule.textContent='Digits → tap higher · Words → tap lower';v.append(rule);
+  for(let r=0;r<N;r++){const win=glerp(c,3200,850),max=c.L<=3?10:20,close=c.L>=7;const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
+    const words=Math.random()<.5,lab=x=>words?NUMW[x]:String(x),want=words?Math.min(a,b):Math.max(a,b);c.hint(`${r+1}/${N} · ${(win/1000).toFixed(1)} s`);
     const got=await new Promise(res=>{k.replaceChildren();const w=mk('div','grid2');[a,b].forEach(x=>{const bt=mk('button','btn',lab(x));bt.style.minHeight='110px';bt.style.fontSize=words?'1.4rem':'2.6rem';bt.onclick=()=>res(x);w.append(bt)});k.append(w);c.after(()=>res(null),win)});
-    k.replaceChildren();flash(c,got===want);await c.sleep(220)}
-  c.finish(`${(win/1000).toFixed(1)} s to answer`);
+    k.replaceChildren();flash(c,got===want);await c.sleep(150)}
+  c.finish(`Last answer window: ${(glerp(c,3200,850)/1000).toFixed(1)} s`);
 }},
-{id:'cardshark',cat:'int',name:'Card Shark',desc:'Cards appear one at a time. Say whether each card matches the one shown N cards earlier. Higher levels go further back and match on more features.',async run(c){
-  const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9'],n=[1,1,2,2,2,3,3,4,4][c.L-1],m=['suit','number','suit','number','both','number','both','both','both'][c.L-1],win=glerp(c,2800,1100),N=30,hist=[];
-  const same=(x,y)=>m==='suit'?x.s===y.s:m==='number'?x.r===y.r:x.s===y.s&&x.r===y.r;const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const prev=hist.length>=n?hist[hist.length-n]:null;let cd;
+{id:'cardshark',cat:'int',name:'Card Shark',desc:'Cards appear one at a time. Say whether each card matches the one shown N cards earlier. Each level up goes further back or matches on more features.',async run(c){
+  const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9'],N=36,hist=[];const[v,k]=lay(c);
+  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,4,4][c.L-1],m=['suit','number','suit','number','both','number','both','both','both'][c.L-1],win=glerp(c,2800,1100);
+    const same=(x,y)=>m==='suit'?x.s===y.s:m==='number'?x.r===y.r:x.s===y.s&&x.r===y.r,prev=hist.length>=n?hist[hist.length-n]:null;let cd;
     if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&same(cd,prev)&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · match the ${m==='both'?'suit AND number':m}`);
     v.innerHTML=`<div class="card" style="color:${'♥♦'.includes(cd.s)?'#d23b3b':'#1b1b1b'}">${cd.r}<small>${cd.s}</small></div>`;
-    if(!prev){await c.sleep(1400);v.innerHTML='';await c.sleep(300);continue}
+    if(!prev){await c.sleep(1200);v.innerHTML='';await c.sleep(250);continue}
     const a=await Promise.race([ask(k,['Match','No match']),c.sleep(win).then(()=>null)]);k.replaceChildren();
-    flash(c,a!==null&&(a==='Match')===same(cd,prev));v.innerHTML='';await c.sleep(280)}
-  c.finish(`${n}-back, ${m==='both'?'suit and number':m}`);
+    flash(c,a!==null&&(a==='Match')===same(cd,prev));v.innerHTML='';await c.sleep(200)}
+  c.finish(`Reached ${[1,1,2,2,2,3,3,4,4][c.peak-1]}-back`);
 }},
-{id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked: forward, backward, or a mixed order.',async run(c){
-  const k=ilerp(c,3,7),ex=ilerp(c,0,3),sp=lerp(c,70,220),dur=lerp(c,2500,5000),mode=['fwd','back','mix'][tier(c)],N=6;const[W,H]=arenaSize();
-  for(let r=0;r<N;r++){const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
+{id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked. Get it right twice in a row and the next round has one more ball.',async run(c){
+  const N=12,[W,H]=arenaSize();
+  for(let r=0;r<N;r++){const k=Math.min(9,c.L+2),ex=ilerp(c,0,3),sp=lerp(c,70,220),dur=lerp(c,2500,5000),mode=['fwd','back','mix'][tier(c)];
+    const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
     const o=spawnOrbs(ar,k+ex,W,H),nums=shuffle([...Array(k)].map((_,i)=>i+1));o.forEach((q,i)=>{q.n=nums[i]||0;q.e.textContent=q.n||'';if(!q.n)q.e.style.background='var(--mute)'});
-    c.hint(`Round ${r+1}/${N} · remember the numbers`);await c.sleep(1500+k*350);o.forEach(q=>{q.e.textContent='';q.e.style.background=''});
+    c.hint(`Round ${r+1}/${N} · remember ${k} numbers`);await c.sleep(1300+k*350);o.forEach(q=>{q.e.textContent='';q.e.style.background=''});
     await drift(c,o,W,H,dur,sp);const order=mode==='fwd'?nums.slice().sort((a,b)=>a-b):mode==='back'?nums.slice().sort((a,b)=>b-a):shuffle(nums);
     c.hint('Tap in this order: '+order.join(' → '));const got=[];
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;got.push(q.n);q.e.textContent=q.n||'✕';q.e.classList.add('sel');if(got.length===k)res()}));
-    order.forEach((x,i)=>c.tally(got[i]===x));flash(c,got.every((x,i)=>x===order[i]),false);await c.sleep(1000)}
-  c.finish(`${k} numbers, ${mode==='fwd'?'forward':mode==='back'?'backward':'mixed'} order`);
+    order.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===order[i]);flash(c,ok,false);await c.sleep(650)}
+  c.finish(`Most balls: ${Math.min(9,c.peak+2)}`);
 }},
-{id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier.',async run(c){
-  const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'],n=[1,1,2,2,2,3,3,3,4][c.L-1],rate=lerp(c,.95,1.3),win=glerp(c,3500,1800),N=24,hist=[];const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const prev=hist.length>=n?hist[hist.length-n]:null;let cd;if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&cd.s===prev.s&&cd.r===prev.r&&g++<60)}
+{id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier. Each level up goes further back.',async run(c){
+  const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'],N=30,hist=[];const[v,k]=lay(c);
+  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,3,4][c.L-1],rate=lerp(c,.95,1.3),win=glerp(c,3500,1800),prev=hist.length>=n?hist[hist.length-n]:null;let cd;
+    if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&cd.s===prev.s&&cd.r===prev.r&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · same card as ${n} before?`);v.innerHTML='<div class="big">🔊</div>';
-    const text=cd.r+' of '+cd.s;if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="big" style="font-size:2rem">${text}</div>`;await c.sleep(1200)}
-    if(!prev){await c.sleep(500);continue}
+    const text=cd.r+' of '+cd.s;if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="big" style="font-size:2rem">${text}</div>`;await c.sleep(1100)}
+    if(!prev){await c.sleep(400);continue}
     const a=await Promise.race([ask(k,['Match','No match']),c.sleep(win).then(()=>null)]);k.replaceChildren();
-    flash(c,a!==null&&(a==='Match')===(cd.s===prev.s&&cd.r===prev.r));await c.sleep(280)}
-  c.finish(`${n}-back by ear`);
+    flash(c,a!==null&&(a==='Match')===(cd.s===prev.s&&cd.r===prev.r));await c.sleep(200)}
+  c.finish(`Reached ${[1,1,2,2,2,3,3,3,4][c.peak-1]}-back by ear`);
 }},
 /* ===== NAVIGATION ===== */
-{id:'rightturn',cat:'nav',name:'Right Turn',desc:'Two rotated shapes are shown. Decide whether they are the same shape turned, or a mirror image. Answer before time runs out.',async run(c){
-  const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15][tier(c)],win=glerp(c,5000,1300),N=20;
-  for(let r=0;r<N;r++){const[v,k]=lay(c),ch=pick(G),mir=Math.random()<.5,a1=rnd(360/step)*step,a2=rnd(360/step)*step;
+{id:'rightturn',cat:'nav',name:'Right Turn',desc:'Two rotated shapes are shown. Decide whether they are the same shape turned, or a mirror image. Each level up gives you less time and harder shapes.',async run(c){
+  const N=24;
+  for(let r=0;r<N;r++){const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15][tier(c)],win=glerp(c,5000,1300);
+    const[v,k]=lay(c),ch=pick(G),mir=Math.random()<.5,a1=rnd(360/step)*step,a2=rnd(360/step)*step;
     v.innerHTML=`<div class="rt"><div><span style="display:inline-block;transform:rotate(${a1}deg)">${ch}</span></div><div><span style="display:inline-block;transform:rotate(${a2}deg) scaleX(${mir?-1:1})">${ch}</span></div></div>`;
-    c.hint(`${r+1}/${N} · same shape, or a mirror image?`);const a=await Promise.race([ask(k,['Same','Mirror']),c.sleep(win).then(()=>null)]);k.replaceChildren();
-    flash(c,a!==null&&(a==='Mirror')===mir);await c.sleep(250)}
-  c.finish(`${(win/1000).toFixed(1)} s per pair`);
+    c.hint(`${r+1}/${N} · same or mirror? ${(win/1000).toFixed(1)} s`);const a=await Promise.race([ask(k,['Same','Mirror']),c.sleep(win).then(()=>null)]);k.replaceChildren();
+    flash(c,a!==null&&(a==='Mirror')===mir);await c.sleep(180)}
+  c.finish(`Last answer window: ${(glerp(c,5000,1300)/1000).toFixed(1)} s`);
 }},
-{id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory in its new position.',async run(c){
-  const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓'],n=c.L<=3?3:c.L<=6?4:5,k=ilerp(c,3,9),mem=glerp(c,5500,2500),N=4;
+{id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory. Get a grid fully right twice in a row and the next has one more object.',async run(c){
+  const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓','🌙'],N=8;
   const TF=[['shifted one column right (wrapping around)',(r,cc,n)=>[r,(cc+1)%n]],['flipped left to right',(r,cc,n)=>[r,n-1-cc]],['flipped top to bottom',(r,cc,n)=>[n-1-r,cc]],['rotated 90° clockwise',(r,cc,n)=>[cc,n-1-r]],['rotated 90° anticlockwise',(r,cc,n)=>[n-1-cc,r]]];
-  const pool=c.L<=2?TF.slice(0,1):c.L<=5?TF.slice(0,3):TF;
-  for(let rd=0;rd<N;rd++){const cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k);let tf=pick(pool);
-    if(c.L>=8){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3)||(TF.indexOf(a)===TF.indexOf(b));const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
+  for(let rd=0;rd<N;rd++){const n=c.L<=3?3:c.L<=6?4:5,k=Math.min(10,c.L+2),mem=glerp(c,5000,2500),pool=c.L<=2?TF.slice(0,1):c.L<=5?TF.slice(0,3):TF;
+    const cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k);let tf=pick(pool);
+    if(c.L>=8){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3);const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
     const[v,kk]=lay(c);const grid=()=>{const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${n},1fr)`;const cs=[...Array(n*n)].map(()=>{const b=mk('button','cell');if(n>4)b.style.fontSize='1.4rem';g.append(b);return b});v.replaceChildren(g);return cs};
-    let cs=grid();cells.forEach((p,i)=>cs[p].textContent=objs[i]);c.hint(`Round ${rd+1}/${N} · memorise the grid`);await c.sleep(mem);cs.forEach(b=>b.textContent='');
-    c.hint('The grid is '+tf[0]+'. Rebuild it: pick an object, then a cell.');await c.sleep(900);cs=grid();const placed={};let cur=null;
+    let cs=grid();cells.forEach((p,i)=>cs[p].textContent=objs[i]);c.hint(`Round ${rd+1}/${N} · memorise ${k} objects`);await c.sleep(mem);cs.forEach(b=>b.textContent='');
+    c.hint('The grid is '+tf[0]+'. Rebuild it: pick an object, then a cell.');await c.sleep(700);cs=grid();const placed={};let cur=null;
     const pal=mk('div','grid3');pal.style.gridTemplateColumns=`repeat(${Math.min(k,5)},1fr)`;objs.forEach(o=>{const b=mk('button','btn',o);b.onclick=()=>{cur=o;pal.querySelectorAll('.btn').forEach(x=>x.classList.toggle('on',x===b))};pal.append(b)});
     const done=mk('button','cta','Done');kk.append(pal,done);
     cs.forEach((b,i)=>b.onclick=()=>{if(placed[i]){delete placed[i];b.textContent='';return}if(!cur)return;Object.keys(placed).forEach(j=>{if(placed[j]===cur){delete placed[j];cs[j].textContent=''}});placed[i]=cur;b.textContent=cur});
     await new Promise(res=>done.onclick=res);let right=0;
     cells.forEach((p,i)=>{const[r2,c2]=tf[1](Math.floor(p/n),p%n,n),q=r2*n+c2,ok=placed[q]===objs[i];c.tally(ok);if(ok){right++;cs[q].classList.add('ok')}else{cs[q].classList.add('no');cs[q].textContent=objs[i]}});
-    kk.replaceChildren();flash(c,right===k,false);await c.sleep(1800)}
-  c.finish(`${k} objects on a ${n}×${n} grid`);
+    kk.replaceChildren();flash(c,right===k,false);await c.sleep(1400)}
+  c.finish(`Most objects: ${Math.min(10,c.peak+2)}`);
 }},
-{id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing.',async run(c){
-  const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'];
-  const L=ilerp(c,1,6),nst=ilerp(c,3,6),rate=lerp(c,.85,1.3),N=8;
-  for(let r=0;r<N;r++){const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
+{id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing. Get both right twice in a row and the next ride has one more turn.',async run(c){
+  const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'],N=12;
+  for(let r=0;r<N;r++){const L=c.L,nst=ilerp(c,3,7),rate=lerp(c,.85,1.3);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
     const parts=[`You board the train facing ${start}.`,`The stops are ${stops.join(', ')}.`,`Get off at ${stops[off]}.`];steps.forEach(s=>{parts.push(s==='around'?'Turn around.':`Turn ${s}.`);f=(f+(s==='left'?3:s==='right'?1:2))%4});
-    const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint(`${r+1}/${N} · listen carefully`);await c.sleep(500);
+    const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint(`${r+1}/${N} · ${L} turn${L>1?'s':''} · listen carefully`);await c.sleep(400);
     if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="story">${text}</div>`;await c.sleep(3000+text.length*40);v.innerHTML='<div class="big">🚆</div>'}
     c.hint('Which stop did you get off at?');const a1=await ask(k,shuffle([stops[off],...shuffle(stops.filter(x=>x!==stops[off])).slice(0,3)]));
-    flash(c,a1===stops[off]);c.hint('Which way are you facing now?');const a2=await ask(k,['North','East','South','West']);flash(c,a2.toLowerCase()===D[f]);await c.sleep(500)}
-  c.finish(`${L} turns, ${nst} stops`);
+    flash(c,a1===stops[off],true,false);c.hint('Which way are you facing now?');const a2=await ask(k,['North','East','South','West']);flash(c,a2.toLowerCase()===D[f],true,false);
+    c.trial(a1===stops[off]&&a2.toLowerCase()===D[f]);await c.sleep(350)}
+  c.finish(`Most turns followed: ${c.peak}`);
 }},
-{id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. Higher levels are faster and busier.',async run(c){
-  const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']][tier(c)],IT=tier(c)===2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'];
-  const D=glerp(c,4500,1400),nb=ilerp(c,3,7),N=14;
-  for(let r=0;r<N;r++){const[v]=lay(c),road=mk('div','road');road.style.background=`linear-gradient(${SC[0]} 0 35%,${SC[1]} 35%)`;
+{id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. Each level up is faster and busier.',async run(c){
+  const N=18;
+  for(let r=0;r<N;r++){const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']][tier(c)],IT=tier(c)===2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],D=glerp(c,4500,1400),nb=ilerp(c,3,7);
+    const[v]=lay(c),road=mk('div','road');road.style.background=`linear-gradient(${SC[0]} 0 35%,${SC[1]} 35%)`;
     road.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="47,35 53,35 95,100 5,100" fill="#555"/><polygon points="49.6,35 50.4,35 51.5,100 48.5,100" fill="#eee"/></svg>';v.append(road);
     const target=pick(IT),batch=shuffle([target,...shuffle(IT.filter(x=>x!==target)).slice(0,nb-1)]),lanes=shuffle([-1,-.7,-.4,-.12,.15,.42,.7,1]).slice(0,batch.length);
     c.hint(`${r+1}/${N} · tap the ${target}`);const els=batch.map((e,i)=>{const d=mk('div');d.textContent=e;road.append(d);return{d,e,l:lanes[i],delay:Math.random()*.25}});
     const res=await new Promise(done=>{let fin=false;els.forEach(o=>o.d.onpointerdown=()=>{if(!fin){fin=true;done(o.e===target)}});const t0=performance.now();
       const f=t=>{if(!c.alive||fin)return;const p=(t-t0)/D;els.forEach(o=>{const q=Math.max(0,Math.min(1,(p-o.delay)/(1-o.delay)));o.d.style.top=(35+q*q*70)+'%';o.d.style.left=(50+o.l*q*q*55)+'%';o.d.style.fontSize=(.5+q*q*3.6)+'rem';o.d.style.opacity=q>0?1:0});
         if(p>=1.05){fin=true;done(false)}else requestAnimationFrame(f)};requestAnimationFrame(f)});
-    flash(c,res);await c.sleep(500)}
-  c.finish(`${nb} objects, ${(D/1000).toFixed(1)} s approach`);
+    flash(c,res);await c.sleep(300)}
+  c.finish(`Last round: ${ilerp(c,3,7)} objects, ${(glerp(c,4500,1400)/1000).toFixed(1)} s`);
 }}
 ];
 
@@ -650,6 +706,13 @@ const SVG=(d,s=20)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="n
 const SPK=s=>SVG('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',s);
 const BACK=SVG('<path d="M15 5l-7 7 7 7"/>',22),CLOSE=SVG('<path d="M6 6l12 12M18 6 6 18"/>',22);
 
+
+/* ---------- instant taps: fire game buttons on touch-down, swallow the late click ---------- */
+let fastAt=0;
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button');if(b){b.classList.add('pressed');const up=()=>{b.classList.remove('pressed');b.removeEventListener('pointerup',up);b.removeEventListener('pointerleave',up);b.removeEventListener('pointercancel',up)};b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);b.addEventListener('pointercancel',up);setTimeout(up,400)}
+  if(e.pointerType==='mouse'&&e.button!==0)return;const st=$('#stage');if(!st||!st.contains(e.target))return;let el=e.target;while(el&&el!==st&&!el.onclick)el=el.parentElement;if(!el||el===st||el.disabled)return;
+  const f=el.onclick;fastAt=Date.now();f.call(el,e)},true);
+document.addEventListener('click',e=>{if(Date.now()-fastAt<450){e.stopPropagation();e.preventDefault()}},true);
 /* ---------- screens ---------- */
 const app=$('#app');
 let live=null;
@@ -657,79 +720,123 @@ const TIERS=[{name:'Beginner',sub:'Slow and forgiving',c:'var(--t1)'},{name:'Med
 const PASS=.7,LEVELS=9,tierOf=L=>L<=3?0:L<=6?1:2;
 const starsFor=acc=>acc>=.95?3:acc>=.85?2:acc>=PASS?1:0;
 const LOCK=SVG('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',18);
+const CHECKI=SVG('<path d="M5 12.5l4.5 4.5L19 7.5"/>',18);
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-function meta(){if(!store.__meta||!Array.isArray(store.__meta.days))store.__meta={days:[]};return store.__meta}
-function rec(g){const e=store[g.id]||(store[g.id]={plays:0});if(!e.lv)e.lv=1;if(!e.stars||typeof e.stars!=='object')e.stars={};if(!e.acc||typeof e.acc!=='object')e.acc={};return e}
+const today=()=>ymd(new Date());
+const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);
+const fmtDay=s=>new Date(s+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const G=id=>GAMES.find(g=>g.id===id);
+function meta(){const m=store.__meta&&typeof store.__meta==='object'?store.__meta:(store.__meta={});
+  ['days','workouts','checks'].forEach(k=>{if(!Array.isArray(m[k]))m[k]=[]});return m}
+function rec(g){const e=store[g.id]||(store[g.id]={plays:0});if(!e.lv)e.lv=1;if(!e.stars||typeof e.stars!=='object')e.stars={};if(!e.acc||typeof e.acc!=='object')e.acc={};if(!Array.isArray(e.hist))e.hist=[];return e}
 const starsOf=g=>Object.values(rec(g).stars).reduce((a,b)=>a+b,0);
 function streak(){const s=new Set(meta().days);const d=new Date();let n=0;if(!s.has(ymd(d)))d.setDate(d.getDate()-1);while(s.has(ymd(d))){n++;d.setDate(d.getDate()-1)}return n}
-function todaysPick(){const seed=[...ymd(new Date())].reduce((a,ch)=>(a*31+ch.charCodeAt(0))>>>0,7);const min=Math.min(...GAMES.map(starsOf)),pool=GAMES.filter(g=>starsOf(g)===min);return pool[seed%pool.length]}
 const catVars=cat=>`--cc:${cat.c};--on:${cat.on}`;
 const greet=()=>{const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'};
-const firstSentence=d=>d.split('. ')[0].replace(/\.$/,'')+'.';
 const starRow=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+const perf=x=>Math.round((((x.peak||x.L)-1)+x.acc/100)/LEVELS*100);
+const seedOf=s=>[...s].reduce((a,ch)=>(a*31+ch.charCodeAt(0))>>>0,7);
 function stopLive(){if(live){live.alive=false;live.clear();live=null}hush()}
 let atHome=true;window.__back=()=>{if(atHome)return false;home();return true};
+const primeAudio=g=>{AC();if(!NATIVE&&hasSpeech&&g.needsAudio){try{speechSynthesis.speak(new SpeechSynthesisUtterance(' '))}catch(e){}}};
+const stepsOf=g=>g.desc.replace(/\([^)]*\)/,'').split(/(?<=\.)\s+/).map(s=>s.trim()).filter(Boolean);
 
-/* ---------- brain report: weak areas + suggestions ---------- */
-function gstat(g){const e=rec(g),h=Array.isArray(e.hist)?e.hist:[],recent=h.slice(-5),acc=recent.length?Math.round(recent.reduce((a,x)=>a+x.acc,0)/recent.length):null;
-  const cleared=Object.values(e.stars).filter(s=>s>0).length,fails=h.filter(x=>x.L===e.lv&&x.acc<PASS*100).length;
+/* ---------- analysis: areas, weak spots, suggestions ---------- */
+function gstat(g){const e=rec(g),h=e.hist,recent=h.slice(-5),acc=recent.length?Math.round(recent.reduce((a,x)=>a+x.acc,0)/recent.length):null;
+  const cleared=Object.values(e.stars).filter(s=>s>0).length,fails=h.length?(e.since||0):0;
   return {g,e,acc,cleared,played:h.length>0,sessions:h.length,stuck:fails>=2,fails,score:acc==null?null:Math.round(.6*acc+.4*(cleared/LEVELS)*100)}}
 function areaStats(){return Object.entries(CATS).map(([k,cat])=>{const gs=GAMES.filter(g=>g.cat===k).map(gstat),pl=gs.filter(s=>s.played);
   const score=pl.length?Math.round(pl.reduce((a,s)=>a+s.score,0)/pl.length):null,acc=pl.length?Math.round(pl.reduce((a,s)=>a+s.acc,0)/pl.length):null,lv=pl.length?Math.round(pl.reduce((a,s)=>a+s.e.lv,0)/pl.length):0;
   return {k,cat,gs,pl,score,acc,lv,sessions:pl.reduce((a,s)=>a+s.sessions,0)}})}
 function suggestions(){const areas=areaStats(),trained=areas.filter(a=>a.score!=null).sort((a,b)=>a.score-b.score),out=[],used=new Set();
   const add=(s,why,L)=>{if(s&&!used.has(s.g.id)&&out.length<3){used.add(s.g.id);out.push({g:s.g,L:L||s.e.lv,why})}};
-  if(trained.length){const w=trained[0];const s=w.pl.slice().sort((a,b)=>a.acc-b.acc)[0];
-    add(s,`${w.cat.name} is your weakest area (${w.score}/100). Your recent accuracy here is ${s.acc}%.`)}
+  if(trained.length){const w=trained[0],s=w.pl.slice().sort((a,b)=>a.acc-b.acc)[0];add(s,`${w.cat.name} is your weakest area (${w.score}/100). Your recent accuracy here is ${s.acc}%.`)}
   const stuck=GAMES.map(gstat).filter(s=>s.stuck).sort((a,b)=>b.fails-a.fails)[0];
-  if(stuck)add(stuck,`You've missed level ${stuck.e.lv} ${stuck.fails} times. Another run will get you through.`);
+  if(stuck)add(stuck,`No new level in your last ${stuck.fails} sessions. A focused run can break through.`);
   const untrained=areas.filter(a=>a.score==null);
   if(untrained.length){const a=untrained[0];add(a.gs[0],`You haven't trained ${a.cat.name} yet. Start here to add it to your report.`,1)}
-  if(trained.length>1){const w=trained[1];const s=w.pl.slice().sort((a,b)=>a.acc-b.acc)[0];add(s,`${w.cat.name} is your next weakest area (${w.score}/100).`)}
+  if(trained.length>1){const w=trained[1],s=w.pl.slice().sort((a,b)=>a.acc-b.acc)[0];add(s,`${w.cat.name} is your next weakest area (${w.score}/100).`)}
   areas.forEach(a=>{const s=a.gs.find(x=>!x.played);if(s)add(s,`New in ${a.cat.name}: try it at level 1.`,1)});
   return out}
+
+/* ---------- daily workout ---------- */
+function makePlan(){const d=today(),seed=seedOf(d),areas=areaStats(),items=[],used=new Set();
+  const add=(s,why)=>{if(s&&!used.has(s.g.id)&&items.length<5){used.add(s.g.id);items.push({id:s.g.id,L:s.e.lv,why})}};
+  const weakest=a=>a.gs.slice().sort((x,y)=>(x.acc==null?-1:x.acc)-(y.acc==null?-1:y.acc)||((seed+x.g.id.length)%3)-((seed+y.g.id.length)%3));
+  const trained=areas.filter(a=>a.score!=null).sort((a,b)=>a.score-b.score);
+  if(trained.length<3){
+    const order=areas.slice().sort((a,b)=>(a.score!=null)-(b.score!=null)||((seed>>a.k.length)%5)-((seed>>b.k.length)%5));
+    order.forEach(a=>{const s=a.gs.find(x=>!x.played)||weakest(a)[0];add(s,a.score==null?`First look at ${a.cat.name}, so your report can include it.`:`Builds your ${a.cat.name} score.`)});
+  }else{
+    const w=trained[0];weakest(w).slice(0,2).forEach(s=>add(s,`${w.cat.name} is your weakest area (${w.score}/100).`));
+    const w2=trained[1];add(weakest(w2)[0],`${w2.cat.name} is your second weakest area (${w2.score}/100).`);
+    add(gstat(G(seed%2?'double':'hawk')),'Speed training. This type has the strongest research behind it.');
+    const rest=areas.filter(a=>!items.some(it=>G(it.id).cat===a.k));if(rest.length){const a=rest[seed%rest.length];add(weakest(a)[0],`Keeps ${a.cat.name} in the mix.`)}
+    let j=0;while(items.length<5&&j<GAMES.length){add(gstat(GAMES[(seed+j*7)%GAMES.length]),'Keeps your training varied.');j++}
+  }
+  return {d,items,res:items.map(()=>null)}}
+function todayPlan(){const m=meta();if(!m.plan||m.plan.d!==today()){m.plan=makePlan();save()}return m.plan}
+const planDone=p=>p.res.filter(r=>r!=null).length;
+
+/* ---------- brain check (baseline + monthly re-test) ---------- */
+const CHECK=[['double','att'],['hawk','spd'],['scene','mem'],['face2face','ppl'],['cardshark','int'],['rightturn','nav']],CHECK_L=4,CHECK_EVERY=30;
+function checkState(){const m=meta(),last=m.checks[m.checks.length-1];
+  if(m.check&&m.check.acc)return {inProgress:true,done:Object.keys(m.check.acc).length};
+  if(!last)return {due:true,first:true};const ago=dayDiff(last.d,today());return {due:ago>=CHECK_EVERY,ago,next:Math.max(0,CHECK_EVERY-ago)}}
+function startCheck(){const m=meta();if(!m.check||!m.check.acc)m.check={d:today(),acc:{}};save();stepScreen('check',Object.keys(m.check.acc).length)}
+const checkList=()=>CHECK.map(([id])=>({id,L:CHECK_L,why:`Brain checks always use level ${CHECK_L}, so your results can be compared month to month.`}));
+
+/* ---------- charts (single series, accent colour, recessive axes) ---------- */
+function weekKeys(n){const s=new Date();s.setDate(s.getDate()-((s.getDay()+6)%7));return [...Array(n)].map((_,i)=>{const d=new Date(s);d.setDate(d.getDate()-7*(n-1-i));return ymd(d)})}
+const weekOf=ds=>{const x=new Date(ds+'T12:00');x.setDate(x.getDate()-((x.getDay()+6)%7));return ymd(x)};
+function weekly(games,n=8){const keys=weekKeys(n),b={};games.forEach(g=>rec(g).hist.forEach(x=>{if(x.d){const k=weekOf(x.d);(b[k]=b[k]||[]).push(perf(x))}}));
+  return keys.map(k=>({k,v:b[k]?Math.round(b[k].reduce((a,c)=>a+c,0)/b[k].length):null,n:b[k]?b[k].length:0}))}
+function lineChart(series){const W=340,H=180,pl=34,pr=16,pt=16,pb=28,iw=W-pl-pr,ih=H-pt-pb,n=series.length,x=i=>pl+i*iw/(n-1),y=v=>pt+ih-(v/100)*ih;
+  let grid='';[0,50,100].forEach(v=>{grid+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${v}</text>`});
+  series.forEach((p,i)=>{if(i%2===n%2||i===n-1)grid+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mute)">${fmtDay(p.k)}</text>`});
+  let path='',prev=null;series.forEach((p,i)=>{if(p.v==null){prev=null;return}path+=(prev==null?'M':'L')+x(i)+' '+y(p.v)+' ';prev=i});
+  const pts=series.map((p,i)=>p.v==null?'':`<circle cx="${x(i)}" cy="${y(p.v)}" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`).join('');
+  let li=-1;series.forEach((p,i)=>{if(p.v!=null)li=i});const last=li>=0?series[li]:null;
+  const lab=last&&last.v!=null?`<text x="${Math.min(x(li),W-pr-2)}" y="${y(last.v)-10}" text-anchor="${li===n-1?'end':'middle'}" font-size="12" font-weight="700" fill="var(--ink)">${last.v}</text>`:'';
+  const hits=series.map((p,i)=>`<rect class="hit" data-i="${i}" x="${x(i)-iw/(n-1)/2}" y="${pt}" width="${iw/(n-1)}" height="${ih}" fill="transparent"/>`).join('');
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly training score">${grid}<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${pts}${lab}<line class="xh" x1="0" x2="0" y1="${pt}" y2="${pt+ih}" stroke="var(--mute)" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>${hits}</svg><div class="tip" hidden></div></div>`}
+function wireChart(el,series){const svg=el.querySelector('svg'),tip=el.querySelector('.tip'),xh=el.querySelector('.xh');
+  el.querySelectorAll('.hit').forEach(r=>{const show=()=>{const p=series[+r.dataset.i],cx=+r.getAttribute('x')+(+r.getAttribute('width'))/2;xh.setAttribute('x1',cx);xh.setAttribute('x2',cx);xh.setAttribute('opacity',1);
+    tip.hidden=false;tip.innerHTML=`<b>Week of ${fmtDay(p.k)}</b><span>${p.v==null?'No sessions':`Score ${p.v} · ${p.n} session${p.n===1?'':'s'}`}</span>`;tip.style.left=Math.max(14,Math.min(86,cx/340*100))+'%'};
+    r.addEventListener('pointerenter',show);r.addEventListener('click',show)});
+  svg.addEventListener('pointerleave',()=>{tip.hidden=true;xh.setAttribute('opacity',0)})}
+function spark(series){const W=96,H=28,n=series.length,x=i=>2+i*(W-4)/(n-1),y=v=>H-3-(v/100)*(H-6);let d='',prev=null;
+  series.forEach((p,i)=>{if(p.v==null){prev=null;return}d+=(prev==null?'M':'L')+x(i).toFixed(1)+' '+y(p.v).toFixed(1)+' ';prev=i});
+  const pts=series.filter(p=>p.v!=null);if(!pts.length)return '';const li=series.lastIndexOf(pts[pts.length-1]);
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${x(li)}" cy="${y(pts[pts.length-1].v)}" r="3" fill="var(--accent)"/></svg>`}
+
+/* ---------- home ---------- */
 function reportCard(){const areas=areaStats(),tr=areas.filter(a=>a.score!=null).sort((a,b)=>a.score-b.score);
   const line=tr.length?`Needs work: <b>${tr[0].cat.name}</b>${tr.length>1?` · Strongest: <b>${tr[tr.length-1].cat.name}</b>`:''}`:'Play a few exercises to build your profile';
   return `<button class="rcard" id="rep"><span class="rbars">${areas.map(a=>`<i style="--cc:${a.cat.c};height:${a.score==null?8:Math.max(12,a.score)}%"></i>`).join('')}</span>
     <span class="rtx"><span class="eyebrow">Brain report</span><span>${line}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>`}
-function report(){
-  stopLive();atHome=false;app.removeAttribute('style');const areas=areaStats(),tr=areas.filter(a=>a.score!=null).sort((a,b)=>a.score-b.score),sugg=suggestions();
-  const weak=GAMES.map(gstat).filter(s=>s.played&&(s.acc<PASS*100||s.stuck)).sort((a,b)=>a.acc-b.acc).slice(0,5);
-  const total=areas.reduce((a,x)=>a+x.sessions,0);
-  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>Based on ${total} recent session${total===1?'':'s'}</small>Brain report</h2></div>
-   <div class="scroll" style="padding-top:18px">
-    ${tr.length?`<div class="sw2"><div class="swc" style="${catVars(tr[tr.length-1].cat)}"><span class="eyebrow">Strongest</span><b>${tr[tr.length-1].cat.name}</b><em>${tr[tr.length-1].score}/100</em></div>
-      <div class="swc" style="${catVars(tr[0].cat)}"><span class="eyebrow">Needs work</span><b>${tr[0].cat.name}</b><em>${tr[0].score}/100</em></div></div>`
-      :`<p class="note">Play a few exercises in different areas. Your scores, weak spots and suggestions will appear here.</p>`}
-    <section><h3 class="sec-h">Your six areas</h3><div class="areas">${areas.map(a=>`<div class="arow" style="${catVars(a.cat)}">
-      <div class="atop"><b>${a.cat.name}</b><span>${a.score==null?'Not trained yet':`${a.score}/100`}</span></div>
-      <div class="abar"><i style="width:${a.score==null?0:a.score}%"></i></div>
-      <p>${a.score==null?a.cat.sub:`Accuracy ${a.acc}% · average level ${a.lv} (${TIERS[tierOf(a.lv)].name}) · ${a.pl.length} of ${a.gs.length} exercises tried`}</p></div>`).join('')}</div></section>
-    ${weak.length?`<section><h3 class="sec-h">Weak spots</h3><div class="weak">${weak.map(s=>`<div class="wrow" style="${catVars(CATS[s.g.cat])}"><span class="gic2">${icon(s.g.id,22)}</span>
-      <span class="wtx"><b>${s.g.name}</b><span>${s.stuck?`Stuck on level ${s.e.lv} · ${s.fails} misses`:`Level ${s.e.lv}`} · recent accuracy ${s.acc}%</span></span></div>`).join('')}</div></section>`:''}
-    <section><h3 class="sec-h">Suggested for you</h3><div class="sugg">${sugg.map((s,i)=>`<div class="srow" style="${catVars(CATS[s.g.cat])}"><div class="shead"><span class="gic2">${icon(s.g.id,22)}</span>
-      <span class="wtx"><b>${s.g.name}</b><span>${CATS[s.g.cat].name} · Level ${s.L}</span></span><button class="sgo" data-i="${i}">Play</button></div><p>${s.why}</p></div>`).join('')}</div></section>
-    <p class="note">Area scores mix your accuracy over your last five sessions of each exercise (60%) with how many levels you've cleared (40%).</p>
-   </div>`;
-  $('#bk').onclick=home;app.querySelectorAll('.sgo').forEach(b=>b.onclick=()=>{const s=sugg[+b.dataset.i];AC();play(s.g,s.L)});
-}
-
+function reminderLabel(){try{const r=window.AndroidApp.getReminder().split(',');return r[0]==='1'?`Every day at ${String(r[1]).padStart(2,'0')}:${String(r[2]).padStart(2,'0')}`:'Off'}catch(e){return 'Off'}}
 function home(){
   stopLive();atHome=true;app.removeAttribute('style');
-  const tp=todaysPick(),sg=suggestions()[0]||{g:tp,L:rec(tp).lv,why:'Today\'s pick.'},pick=sg.g,pc=CATS[pick.cat],total=GAMES.reduce((a,g)=>a+starsOf(g),0);
+  const plan=todayPlan(),done=planDone(plan),total=GAMES.reduce((a,g)=>a+starsOf(g),0),cs=checkState();
+  const wTitle=done>=plan.items.length?'Done for today':done?'Keep going':'Your 15-minute session';
   app.innerHTML=`<div class="scroll">
     <header class="home-head"><div><p class="eyebrow">${greet()}</p><h1>Mind Gym</h1></div>
       <div class="stats"><div class="stat"><b>${streak()}</b><span>day streak</span></div><div class="stat"><b>★ ${total}</b><span>of ${GAMES.length*LEVELS*3}</span></div></div></header>
-    <button class="pick" id="pick" style="${catVars(pc)}"><span class="bgi">${icon(pick.id,150)}</span><span class="pick-ic">${icon(pick.id,34)}</span>
-      <span class="pick-tx"><span class="eyebrow">Suggested for you · ${pc.name}</span><b>${pick.name}</b><em>${sg.why}</em></span><span class="play">Play level ${sg.L}</span></button>
+    <button class="wcard" id="wo"><span class="eyebrow">Today's workout</span><b>${wTitle}</b>
+      <span class="wdots">${plan.items.map((it,i)=>`<span class="wd${plan.res[i]!=null?' ok':''}" style="${catVars(CATS[G(it.id).cat])}">${plan.res[i]!=null?CHECKI:icon(it.id,18)}</span>`).join('')}</span>
+      <span class="wmeta">${done} of ${plan.items.length} done · picked from your weak spots</span><span class="play">${done===0?'Start workout':done<plan.items.length?'Continue':'See results'}</span></button>
+    ${cs.due||cs.inProgress?`<button class="rcard" id="chk"><span class="gic2" style="--cc:var(--accent);--on:#fff">${SVG('<path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/>',22)}</span>
+      <span class="rtx"><span class="eyebrow">Brain check</span><span>${cs.inProgress?`Continue your check (${cs.done} of ${CHECK.length} done)`:cs.first?'Take your baseline test: 6 short tests, about 10 minutes':'Your monthly re-test is due'}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>`:''}
     ${reportCard()}
+    ${window.AndroidApp?`<button class="rcard" id="rem"><span class="gic2" style="--cc:var(--accent);--on:#fff">${SVG('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',22)}</span><span class="rtx"><span class="eyebrow">Daily reminder</span><span>${reminderLabel()}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>`:''}
   </div>`;
-  $('#pick').onclick=()=>intro(pick,sg.L);$('#rep').onclick=report;
+  $('#wo').onclick=()=>done>=plan.items.length?workoutSummary():stepScreen('workout',plan.res.findIndex(r=>r==null));
+  $('#rep').onclick=report;if($('#chk'))$('#chk').onclick=startCheck;if($('#rem'))$('#rem').onclick=settings;
   const sc=$('.scroll',app);
   Object.entries(CATS).forEach(([k,cat])=>{
     const list=GAMES.filter(g=>g.cat===k),sec=mk('section','cat');sec.style.cssText=catVars(cat);
-    const cs=list.reduce((a,g)=>a+starsOf(g),0);
-    sec.innerHTML=`<div class="cat-h"><h3><i></i>${cat.name}</h3><span>★ ${cs} / ${list.length*LEVELS*3}</span></div><p class="sub">${cat.sub}</p>`;
+    sec.innerHTML=`<div class="cat-h"><h3><i></i>${cat.name}</h3><span>★ ${list.reduce((a,g)=>a+starsOf(g),0)} / ${list.length*LEVELS*3}</span></div><p class="sub">${cat.sub}</p>`;
     const rail=mk('div','rail');
     list.forEach(g=>{const b=mk('button','gcard'),e=rec(g),cleared=Object.keys(e.stars).filter(L=>e.stars[L]>0).length;
       b.innerHTML=`<span class="bgi">${icon(g.id,100)}</span><span class="gic">${icon(g.id,26)}</span><b>${g.name}</b>
@@ -738,67 +845,181 @@ function home(){
       b.onclick=()=>intro(g);rail.append(b)});
     sec.append(rail);sc.append(sec)});
 }
+
+/* ---------- single exercise: level picker ---------- */
 function intro(g,selL){
   stopLive();atHome=false;const cat=CATS[g.cat],e=rec(g);app.style.cssText=catVars(cat);let sel=Math.min(selL||e.lv,e.lv);
   const paren=(g.desc.match(/\(([^)]+)\)/)||[])[1];
-  const steps=g.desc.replace(/\([^)]*\)/,'').split(/(?<=\.)\s+/).map(s=>s.trim()).filter(Boolean);
   app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>${cat.name}</small></h2><span class="scorepill">★ ${starsOf(g)}</span></div>
    <div class="intro"><div class="ihead"><div class="bigic">${icon(g.id,40)}</div><h1>${g.name}</h1></div>
-    <div><p class="eyebrow" style="margin-bottom:10px">Choose a level</p><div class="levels" id="lvls"></div></div>
-    <div><p class="eyebrow" style="margin-bottom:12px">How to play</p><ol class="steps">${steps.map(s=>`<li><span>${s}</span></li>`).join('')}</ol></div>
+    <div><p class="eyebrow" style="margin-bottom:6px">Choose a starting level</p><p class="note" style="margin-bottom:12px">Two right in a row moves you up a level. Two misses in a row moves you down one.</p><div class="levels" id="lvls"></div></div>
+    <div><p class="eyebrow" style="margin-bottom:12px">How to play</p><ol class="steps">${stepsOf(g).map(s=>`<li><span>${s}</span></li>`).join('')}</ol></div>
     ${g.needsAudio?`<p class="note">${SPK(18)} Turn your sound on for this one.</p>`:''}${paren?`<p class="note">${paren}</p>`:''}
    </div><div class="dock"><button class="cta" id="go"></button></div>`;
   const draw=()=>{$('#lvls').innerHTML=TIERS.map((T,ti)=>`<div class="tier" style="--tc:${T.c}"><div class="tier-h"><b>${T.name}</b><span>${T.sub}</span></div><div class="lvrow">${[1,2,3].map(j=>{const L=ti*3+j,lock=L>e.lv,s=e.stars[L]||0;
       return `<button class="lvb${L===sel?' sel':''}" data-l="${L}" ${lock?`disabled aria-label="Level ${L} locked"`:`aria-label="Level ${L}, ${s} stars"`}><b>${lock?LOCK:L}</b><span>${lock?'&nbsp;':starRow(s)}</span></button>`}).join('')}</div></div>`).join('');
     $('#lvls').querySelectorAll('.lvb:not([disabled])').forEach(b=>b.onclick=()=>{sel=+b.dataset.l;draw()});
     $('#go').textContent=`Start level ${sel} · ${TIERS[tierOf(sel)].name}`};
-  draw();
-  $('#bk').onclick=home;
-  $('#go').onclick=()=>{AC();if(!NATIVE&&hasSpeech&&g.needsAudio){try{speechSynthesis.speak(new SpeechSynthesisUtterance(' '))}catch(e){}}play(g,sel)};
+  draw();$('#bk').onclick=home;$('#go').onclick=()=>{primeAudio(g);play(g,sel)};
 }
-function play(g,L){
-  stopLive();atHome=false;const cat=CATS[g.cat];app.style.cssText=catVars(cat);
-  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Quit">${CLOSE}</button><h2><small>Level ${L} · ${TIERS[tierOf(L)].name}</small>${g.name}</h2><span class="scorepill" id="st"></span></div>
-   <p id="hint"></p><div id="stage"></div>`;
+
+/* ---------- workout / check step screen ---------- */
+function stepScreen(kind,i){
+  const list=kind==='workout'?todayPlan().items:checkList();
+  if(i<0||i>=list.length){kind==='workout'?workoutSummary():checkSummary();return}
+  const it=list[i],g=G(it.id),cat=CATS[g.cat];stopLive();atHome=false;app.style.cssText=catVars(cat);
+  const res=kind==='workout'?todayPlan().res:null;
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back to home">${CLOSE}</button><h2><small>${kind==='workout'?"Today's workout":'Brain check'}</small>Exercise ${i+1} of ${list.length}</h2></div>
+   <div class="intro"><div class="pdots">${list.map((_,j)=>`<i class="${(res?res[j]!=null:j<i)?'ok':j===i?'cur':''}"></i>`).join('')}</div>
+    <div class="ihead"><div class="bigic">${icon(g.id,40)}</div><div><p class="eyebrow" style="color:var(--cc)">${cat.name} · Level ${it.L} · ${TIERS[tierOf(it.L)].name}</p><h1>${g.name}</h1></div></div>
+    <p class="why">${it.why}</p>
+    <div><p class="eyebrow" style="margin-bottom:12px">How to play</p><ol class="steps">${stepsOf(g).map(s=>`<li><span>${s}</span></li>`).join('')}</ol></div>
+    ${g.needsAudio?`<p class="note">${SPK(18)} Turn your sound on for this one.</p>`:''}
+   </div><div class="dock"><button class="cta" id="go">Start</button>${kind==='workout'?'<button class="ghost" id="skip">Skip this one</button>':''}</div>`;
+  $('#bk').onclick=home;$('#go').onclick=()=>{primeAudio(g);play(g,it.L,{kind,i,n:list.length})};
+  if($('#skip'))$('#skip').onclick=()=>{const p=todayPlan();p.res[i]='skip';save();const nx=p.res.findIndex(r=>r==null);stepScreen('workout',nx)};
+}
+
+/* ---------- play ---------- */
+function play(g,L,opts){
+  opts=opts||{};stopLive();atHome=false;const cat=CATS[g.cat];app.style.cssText=catVars(cat);const adaptive=opts.kind!=='check';
+  const lab=()=>opts.kind==='check'?`Brain check ${opts.i+1}/${opts.n} · Level ${c.L}`:`${opts.kind==='workout'?`Workout ${opts.i+1}/${opts.n} · `:''}Level ${c.L} · ${TIERS[tierOf(c.L)].name}`;
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Quit">${CLOSE}</button><h2><small id="lvl"></small>${g.name}</h2><span class="scorepill" id="st"></span></div>
+   <div class="ladder" id="ladder" aria-hidden="true">${[...Array(LEVELS)].map((_,i)=>`<i data-l="${i+1}"></i>`).join('')}</div>
+   <p id="hint"></p><div id="stage"></div><div class="toast" id="toast" hidden></div>`;
   const timers=new Set();let done=false;
-  const c={alive:true,stage:$('#stage'),L,t:(L-1)/(LEVELS-1),right:0,wrong:0,
+  const c={alive:true,stage:$('#stage'),L,start:L,peak:L,right:0,wrong:0,run:{ok:0,bad:0},cleared:{},miss:{},
     clear(){timers.forEach(clearTimeout);timers.clear()},
     after(fn,ms){const id=setTimeout(()=>{timers.delete(id);if(c.alive)fn()},ms);timers.add(id);return id},
     sleep(ms){return new Promise(r=>c.after(r,ms))},
     say(t,rate){return say(t,rate).then(()=>new Promise(r=>{if(c.alive)r()}))},
     tally(ok){ok?c.right++:c.wrong++;const s=$('#st');if(s)s.textContent=`${c.right}/${c.right+c.wrong}`},
+    trial(ok){if(!adaptive||!c.alive)return;const cur=c.L;
+      if(ok){c.run.bad=0;if(++c.run.ok>=2){c.run.ok=0;const m=c.miss[cur]||0;c.cleared[cur]=Math.max(c.cleared[cur]||0,m===0?3:m===1?2:1);
+          if(cur<LEVELS){c.L++;c.peak=Math.max(c.peak,c.L);toast(`Level up! ${cur} → ${c.L}`,true)}else toast('Top level cleared!',true)}}
+      else{c.miss[cur]=(c.miss[cur]||0)+1;c.run.ok=0;if(++c.run.bad>=2){c.run.bad=0;if(cur>1){c.L--;toast(`Back to level ${c.L}`,false)}}}
+      head()},
     stat(){},
     hint(t){const h=$('#hint');if(h)h.textContent=t},
     timer(sec,cb){c.after(cb,sec*1000)},
     finish(note,accOverride){if(done||!c.alive)return;done=true;c.alive=false;c.clear();
-      const tot=c.right+c.wrong,acc=accOverride!=null?accOverride:tot?c.right/tot:0,stars=starsFor(acc),pts=Math.round(acc*100*L);
-      const e=rec(g),prevStars=e.stars[L]||0;e.plays++;e.best=Math.max(e.best||0,pts);e.stars[L]=Math.max(prevStars,stars);e.acc[L]=Math.max(e.acc[L]||0,Math.round(acc*100));e.hist=(Array.isArray(e.hist)?e.hist:[]).concat({L,acc:Math.round(acc*100),d:ymd(new Date())}).slice(-20);
-      let unlocked=false;if(stars>0&&L===e.lv&&L<LEVELS){e.lv=L+1;unlocked=true}
-      const m=meta(),t=ymd(new Date());if(!m.days.includes(t)){m.days.push(t);if(m.days.length>400)m.days.shift()}save();
-      result(g,L,acc,pts,stars,prevStars,note,unlocked)}
+      const tot=c.right+c.wrong,acc=accOverride!=null?accOverride:tot?c.right/tot:0,pct=Math.round(acc*100),pts=Math.round(acc*100*c.peak);
+      const e=rec(g),m=meta(),prevLv=e.lv,prevPeak=e.peak||0;e.plays++;e.hist=e.hist.concat({L:c.start,peak:c.peak,acc:pct,d:today()}).slice(-60);
+      const gained=[];
+      if(opts.kind==='check'){m.check=m.check&&m.check.acc?m.check:{d:today(),acc:{}};m.check.acc[g.cat]=pct;
+        if(Object.keys(m.check.acc).length>=CHECK.length){m.checks.push({d:today(),acc:m.check.acc});delete m.check}}
+      else{Object.entries(c.cleared).forEach(([l,s])=>{l=+l;if(s>(e.stars[l]||0))gained.push(l);e.stars[l]=Math.max(e.stars[l]||0,s)});
+        const top=Math.max(0,...Object.keys(c.cleared).map(Number));e.lv=Math.max(e.lv,Math.min(LEVELS,top+1));e.peak=Math.max(prevPeak,c.peak);
+        e.since=e.lv>prevLv?0:(e.since||0)+1;e.best=Math.max(e.best||0,pts);e.acc[c.start]=Math.max(e.acc[c.start]||0,pct);
+        if(opts.kind==='workout'){const p=todayPlan();p.res[opts.i]=pct;if(planDone(p)>=p.items.length&&!m.workouts.includes(today())){m.workouts.push(today());try{window.AndroidApp&&window.AndroidApp.markWorkoutDone(today())}catch(err){}}}}
+      if(!m.days.includes(today())){m.days.push(today());if(m.days.length>400)m.days.shift()}save();
+      result(g,{acc,pct,pts,note,opts,start:c.start,final:c.L,peak:c.peak,cleared:c.cleared,unlocked:e.lv>prevLv?e.lv:0,newPeak:c.peak>prevPeak&&prevPeak>0,gained})}
   };
-  live=c;$('#bk').onclick=()=>intro(g,L);
-  (async()=>{for(const n of ['3','2','1']){c.stage.innerHTML=`<div class="count"><span>${n}</span></div>`;await c.sleep(600)}c.stage.innerHTML='';return g.run(c)})()
+  function head(){const s=$('#lvl');if(s)s.textContent=lab();$('#ladder').querySelectorAll('i').forEach(i=>{const l=+i.dataset.l;i.className=l<c.L?'done':l===c.L?'cur':''})}
+  function toast(t,up){const el=$('#toast');if(!el)return;el.textContent=t;el.className='toast '+(up?'up':'down');el.hidden=false;buzz(up?[15,40,15]:30);clearTimeout(el._t);el._t=setTimeout(()=>{el.hidden=true},1300)}
+  live=c;head();$('#bk').onclick=()=>opts.kind?home():intro(g,L);
+  (async()=>{for(const n of ['3','2','1']){c.stage.innerHTML=`<div class="count"><span>${n}</span></div>`;await c.sleep(420)}c.stage.innerHTML='';return g.run(c)})()
     .catch(err=>{console.error(err);if(c.alive)c.hint('Something went wrong. Tap ✕ to go back.')});
 }
-function result(g,L,acc,pts,stars,prevStars,note,unlocked){
-  live=null;const cat=CATS[g.cat],e=rec(g);app.style.cssText=catVars(cat);const pass=stars>0,pct=Math.round(acc*100);
-  const star=f=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" fill="${f?'var(--c-spd)':'var(--line)'}" stroke="${f?'var(--c-spd)':'var(--line)'}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
-  const nextT=L<LEVELS&&tierOf(L+1)!==tierOf(L)?TIERS[tierOf(L+1)].name:null;
-  const msg=!pass?'Not yet':L===LEVELS&&stars===3?'Mastered!':`Level ${L} cleared!`;
-  const sub=!pass?`You need ${Math.round(PASS*100)}% to clear level ${L}. Try again.`:unlocked?`Level ${L+1} unlocked${nextT?` · ${nextT} mode is open`:''}.`:stars<3?`${stars===1?85:95}% earns the next star.`:'Perfect score on this level.';
-  app.innerHTML=`<div class="top"><button class="ib" id="x" aria-label="Back to levels">${CLOSE}</button><h2><small>Level ${L} · ${TIERS[tierOf(L)].name}</small>${g.name}</h2></div>
-   <div class="res"><div class="stars" aria-label="${stars} of 3 stars">${[1,2,3].map(i=>star(i<=stars)).join('')}</div>
-    <div class="ring${pass?'':' fail'}"><b>${pct}%</b><span>accuracy</span></div>
-    <h2 class="msg">${msg}</h2><p class="note" style="justify-content:center;text-align:center">${sub}</p>${note?`<p class="note" style="justify-content:center">${note}</p>`:''}
-    <div class="tiles2" style="width:100%"><div class="tile2"><b>+${pts}</b><span>Points</span></div><div class="tile2"><b>${starRow(e.stars[L]||0)}</b><span>Best on level ${L}</span></div></div>
-   </div><div class="dock">${pass&&L<LEVELS?`<button class="cta" id="next">Next: level ${L+1}</button><button class="ghost" id="again">Replay level ${L}</button>`:`<button class="cta" id="again">${pass?'Play again':'Try again'}</button>`}<button class="ghost" id="hm">All exercises</button></div>`;
-  $('#again').onclick=()=>play(g,L);$('#hm').onclick=home;$('#x').onclick=()=>intro(g,L);if($('#next'))$('#next').onclick=()=>play(g,L+1);
-  if(stars>prevStars||unlocked){const cf=mk('div','confetti'),cols=['var(--c-att)','var(--c-spd)','var(--c-mem)','var(--c-ppl)','var(--c-int)','var(--c-nav)'];
-    for(let i=0;i<36;i++){const p=mk('i');p.style.left=rnd(100)+'%';p.style.background=pick(cols);p.style.animationDelay=(Math.random()*.6)+'s';cf.append(p)}
-    $('.res').append(cf);buzz(30)}
+
+/* ---------- result ---------- */
+function result(g,R){
+  live=null;const o=R.opts||{},cat=CATS[g.cat],e=rec(g),chk=o.kind==='check';app.style.cssText=catVars(cat);
+  const cl=Object.entries(R.cleared).map(([l,s])=>[+l,s]).sort((a,b)=>a[0]-b[0]);
+  const msg=chk?`Test ${o.i+1} done`:R.unlocked?`Level ${R.unlocked} unlocked!`:R.peak>R.start?`You climbed to level ${R.peak}`:cl.length?`Level ${R.start} cleared`:'Keep at it';
+  const sub=chk?'Brain check results are saved for your monthly comparison.':R.unlocked&&tierOf(R.unlocked)!==tierOf(R.unlocked-1)?`${TIERS[tierOf(R.unlocked)].name} mode is open.`:cl.length?'Two right in a row clears a level. Fewer misses earn more stars.':`Get 2 right in a row to clear level ${R.start}.`;
+  const last=o.kind&&o.i+1>=o.n,cont=Math.min(R.final,e.lv);
+  const dock=o.kind?`<button class="cta" id="nx">${last?(chk?'See check results':'See workout results'):'Next exercise'}</button><button class="ghost" id="hm">Back to home</button>`
+    :`<button class="cta" id="again">Play again from level ${cont}</button><button class="ghost" id="hm">All exercises</button>`;
+  app.innerHTML=`<div class="top"><button class="ib" id="x" aria-label="Close">${CLOSE}</button><h2><small>${chk?'Brain check':cat.name}</small>${g.name}</h2></div>
+   <div class="res">
+    <div class="ring"><b>${chk?R.pct+'%':'Lv '+R.peak}</b><span>${chk?'accuracy':'highest level'}</span></div>
+    <h2 class="msg">${msg}</h2><p class="note" style="justify-content:center;text-align:center">${sub}</p>
+    ${!chk&&cl.length?`<div class="clr">${cl.map(([l,s])=>`<span class="cchip${R.gained.includes(l)?' new':''}"><b>Lv ${l}</b>${starRow(s)}</span>`).join('')}</div>`:''}
+    ${R.note?`<p class="note" style="justify-content:center">${R.note}</p>`:''}
+    ${chk?'':`<div class="tiles2" style="width:100%"><div class="tile2"><b>${R.pct}%</b><span>Accuracy</span></div><div class="tile2"><b>+${R.pts}</b><span>Points</span></div></div>`}
+   </div><div class="dock">${dock}</div>`;
+  $('#hm').onclick=home;$('#x').onclick=()=>o.kind?home():intro(g,cont);
+  if($('#again'))$('#again').onclick=()=>play(g,cont);
+  if($('#nx'))$('#nx').onclick=()=>{if(chk){const m=meta();stepScreen('check',m.check&&m.check.acc?Object.keys(m.check.acc).length:CHECK.length)}else{const p=todayPlan();stepScreen('workout',p.res.findIndex(r=>r==null))}};
+  if(!chk&&(R.unlocked||R.gained.length))confetti();
+}
+function confetti(){const host=$('.res');if(!host)return;const cf=mk('div','confetti'),cols=['var(--c-att)','var(--c-spd)','var(--c-mem)','var(--c-ppl)','var(--c-int)','var(--c-nav)'];
+  for(let i=0;i<36;i++){const p=mk('i');p.style.left=rnd(100)+'%';p.style.background=pick(cols);p.style.animationDelay=(Math.random()*.6)+'s';cf.append(p)}host.append(cf);buzz(30)}
+
+/* ---------- summaries ---------- */
+function workoutSummary(){
+  stopLive();atHome=false;app.removeAttribute('style');const p=todayPlan(),nums=p.res.filter(r=>typeof r==='number'),avg=nums.length?Math.round(nums.reduce((a,b)=>a+b,0)/nums.length):0,complete=planDone(p)>=p.items.length;
+  app.innerHTML=`<div class="top"><button class="ib" id="x" aria-label="Close">${CLOSE}</button><h2><small>${fmtDay(p.d)}</small>Today's workout</h2></div>
+   <div class="scroll" style="padding-top:18px"><div class="res" style="flex:none">
+     <div class="ring"><b>${avg}%</b><span>average</span></div><h2 class="msg">${complete?'Workout complete':'Workout in progress'}</h2>
+     <p class="note" style="justify-content:center">${complete?`Day streak: ${streak()}. Come back tomorrow for a new set.`:`${planDone(p)} of ${p.items.length} done.`}</p></div>
+    <div class="weak">${p.items.map((it,i)=>{const g=G(it.id),r=p.res[i];return `<div class="wrow" style="${catVars(CATS[g.cat])}"><span class="gic2">${icon(g.id,22)}</span><span class="wtx"><b>${g.name}</b><span>${CATS[g.cat].name} · Level ${it.L}</span></span><span class="wres">${r==null?'–':r==='skip'?'Skipped':r+'%'}</span></div>`}).join('')}</div>
+   </div><div class="dock"><button class="cta" id="rp">See your brain report</button><button class="ghost" id="hm">Back to home</button></div>`;
+  $('#x').onclick=home;$('#hm').onclick=home;$('#rp').onclick=report;if(complete&&nums.length)confetti();
+}
+function checkSummary(){
+  stopLive();atHome=false;app.removeAttribute('style');const ch=meta().checks;if(!ch.length){home();return}
+  const last=ch[ch.length-1],base=ch[0],first=ch.length===1;
+  app.innerHTML=`<div class="top"><button class="ib" id="x" aria-label="Close">${CLOSE}</button><h2><small>${fmtDay(last.d)}</small>Brain check results</h2></div>
+   <div class="scroll" style="padding-top:18px">
+    <p class="note">${first?`This is your baseline. Take the check again in ${CHECK_EVERY} days to see how much you've changed.`:`Compared with your baseline on ${fmtDay(base.d)}.`}</p>
+    ${checkBars(ch)}
+   </div><div class="dock"><button class="cta" id="rp">See your brain report</button><button class="ghost" id="hm">Back to home</button></div>`;
+  $('#x').onclick=home;$('#hm').onclick=home;$('#rp').onclick=report;
+}
+function checkBars(ch){const last=ch[ch.length-1],base=ch[0],multi=ch.length>1;
+  return `<div class="areas">${Object.entries(CATS).map(([k,cat])=>{const v=last.acc[k],b=base.acc[k],dlt=multi&&v!=null&&b!=null?v-b:null;
+    return `<div class="arow"><div class="atop"><b>${cat.name}</b><span class="cval">${v==null?'–':v+'%'}${dlt!=null?` <em class="${dlt>=0?'up':'down'}">${dlt>=0?'▲':'▼'} ${Math.abs(dlt)}</em>`:''}</span></div>
+      <div class="cbar"><i style="width:${v||0}%"></i>${multi&&b!=null?`<s style="left:${b}%" title="Baseline ${b}%"></s>`:''}</div></div>`}).join('')}</div>
+    ${multi?'<p class="note"><span class="legend-bar"></span> Latest check <span class="legend-tick"></span> Baseline</p>':''}`}
+
+/* ---------- brain report ---------- */
+function report(){
+  stopLive();atHome=false;app.removeAttribute('style');const areas=areaStats(),tr=areas.filter(a=>a.score!=null).sort((a,b)=>a.score-b.score),sugg=suggestions();
+  const weak=GAMES.map(gstat).filter(s=>s.played&&(s.acc<PASS*100||s.stuck)).sort((a,b)=>a.acc-b.acc).slice(0,5);
+  const total=areas.reduce((a,x)=>a+x.sessions,0),wk=weekly(GAMES),hasTrend=wk.some(p=>p.v!=null),cs=checkState(),ch=meta().checks;
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>Based on ${total} recent session${total===1?'':'s'}</small>Brain report</h2></div>
+   <div class="scroll" style="padding-top:18px">
+    ${tr.length?`<div class="sw2"><div class="swc" style="${catVars(tr[tr.length-1].cat)}"><span class="eyebrow">Strongest</span><b>${tr[tr.length-1].cat.name}</b><em>${tr[tr.length-1].score}/100</em></div>
+      <div class="swc" style="${catVars(tr[0].cat)}"><span class="eyebrow">Needs work</span><b>${tr[0].cat.name}</b><em>${tr[0].score}/100</em></div></div>`
+      :`<p class="note">Play a few exercises in different areas. Your scores, weak spots and suggestions will appear here.</p>`}
+    <section><h3 class="sec-h">Progress</h3>${hasTrend?`<p class="sub" style="margin-top:-6px">Weekly training score: your accuracy, weighted by the level you played (0–100). Tap a week for details.</p>${lineChart(wk)}`:'<p class="note">Your weekly progress chart appears after your first session.</p>'}</section>
+    <section><h3 class="sec-h">Your six areas</h3><div class="areas">${areas.map(a=>{const sw=weekly(a.gs.map(s=>s.g));return `<div class="arow" style="${catVars(a.cat)}">
+      <div class="atop"><b>${a.cat.name}</b><span>${a.score==null?'Not trained yet':`${a.score}/100`}</span></div>
+      <div class="abar"><i style="width:${a.score==null?0:a.score}%"></i></div>
+      <div class="arow2"><p>${a.score==null?a.cat.sub:`Accuracy ${a.acc}% · average level ${a.lv} (${TIERS[tierOf(a.lv)].name}) · ${a.pl.length} of ${a.gs.length} tried`}</p>${spark(sw)}</div></div>`}).join('')}</div>
+      ${hasTrend?'<p class="note" style="margin-top:8px">Small lines show each area’s weekly score over the last 8 weeks.</p>':''}</section>
+    <section><h3 class="sec-h">Brain check</h3>${ch.length?checkBars(ch):''}<p class="note" style="margin:10px 0">${cs.inProgress?`Check in progress: ${cs.done} of ${CHECK.length} tests done.`:ch.length?(cs.due?'Your monthly re-test is due.':`Next re-test in ${cs.next} day${cs.next===1?'':'s'}.`):'Take a baseline test now, then re-test every month to measure real change.'}</p>
+      <button class="ghost" id="chk">${cs.inProgress?'Continue brain check':ch.length?(cs.due?'Take the re-test':'Take a check now'):'Take your baseline test'}</button></section>
+    ${weak.length?`<section><h3 class="sec-h">Weak spots</h3><div class="weak">${weak.map(s=>`<div class="wrow" style="${catVars(CATS[s.g.cat])}"><span class="gic2">${icon(s.g.id,22)}</span>
+      <span class="wtx"><b>${s.g.name}</b><span>${s.stuck?`No new level in ${s.fails} sessions`:`Level ${s.e.lv}`} · recent accuracy ${s.acc}%</span></span></div>`).join('')}</div></section>`:''}
+    <section><h3 class="sec-h">Suggested for you</h3><div class="sugg">${sugg.map((s,i)=>`<div class="srow" style="${catVars(CATS[s.g.cat])}"><div class="shead"><span class="gic2">${icon(s.g.id,22)}</span>
+      <span class="wtx"><b>${s.g.name}</b><span>${CATS[s.g.cat].name} · Level ${s.L}</span></span><button class="sgo" data-i="${i}">Play</button></div><p>${s.why}</p></div>`).join('')}</div></section>
+    <p class="note">Area scores combine your accuracy over the last five sessions of each exercise (60%) with how many levels you've cleared (40%).</p>
+   </div>`;
+  $('#bk').onclick=home;$('#chk').onclick=startCheck;app.querySelectorAll('.sgo').forEach(b=>b.onclick=()=>{const s=sugg[+b.dataset.i];primeAudio(s.g);play(s.g,s.L)});
+  const chEl=app.querySelector('.chart');if(chEl)wireChart(chEl,wk);
+}
+
+/* ---------- reminder settings (Android app only) ---------- */
+function settings(){
+  stopLive();atHome=false;app.removeAttribute('style');const A=window.AndroidApp;let on=false,h=19,m=0;
+  try{const r=A.getReminder().split(',');on=r[0]==='1';h=+r[1];m=+r[2]}catch(e){}
+  const pad=n=>String(n).padStart(2,'0');
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>Settings</small>Daily reminder</h2></div>
+   <div class="intro">${A?`<p class="note">A daily notification reminds you to do your workout. It is skipped on days you've already finished it.</p>
+     <label class="toggle" for="ron"><span><b>Remind me every day</b><em>One notification a day</em></span><input type="checkbox" id="ron" ${on?'checked':''}><i></i></label>
+     <label class="field" for="rt"><b>Time</b><input type="time" id="rt" value="${pad(h)}:${pad(m)}"></label>
+     <p class="note" id="rst"></p>`:'<p class="note">Reminders work in the Android app.</p>'}
+   </div>${A?'<div class="dock"><button class="cta" id="sv">Save</button></div>':''}`;
+  $('#bk').onclick=home;
+  if(A)$('#sv').onclick=()=>{const v=($('#rt').value||'19:00').split(':'),onv=$('#ron').checked;let ok=true;
+    try{A.setReminder(onv,+v[0],+v[1]);ok=A.notificationsAllowed()}catch(e){}
+    $('#rst').textContent=onv?(ok?`Saved. You'll be reminded every day at ${pad(+v[0])}:${pad(+v[1])}.`:'Saved, but notifications are blocked. Allow notifications for Mind Gym when your phone asks, or in your phone’s Settings → Apps → Mind Gym → Notifications.'):'Saved. Reminders are off.'};
 }
 home();
 </script>
+
 
 

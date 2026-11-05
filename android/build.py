@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 TOOLS, OUT = sys.argv[1], sys.argv[2]
 PKG = "com.mindgym.app"
-VERSION_CODE, VERSION_NAME = 4, "4.0"
+VERSION_CODE, VERSION_NAME = 5, "5.0"
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 
 # ---------- Android binary XML (AXML) ----------
@@ -99,6 +99,8 @@ manifest = ("manifest", [(False, "package", T_STR, PKG), A("versionCode", T_INT,
     ("uses-sdk", [A("minSdkVersion", T_INT, 24), A("targetSdkVersion", T_INT, 34)], []),
     ("uses-permission", [A("name", T_STR, "android.permission.INTERNET")], []),
     ("uses-permission", [A("name", T_STR, "android.permission.VIBRATE")], []),
+    ("uses-permission", [A("name", T_STR, "android.permission.POST_NOTIFICATIONS")], []),
+    ("uses-permission", [A("name", T_STR, "android.permission.RECEIVE_BOOT_COMPLETED")], []),
     ("queries", [], [("intent", [], [("action", [A("name", T_STR, "android.intent.action.TTS_SERVICE")], [])])]),
     ("application", [A("label", T_STR, "Mind Gym"), A("icon", T_REF, ICON_ID), A("allowBackup", T_BOOL, True), A("hardwareAccelerated", T_BOOL, True)], [
         ("activity", [A("name", T_STR, PKG + ".MainActivity"), A("exported", T_BOOL, True), A("screenOrientation", T_INT, 1),
@@ -108,22 +110,31 @@ manifest = ("manifest", [(False, "package", T_STR, PKG), A("versionCode", T_INT,
                 ("category", [A("name", T_STR, "android.intent.category.LAUNCHER")], []),
             ]),
         ]),
+        ("receiver", [A("name", T_STR, PKG + ".ReminderReceiver"), A("exported", T_BOOL, True)], [
+            ("intent-filter", [], [
+                ("action", [A("name", T_STR, "android.intent.action.BOOT_COMPLETED")], []),
+                ("action", [A("name", T_STR, "android.intent.action.MY_PACKAGE_REPLACED")], []),
+            ]),
+        ]),
     ]),
 ])
 
-# ---------- resources.arsc with one drawable (the launcher icon) ----------
-def arsc(icon_path):
-    gpool = string_pool([icon_path])
+# ---------- resources.arsc: drawables 0x7f010000 (launcher icon), 0x7f010001 (notification icon) ----------
+def arsc(items):
+    """items = [(key, path)] -> resource ids 0x7f010000 + index"""
+    n = len(items)
+    gpool = string_pool([p for _, p in items])
     tpool = string_pool(["drawable"])
-    kpool = string_pool(["icon"])
-    spec = struct.pack("<HHIBBHI", 0x0202, 16, 20, 1, 0, 0, 1) + struct.pack("<I", 0)
+    kpool = string_pool([k for k, _ in items])
+    spec = struct.pack("<HHIBBHI", 0x0202, 16, 16 + 4 * n, 1, 0, 0, n) + b"\0" * (4 * n)
     config = bytearray(64)
     struct.pack_into("<I", config, 0, 64)
     struct.pack_into("<H", config, 14, 640)  # xxxhdpi
     thdr = 8 + 1 + 1 + 2 + 4 + 4 + 64
-    entries = struct.pack("<HHI", 8, 0, 0) + struct.pack("<HBBI", 8, 0, T_STR, 0)
-    tsize = thdr + 4 + len(entries)
-    ttype = struct.pack("<HHIBBHII", 0x0201, thdr, tsize, 1, 0, 0, 1, thdr + 4) + bytes(config) + struct.pack("<I", 0) + entries
+    entries = b"".join(struct.pack("<HHI", 8, 0, i) + struct.pack("<HBBI", 8, 0, T_STR, i) for i in range(n))
+    offsets = b"".join(struct.pack("<I", 16 * i) for i in range(n))
+    tsize = thdr + 4 * n + len(entries)
+    ttype = struct.pack("<HHIBBHII", 0x0201, thdr, tsize, 1, 0, 0, n, thdr + 4 * n) + bytes(config) + offsets + entries
     phdr = 288
     name = PKG.encode("utf-16-le").ljust(256, b"\0")
     psize = phdr + len(tpool) + len(kpool) + len(spec) + len(ttype)
@@ -153,6 +164,23 @@ def make_icon(path):
     d.ellipse((cx - 92, cy - 92, cx + 92, cy + 92), fill=(47, 196, 174, 255))
     im.resize((192, 192), Image.LANCZOS).quantize(colors=48, method=Image.Quantize.FASTOCTREE).save(path, optimize=True)
 
+
+def make_small_icon(path):
+    """Status-bar icon: white silhouette on transparent, 96px (24dp at xxxhdpi)."""
+    from PIL import Image, ImageDraw
+    import math
+    S = 384
+    im = Image.new("LA", (S, S), (0, 0))
+    d = ImageDraw.Draw(im)
+    cx = cy = S / 2
+    for i in range(6):
+        a = -math.pi / 2 + i * math.pi / 3
+        x, y = cx + 120 * math.cos(a), cy + 120 * math.sin(a)
+        d.line((cx, cy, x, y), fill=(255, 255), width=18)
+        d.ellipse((x - 44, y - 44, x + 44, y + 44), fill=(255, 255))
+    d.ellipse((cx - 58, cy - 58, cx + 58, cy + 58), fill=(255, 255))
+    im.resize((96, 96), Image.LANCZOS).save(path, optimize=True)
+
 # ---------- aligned zip ----------
 def write_apk(path, entries):
     with open(path, "wb") as raw:
@@ -180,6 +208,8 @@ def main():
     subprocess.check_call(["java", "-cp", os.path.join(TOOLS, "dx.jar"), "com.android.dx.command.Main", "--dex", "--min-sdk-version=24", "--output=" + dex, cls])
     icon = os.path.join(work, "icon.png")
     make_icon(icon)
+    small = os.path.join(work, "ic_stat.png")
+    make_small_icon(small)
     html = open(os.path.join(ROOT, "index.html"), "rb").read()
     head = b'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>'
     page = head + html + b"</body></html>"
@@ -187,8 +217,9 @@ def main():
     write_apk(unsigned, [
         ("AndroidManifest.xml", axml(manifest), False),
         ("classes.dex", open(dex, "rb").read(), False),
-        ("resources.arsc", arsc("res/drawable/icon.png"), True),
+        ("resources.arsc", arsc([("icon", "res/drawable/icon.png"), ("ic_stat", "res/drawable/ic_stat.png")]), True),
         ("res/drawable/icon.png", open(icon, "rb").read(), True),
+        ("res/drawable/ic_stat.png", open(small, "rb").read(), True),
         ("assets/index.html", page, False),
     ])
     ks = os.path.join(HERE, "mindgym-release.p12")
