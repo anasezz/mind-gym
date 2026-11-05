@@ -261,6 +261,16 @@ button.pressed{transform:translateY(3px);filter:brightness(.93)}
 .pace span{font-size:.84rem;color:var(--mute);line-height:1.35}
 .pace.sel{border-color:var(--accent);box-shadow:0 3px 0 var(--accent)}
 .pace.sel b::after{content:" ✓";color:var(--accent)}
+
+.spanl{margin:10px 0 0;display:flex;justify-content:center;gap:12px;align-items:baseline;font-size:.9rem;color:var(--mute)}
+.spanl b{font-family:var(--f-display);font-size:1.15rem;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:3px 14px}
+.spanl.up b{animation:bumpup .5s ease-out}.spanl.down b{animation:bumpdn .5s ease-out}
+@keyframes bumpup{0%{transform:scale(1.25);border-color:var(--good);color:var(--good)}100%{transform:scale(1)}}
+@keyframes bumpdn{0%{transform:scale(.9);border-color:var(--bad);color:var(--bad)}100%{transform:scale(1)}}
+.spanres{margin:0;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:.95rem}
+.spanres b{font-family:var(--f-display)}
+.spanres span{font-size:.8rem;color:var(--mute)}
+.spanres .newb{background:var(--good);color:#fff;font-weight:800;padding:3px 10px;border-radius:999px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <div id="app"></div>
@@ -365,16 +375,16 @@ const tms=(c,a,b,min=80)=>Math.round(Math.max(min,a*Math.pow(b/a,prog(c)))*pace(
 async function fixate(c,b){const f=put(b,'+',50,50,2.4);f.style.color='var(--mute)';f.style.fontWeight='800';await c.sleep(Math.round(550*pace(c)));f.remove()}
 const GAMES=[
 /* ===== ATTENTION ===== */
-{id:'tracker',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
+{id:'tracker',span:'balls',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
   const N=12,[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
-  for(let r=0;r<N;r++){const t=span(c,2,8),d=ilerp(c,3,8),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2800,5500),show=tms(c,2200,1300);
+  c.spanInit(2,8);for(let r=0;r<N;r++){const t=c.spanN(),d=ilerp(c,3,8),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2800,5500),show=tms(c,2200,1300);
     ar.replaceChildren();const o=spawnOrbs(ar,t+d,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
     c.hint(`Round ${r+1}/${N} · remember these ${t}`);await c.sleep(show);o.forEach(q=>q.e.classList.remove('tgt'));c.hint('Keep your eyes on them…');
     await drift(c,o,W,H,dur,sp);c.hint(`Tap the ${t} you tracked`);let sel=0;
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;q.e.classList.add('sel');if(++sel===t)res()}));
     o.forEach(q=>{if(q.s)c.tally(q.t)});const ok=o.every(q=>!!q.s===q.t);
-    o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});flash(c,ok,false);await c.sleep(700)}
-  c.finish(`Last round: ${span(c,2,8)} targets among ${span(c,2,8)+ilerp(c,3,8)} bubbles`);
+    o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});flash(c,ok,false,false);c.spanDone(ok);await c.sleep(700)}
+  c.finish(`Level ${c.L}: ${ilerp(c,3,8)} decoys, ${Math.round(lerp(c,70,190))} px/s`);
 }},
 {id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. Each level up flashes faster and adds decoy signs.',async run(c){
   const N=20;
@@ -472,13 +482,13 @@ const GAMES=[
   c.finish(`Last speed: ${rt(c,.6,1.3).toFixed(2)}×`);
 }},
 /* ===== MEMORY ===== */
-{id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one. Each level up adds an object and shortens the look.',async run(c){
+{id:'scene',span:'objects',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one.',async run(c){
   const KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'],N=16;
-  for(let r=0;r<N;r++){const n=Math.min(15,ilerp(c,4,12)),T=tms(c,2500,700),minD=Math.max(9,lerp(c,16,11));const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
+  c.spanInit(4,15);for(let r=0;r<N;r++){const n=c.spanN(),T=tms(c,2500,700),minD=Math.max(9,lerp(c,16,11));const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
     c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(400);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.show(T);
     b.replaceChildren();noise(b);await c.sleep(500);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.8));els.forEach(e=>e.style.cursor='pointer');
-    c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m);await c.sleep(550)}
-  c.finish(`Last scene: ${Math.min(15,ilerp(c,4,12))} objects`);
+    c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m,true,false);c.spanDone(i===m);await c.sleep(550)}
+  c.finish(`Look time at level ${c.L}: ${tms(c,2500,700)} ms`);
 }},
 {id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a syllable when you turn it over. Find all the pairs. Clear a board in few moves twice in a row and the next board gets bigger.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti','zo','ne'],['ba','so','ki','da','me','ro','fa','ti','go','ne'],['ba','pa','da','ta','ga','ka','ma','na','fa','va']],N=5;
@@ -493,27 +503,27 @@ const GAMES=[
     flash(c,moves<=limit,false);await c.sleep(500)}
   c.finish(`Last board: ${[3,3,4,4,4,5,5,6,6,6,8,8,8,9,9,10,10][c.L-1]} pairs`);
 }},
-{id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. Get it right twice in a row and the next series is one longer.',async run(c){
+{id:'stacks',span:'syllables',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti'],['ba','so','ki','da','me','ro','fa','ti'],['ba','pa','da','ta','ga','ka','ma','na']],N=16;
-  for(let r=0;r<N;r++){const Ls=span(c,2,10),rate=rt(c,.7,1.3),gap=tms(c,450,120),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[Math.min(2,tier(c))]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
+  c.spanInit(2,10);for(let r=0;r<N;r++){const Ls=c.spanN(),rate=rt(c,.7,1.3),gap=tms(c,450,120),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[Math.min(2,tier(c))]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
     v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen to ${Ls} syllables`);await c.sleep(450);
     for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(650);v.innerHTML='<div class="big">·</div>'}await c.sleep(gap)}
     v.innerHTML='<div class="disp" style="font-size:2rem" id="d"></div>';c.hint('Tap them in order');const typed=[];
     await new Promise(res=>{const w=mk('div','grid3');shown.forEach(s=>{const b=mk('button','btn',s);b.onclick=()=>{typed.push(s);$('#d',v).textContent=typed.join(' ');if(typed.length===Ls)res()};w.append(b)});k.append(w)});
-    seq.forEach((s,i)=>c.tally(typed[i]===s));const ok=typed.join()===seq.join();flash(c,ok,false);await c.sleep(450)}
-  c.finish(`Longest series: ${span({L:c.peak},2,10)} syllables`);
+    seq.forEach((s,i)=>c.tally(typed[i]===s));const ok=typed.join()===seq.join();flash(c,ok,false,false);c.spanDone(ok);await c.sleep(450)}
+  c.finish(`Speech speed at level ${c.L}: ${rt(c,.7,1.3).toFixed(2)}×`);
 }},
-{id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects. Get it right twice in a row and the next list is one step longer.',async run(c){
+{id:'todo',span:'steps',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects.',async run(c){
   const OBJ=[['🔴','red circle'],['🔵','blue circle'],['🟢','green circle'],['🟡','yellow circle'],['🟥','red square'],['🟦','blue square'],['🟩','green square'],['🟨','yellow square'],['🟠','orange circle'],['🟧','orange square'],['🟣','purple circle'],['🟪','purple square']];
   const N=14;
-  for(let r=0;r<N;r++){const k2=span(c,2,9),rate=rt(c,.85,1.2),cols=tier(c)===0?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
+  c.spanInit(2,9);for(let r=0;r<N;r++){const k2=c.spanN(),rate=rt(c,.85,1.2),cols=tier(c)===0?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
     const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint(`${r+1}/${N} · listen to ${seq.length} steps…`);
     const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;const cells=items.map(it=>{const b=mk('button','cell',it[0]);g.append(b);return b});v.append(g);
     if(hasSpeech)await c.say(text,rate);else{c.hint(text);await c.sleep(1500+k2*1100)}
     c.hint('Now do it');const got=[];
     await new Promise(res=>cells.forEach((b,i)=>b.onclick=()=>{got.push(items[i]);b.classList.add('lit');if(got.length===seq.length)res()}));
-    seq.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===seq[i]);flash(c,ok,false);await c.sleep(450)}
-  c.finish(`Longest list: ${span({L:c.peak},2,9)} steps`);
+    seq.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===seq[i]);flash(c,ok,false,false);c.spanDone(ok);await c.sleep(450)}
+  c.finish(`Speech speed at level ${c.L}: ${rt(c,.85,1.2).toFixed(2)}×`);
 }},
 {id:'mindseye',cat:'mem',name:"Mind's Eye",desc:'A target shape is shown, then hidden. Then find it among look-alikes that differ in colour, shape or tilt. (Built from a short description, so it may differ from the original.)',async run(c){
   const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90],N=18;
@@ -534,29 +544,29 @@ const GAMES=[
     await c.sleep(gap);if(pressed||isT)flash(c,pressed===isT);else c.tally(true)}
   c.finish(`Closest decoy: ${Math.round(Math.max(40,lerp(c,350,70)))} Hz away`);
 }},
-{id:'rhythm',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad. Get it right twice in a row and the next rhythm has one more note.',async run(c){
+{id:'rhythm',span:'notes',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad.',async run(c){
   const N=14;
-  for(let r=0;r<N;r++){const n=span(c,3,10),tol=Math.max(.12,lerp(c,.4,.18)),IV=[[400,800],[300,600,900],[200,300,450,600,900],[150,250,350,450,600,800]][tier(c)];const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
+  c.spanInit(3,10);for(let r=0;r<N;r++){const n=c.spanN(),tol=Math.max(.12,lerp(c,.4,.18)),IV=[[400,800],[300,600,900],[200,300,450,600,900],[150,250,350,450,600,800]][tier(c)];const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
     c.hint(`${r+1}/${N} · ${n} notes · listen and watch`);await c.sleep(450);let t=0;const marks=[0,...gaps.map(g=>t+=g)];
     for(let i=0;i<n;i++){const d=mk('b');d.style.left=(5+marks[i]/tot*90)+'%';line.append(d);{const f=pick([392,440,523,587,659]);tone(f,f,140,.25,'triangle')}if(i<n-1)await c.sleep(gaps[i])}
     await c.sleep(500);c.hint('Now tap it back');const pad=mk('button','pad','Tap');pad.style.minHeight='140px';k.append(pad);const taps=[];
     await new Promise(res=>pad.onpointerdown=()=>{taps.push(performance.now());tone(523,523,90,.2,'triangle');const u=mk('b','u');u.style.left=(5+(taps[taps.length-1]-taps[0])/tot*90)+'%';line.append(u);if(taps.length===n)res()});
-    const got=taps.slice(1).map((x,i)=>x-taps[i]),oks=got.map((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*tol+60);oks.forEach(o=>c.tally(o));const ok=oks.every(Boolean);flash(c,ok,false);await c.sleep(550)}
-  c.finish(`Longest rhythm: ${span({L:c.peak},3,10)} notes`);
+    const got=taps.slice(1).map((x,i)=>x-taps[i]),oks=got.map((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*tol+60);oks.forEach(o=>c.tally(o));const ok=oks.every(Boolean);flash(c,ok,false,false);c.spanDone(ok);await c.sleep(550)}
+  c.finish(`Timing margin at level ${c.L}: ±${Math.round(Math.max(.12,lerp(c,.4,.18))*100)}%`);
 }},
 /* ===== PEOPLE SKILLS ===== */
-{id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job. Remember everyone twice in a row and the next group is one person bigger.',async run(c){
+{id:'facefacts',span:'people',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job.',async run(c){
   const NAMES=[['Ann','Anna','Hanna','Amy'],['Ben','Ken','Len','Glen'],['Tom','Tim','Tod','Ted'],['Sara','Zara','Clara','Kara'],['Jon','Joan','Jan','Jean'],['Mia','Nia','Leah','Maya'],['Rob','Bob','Rod','Ron'],['Lily','Lucy','Lola','Luna']];
   const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'],N=8;
-  for(let r=0;r<N;r++){const k=span(c,2,8),show=tms(c,3200,1800),sim=tier(c)>=1,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
+  c.spanInit(2,8);for(let r=0;r<N;r++){const k=c.spanN(),show=tms(c,3200,1800),sim=tier(c)>=1,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
     const names=pool.slice(0,k),jobs=shuffle(JOBS).slice(0,k),ppl=names.map((nm,i)=>({f:rface(),name:nm,job:jobs[i]}));
     for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint(`Group ${r+1}/${N} · meet ${k} people`);await c.sleep(show)}
     let all=true;for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
       const nm=shuffle([p.name,...shuffle([...new Set([...pool,...fam.flat()])].filter(x=>x!==p.name)).slice(0,3)]);
       const a=await ask(kk,nm);flash(c,a===p.name,true,false);c.hint('And their job?');
       const jb=shuffle([p.job,...shuffle([...new Set([...jobs,...JOBS])].filter(x=>x!==p.job)).slice(0,3)]);const b=await ask(kk,jb);flash(c,b===p.job,true,false);if(a!==p.name||b!==p.job)all=false}
-    c.trial(all)}
-  c.finish(`Largest group: ${span({L:c.peak},2,8)} people`);
+    c.spanDone(all)}
+  c.finish(`Look time per person at level ${c.L}: ${(tms(c,3200,1800)/1000).toFixed(1)} s`);
 }},
 {id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Answer them all right twice in a row and the next story is longer and faster.',async run(c){
   const NM=['Maria','Tom','Elena','Jack','Priya','Omar','Grace','Leo'],PL=['market','library','beach','station','farm','museum','bakery'],IT=['apples','books','candles','tickets','scarves','plates'],CL=['red','blue','green','yellow','white'],DY=['Monday','Tuesday','Friday','Saturday','Sunday'],TH=['umbrella','guitar','basket','camera','kite'],FD=['sandwiches','cookies','oranges','pancakes'];
@@ -609,17 +619,17 @@ const GAMES=[
     flash(c,a!==null&&(a==='Match')===same(cd,prev));v.innerHTML='';await c.sleep(200)}
   c.finish(`Reached ${[1,1,1,2,2,2,3,3,3,4,4,4,4,5,5,6,6][c.peak-1]}-back`);
 }},
-{id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked. Get it right twice in a row and the next round has one more ball.',async run(c){
+{id:'juggle',span:'balls',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked.',async run(c){
   const N=12,[W,H]=arenaSize();
-  for(let r=0;r<N;r++){const k=span(c,3,10),ex=Math.min(4,ilerp(c,0,3)),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2500,5000),mode=['fwd','back','mix','mix'][tier(c)];
+  c.spanInit(3,10);for(let r=0;r<N;r++){const k=c.spanN(),ex=Math.min(4,ilerp(c,0,3)),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2500,5000),mode=['fwd','back','mix','mix'][tier(c)];
     const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
     const o=spawnOrbs(ar,k+ex,W,H),nums=shuffle([...Array(k)].map((_,i)=>i+1));o.forEach((q,i)=>{q.n=nums[i]||0;q.e.textContent=q.n||'';if(!q.n)q.e.style.background='var(--mute)'});
     c.hint(`Round ${r+1}/${N} · remember ${k} numbers`);await c.sleep(1300+k*350);o.forEach(q=>{q.e.textContent='';q.e.style.background=''});
     await drift(c,o,W,H,dur,sp);const order=mode==='fwd'?nums.slice().sort((a,b)=>a-b):mode==='back'?nums.slice().sort((a,b)=>b-a):shuffle(nums);
     c.hint('Tap in this order: '+order.join(' → '));const got=[];
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;got.push(q.n);q.e.textContent=q.n||'✕';q.e.classList.add('sel');if(got.length===k)res()}));
-    order.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===order[i]);flash(c,ok,false);await c.sleep(650)}
-  c.finish(`Most balls: ${span({L:c.peak},3,10)}`);
+    order.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===order[i]);flash(c,ok,false,false);c.spanDone(ok);await c.sleep(650)}
+  c.finish(`Level ${c.L}: ${['forward','backward','mixed','mixed'][tier(c)]} order, ${Math.min(4,ilerp(c,0,3))} decoys`);
 }},
 {id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier. Each level up goes further back.',async run(c){
   const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'],N=30,hist=[];const[v,k]=lay(c);
@@ -642,10 +652,10 @@ const GAMES=[
     flash(c,a!==null&&(a==='Mirror')===mir);await c.sleep(180)}
   c.finish(`Last answer window: ${(tms(c,6000,2200)/1000).toFixed(1)} s`);
 }},
-{id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory. Get a grid fully right twice in a row and the next has one more object.',async run(c){
+{id:'mentalmap',span:'objects',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory.',async run(c){
   const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓','🌙','🍄','🔑','🎲','🌼'],N=8;
   const TF=[['shifted one column right (wrapping around)',(r,cc,n)=>[r,(cc+1)%n]],['flipped left to right',(r,cc,n)=>[r,n-1-cc]],['flipped top to bottom',(r,cc,n)=>[n-1-r,cc]],['rotated 90° clockwise',(r,cc,n)=>[cc,n-1-r]],['rotated 90° anticlockwise',(r,cc,n)=>[n-1-cc,r]]];
-  for(let rd=0;rd<N;rd++){const n=[3,4,5,6][tier(c)],k=span(c,3,12),mem=tms(c,6000,3000),pool=c.L<=3?TF.slice(0,1):c.L<=7?TF.slice(0,3):TF;
+  c.spanInit(3,14);for(let rd=0;rd<N;rd++){const n=[3,4,5,6][tier(c)];if(c.sp.n>n*n-2)c.sp.n=n*n-2;const k=c.spanN(),mem=tms(c,6000,3000),pool=c.L<=3?TF.slice(0,1):c.L<=7?TF.slice(0,3):TF;
     const cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k);let tf=pick(pool);
     if(c.L>=11){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3);const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
     const[v,kk]=lay(c);const grid=()=>{const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${n},1fr)`;const cs=[...Array(n*n)].map(()=>{const b=mk('button','cell');if(n>4)b.style.fontSize='1.4rem';g.append(b);return b});v.replaceChildren(g);return cs};
@@ -656,19 +666,19 @@ const GAMES=[
     cs.forEach((b,i)=>b.onclick=()=>{if(placed[i]){delete placed[i];b.textContent='';return}if(!cur)return;Object.keys(placed).forEach(j=>{if(placed[j]===cur){delete placed[j];cs[j].textContent=''}});placed[i]=cur;b.textContent=cur});
     await new Promise(res=>done.onclick=res);let right=0;
     cells.forEach((p,i)=>{const[r2,c2]=tf[1](Math.floor(p/n),p%n,n),q=r2*n+c2,ok=placed[q]===objs[i];c.tally(ok);if(ok){right++;cs[q].classList.add('ok')}else{cs[q].classList.add('no');cs[q].textContent=objs[i]}});
-    kk.replaceChildren();flash(c,right===k,false);await c.sleep(1400)}
-  c.finish(`Most objects: ${span({L:c.peak},3,12)}`);
+    kk.replaceChildren();flash(c,right===k,false,false);c.spanDone(right===k);await c.sleep(1400)}
+  c.finish(`Level ${c.L}: ${[3,4,5,6][tier(c)]}×${[3,4,5,6][tier(c)]} grid`);
 }},
-{id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing. Get both right twice in a row and the next ride has one more turn.',async run(c){
+{id:'truenorth',span:'turns',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing.',async run(c){
   const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'],N=12;
-  for(let r=0;r<N;r++){const L=span(c,1,9),nst=Math.min(8,ilerp(c,3,7)),rate=rt(c,.85,1.2);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
+  c.spanInit(1,9);for(let r=0;r<N;r++){const L=c.spanN(),nst=Math.min(8,ilerp(c,3,7)),rate=rt(c,.85,1.2);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
     const parts=[`You board the train facing ${start}.`,`The stops are ${stops.join(', ')}.`,`Get off at ${stops[off]}.`];steps.forEach(s=>{parts.push(s==='around'?'Turn around.':`Turn ${s}.`);f=(f+(s==='left'?3:s==='right'?1:2))%4});
     const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint(`${r+1}/${N} · ${L} turn${L>1?'s':''} · listen carefully`);await c.sleep(400);
     if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="story">${text}</div>`;await c.sleep(3000+text.length*40);v.innerHTML='<div class="big">🚆</div>'}
     c.hint('Which stop did you get off at?');const a1=await ask(k,shuffle([stops[off],...shuffle(stops.filter(x=>x!==stops[off])).slice(0,3)]));
     flash(c,a1===stops[off],true,false);c.hint('Which way are you facing now?');const a2=await ask(k,['North','East','South','West']);flash(c,a2.toLowerCase()===D[f],true,false);
-    c.trial(a1===stops[off]&&a2.toLowerCase()===D[f]);await c.sleep(350)}
-  c.finish(`Most turns followed: ${span({L:c.peak},1,9)}`);
+    c.spanDone(a1===stops[off]&&a2.toLowerCase()===D[f]);await c.sleep(350)}
+  c.finish(`Level ${c.L}: ${Math.min(8,ilerp(c,3,7))} stops`);
 }},
 {id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. Each level up is faster and busier.',async run(c){
   const N=18;
@@ -878,7 +888,7 @@ function intro(g,selL){
   const paren=(g.desc.match(/\(([^)]+)\)/)||[])[1];
   app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>${cat.name}</small></h2><span class="scorepill">★ ${starsOf(g)}</span></div>
    <div class="intro"><div class="ihead"><div class="bigic">${icon(g.id,40)}</div><h1>${g.name}</h1></div>
-    <div><p class="eyebrow" style="margin-bottom:6px">Choose a starting level</p><p class="note" style="margin-bottom:12px">Two right in a row moves you up a level. Two misses in a row moves you down one.</p><div class="levels" id="lvls"></div></div>
+    <div><p class="eyebrow" style="margin-bottom:6px">Choose a starting level</p><p class="note" style="margin-bottom:12px">${g.span?`Each correct round adds one to the number of ${g.span}, and a miss takes one away. Your level (speed, decoys, time) goes up when you match your best number of ${g.span} twice in a row. Your best so far: ${rec(g).span||'none yet'}.`:'Two right in a row moves you up a level. Two misses in a row moves you down one.'}</p><div class="levels" id="lvls"></div></div>
     <div><p class="eyebrow" style="margin-bottom:12px">How to play</p><ol class="steps">${stepsOf(g).map(s=>`<li><span>${s}</span></li>`).join('')}</ol></div>
     ${g.needsAudio?`<p class="note">${SPK(18)} Turn your sound on for this one.</p>`:''}${paren?`<p class="note">${paren}</p>`:''}
    </div><div class="dock"><button class="cta" id="go"></button></div>`;
@@ -912,7 +922,7 @@ function play(g,L,opts){
   const lab=()=>opts.kind==='check'?`Brain check ${opts.i+1}/${opts.n} · Level ${c.L}`:`${opts.kind==='workout'?`Workout ${opts.i+1}/${opts.n} · `:''}Level ${c.L} · ${TIERS[tierOf(c.L)].name}`;
   app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Quit">${CLOSE}</button><h2><small id="lvl"></small>${g.name}</h2><span class="scorepill" id="st"></span></div>
    <div class="ladder" id="ladder" aria-hidden="true">${[...Array(LEVELS)].map((_,i)=>`<i data-l="${i+1}"></i>`).join('')}</div>
-   <p id="hint"></p><div id="stage"></div><div class="toast" id="toast" hidden></div>`;
+   <p class="spanl" id="spanl" hidden></p><p id="hint"></p><div id="stage"></div><div class="toast" id="toast" hidden></div>`;
   const timers=new Set();let done=false;
   const c={alive:true,noPace:!adaptive,stage:$('#stage'),L,start:L,peak:L,right:0,wrong:0,run:{ok:0,bad:0},cleared:{},miss:{},
     clear(){timers.forEach(clearTimeout);timers.clear()},
@@ -926,12 +936,20 @@ function play(g,L,opts){
           if(cur<LEVELS){c.L++;c.peak=Math.max(c.peak,c.L);toast(`Level up! ${cur} → ${c.L}`,true)}else toast('Top level cleared!',true)}}
       else{c.miss[cur]=(c.miss[cur]||0)+1;c.run.ok=0;if(++c.run.bad>=2){c.run.bad=0;if(cur>1){c.L--;toast(`Back to level ${c.L}`,false)}}}
       head()},
+    /* count dial: +1 after a correct round, -1 after a miss. The level only counts rounds played at or above your best count. */
+    spanInit(min,max){const e=rec(g);const best=e.span||0;c.sp={min,max,unit:g.span||'items',best,prev:best,n:adaptive?Math.max(min,Math.min(max,(best||min+1)-1)):span(c,min,max)};head();return c.sp.n},
+    spanN(){return c.sp.n},
+    spanDone(ok){const s=c.sp;if(!s||!c.alive||!adaptive)return;const n=s.n,thr=Math.max(s.min+1,s.best);
+      if(ok){if(n>s.best)s.best=n;if(n>=thr)c.trial(true);else c.run.bad=0;s.n=Math.min(s.max,n+1)}
+      else{if(n<=thr)c.trial(false);else c.run.ok=0;s.n=Math.max(s.min,n-1)}
+      head();const sl=$('#spanl');if(sl&&s.n!==n){sl.classList.remove('up','down');void sl.offsetWidth;sl.classList.add(s.n>n?'up':'down')}},
     stat(){},
     hint(t){const h=$('#hint');if(h)h.textContent=t},
     timer(sec,cb){c.after(cb,sec*1000)},
     finish(note,accOverride){if(done||!c.alive)return;done=true;c.alive=false;c.clear();
       const tot=c.right+c.wrong,acc=accOverride!=null?accOverride:tot?c.right/tot:0,pct=Math.round(acc*100),pts=Math.round(acc*100*c.peak);
-      const e=rec(g),m=meta(),prevLv=e.lv,prevPeak=e.peak||0;e.plays++;e.hist=e.hist.concat({L:c.start,peak:c.peak,acc:pct,d:today()}).slice(-60);
+      const e=rec(g),m=meta(),prevLv=e.lv,prevPeak=e.peak||0;e.plays++;e.hist=e.hist.concat({L:c.start,peak:c.peak,acc:pct,d:today(),...(c.sp?{sp:c.sp.best}:{})}).slice(-60);
+      if(c.sp&&adaptive)e.span=Math.max(e.span||0,c.sp.best);
       const gained=[];
       if(opts.kind==='check'){m.check=m.check&&m.check.acc?m.check:{d:today(),acc:{}};m.check.acc[g.cat]=pct;
         if(Object.keys(m.check.acc).length>=CHECK.length){m.checks.push({d:today(),acc:m.check.acc});delete m.check}}
@@ -940,9 +958,9 @@ function play(g,L,opts){
         e.since=e.lv>prevLv?0:(e.since||0)+1;e.best=Math.max(e.best||0,pts);e.acc[c.start]=Math.max(e.acc[c.start]||0,pct);
         if(opts.kind==='workout'){const p=todayPlan();p.res[opts.i]=pct;if(planDone(p)>=p.items.length&&!m.workouts.includes(today())){m.workouts.push(today());try{window.AndroidApp&&window.AndroidApp.markWorkoutDone(today())}catch(err){}}}}
       if(!m.days.includes(today())){m.days.push(today());if(m.days.length>400)m.days.shift()}save();
-      result(g,{acc,pct,pts,note,opts,start:c.start,final:c.L,peak:c.peak,cleared:c.cleared,unlocked:e.lv>prevLv?e.lv:0,newPeak:c.peak>prevPeak&&prevPeak>0,gained})}
+      result(g,{acc,pct,pts,note,opts,start:c.start,final:c.L,peak:c.peak,cleared:c.cleared,unlocked:e.lv>prevLv?e.lv:0,newPeak:c.peak>prevPeak&&prevPeak>0,gained,span:c.sp&&adaptive?{unit:c.sp.unit,best:c.sp.best,prev:c.sp.prev}:null})}
   };
-  function head(){const s=$('#lvl');if(s)s.textContent=lab();$('#ladder').querySelectorAll('i').forEach(i=>{const l=+i.dataset.l;i.className=l<c.L?'done':l===c.L?'cur':''})}
+  function head(){const s=$('#lvl');if(s)s.textContent=lab();const sl=$('#spanl');if(sl&&c.sp){sl.hidden=false;sl.innerHTML=`<b>${c.sp.unit[0].toUpperCase()+c.sp.unit.slice(1)}: ${c.sp.n}</b><span>Your best: ${c.sp.best||'–'}</span>`}$('#ladder').querySelectorAll('i').forEach(i=>{const l=+i.dataset.l;i.className=l<c.L?'done':l===c.L?'cur':''})}
   function toast(t,up){const el=$('#toast');if(!el)return;el.textContent=t;el.className='toast '+(up?'up':'down');el.hidden=false;buzz(up?[15,40,15]:30);clearTimeout(el._t);el._t=setTimeout(()=>{el.hidden=true},1300)}
   live=c;head();$('#bk').onclick=()=>opts.kind?home():intro(g,L);
   (async()=>{for(const n of ['3','2','1']){c.stage.innerHTML=`<div class="count"><span>${n}</span></div>`;await c.sleep(420)}c.stage.innerHTML='';return g.run(c)})()
@@ -954,7 +972,7 @@ function result(g,R){
   live=null;const o=R.opts||{},cat=CATS[g.cat],e=rec(g),chk=o.kind==='check';app.style.cssText=catVars(cat);
   const cl=Object.entries(R.cleared).map(([l,s])=>[+l,s]).sort((a,b)=>a[0]-b[0]);
   const msg=chk?`Test ${o.i+1} done`:R.unlocked?`Level ${R.unlocked} unlocked!`:R.peak>R.start?`You climbed to level ${R.peak}`:cl.length?`Level ${R.start} cleared`:'Keep at it';
-  const sub=chk?'Brain check results are saved for your monthly comparison.':R.unlocked&&tierOf(R.unlocked)!==tierOf(R.unlocked-1)?`${TIERS[tierOf(R.unlocked)].name} mode is open.`:cl.length?'Two right in a row clears a level. Fewer misses earn more stars.':`Get 2 right in a row to clear level ${R.start}.`;
+  const sub=chk?'Brain check results are saved for your monthly comparison.':R.unlocked&&tierOf(R.unlocked)!==tierOf(R.unlocked-1)?`${TIERS[tierOf(R.unlocked)].name} mode is open.`:R.span?(cl.length?`Matching your best ${R.span.unit} count twice in a row clears a level.`:`Match your best of ${Math.max(R.span.best,R.span.prev)} ${R.span.unit} twice in a row to clear level ${R.start}.`):cl.length?'Two right in a row clears a level. Fewer misses earn more stars.':`Get 2 right in a row to clear level ${R.start}.`;
   const last=o.kind&&o.i+1>=o.n,cont=Math.min(R.final,e.lv);
   const dock=o.kind?`<button class="cta" id="nx">${last?(chk?'See check results':'See workout results'):'Next exercise'}</button><button class="ghost" id="hm">Back to home</button>`
     :`<button class="cta" id="again">Play again from level ${cont}</button><button class="ghost" id="hm">All exercises</button>`;
@@ -963,13 +981,14 @@ function result(g,R){
     <div class="ring"><b>${chk?R.pct+'%':'Lv '+R.peak}</b><span>${chk?'accuracy':'highest level'}</span></div>
     <h2 class="msg">${msg}</h2><p class="note" style="justify-content:center;text-align:center">${sub}</p>
     ${!chk&&cl.length?`<div class="clr">${cl.map(([l,s])=>`<span class="cchip${R.gained.includes(l)?' new':''}"><b>Lv ${l}</b>${starRow(s)}</span>`).join('')}</div>`:''}
+    ${R.span?`<p class="spanres">Best this session: <b>${R.span.best} ${R.span.unit}</b>${R.span.best>R.span.prev?'<span class="newb">New record!</span>':`<span>Record: ${R.span.prev}</span>`}</p>`:''}
     ${R.note?`<p class="note" style="justify-content:center">${R.note}</p>`:''}
     ${chk?'':`<div class="tiles2" style="width:100%"><div class="tile2"><b>${R.pct}%</b><span>Accuracy</span></div><div class="tile2"><b>+${R.pts}</b><span>Points</span></div></div>`}
    </div><div class="dock">${dock}</div>`;
   $('#hm').onclick=home;$('#x').onclick=()=>o.kind?home():intro(g,cont);
   if($('#again'))$('#again').onclick=()=>play(g,cont);
   if($('#nx'))$('#nx').onclick=()=>{if(chk){const m=meta();stepScreen('check',m.check&&m.check.acc?Object.keys(m.check.acc).length:CHECK.length)}else{const p=todayPlan();stepScreen('workout',p.res.findIndex(r=>r==null))}};
-  if(!chk&&(R.unlocked||R.gained.length))confetti();
+  if(!chk&&(R.unlocked||R.gained.length||(R.span&&R.span.best>R.span.prev)))confetti();
 }
 function confetti(){const host=$('.res');if(!host)return;const cf=mk('div','confetti'),cols=['var(--c-att)','var(--c-spd)','var(--c-mem)','var(--c-ppl)','var(--c-int)','var(--c-nav)'];
   for(let i=0;i<36;i++){const p=mk('i');p.style.left=rnd(100)+'%';p.style.background=pick(cols);p.style.animationDelay=(Math.random()*.6)+'s';cf.append(p)}host.append(cf);buzz(30)}
