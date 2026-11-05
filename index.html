@@ -8,16 +8,16 @@
   --bg:#f4f2fb; --surface:#ffffff; --ink:#1c1836; --mute:#6b6688; --line:#e2def0;
   --good:#16a34a; --bad:#e11d48; --accent:#7445d6; --cc:var(--accent); --on:#ffffff;
   --c-att:#e04e30; --c-spd:#f2a516; --c-mem:#3366ee; --c-ppl:#d63384; --c-int:#7445d6; --c-nav:#0d9488;
-  --t1:#16a34a; --t2:#d97706; --t3:#e11d48;
+  --t1:#16a34a; --t2:#d97706; --t3:#e11d48; --t4:#6d28d9;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#14112a; --surface:#201c3b; --ink:#f1effa; --mute:#a39fc0; --line:#352f5a;
-  --good:#34d399; --bad:#fb7185; --accent:#9b7bf0; --t1:#22c55e; --t2:#f59e0b; --t3:#f43f5e; color-scheme:dark}}
+  --good:#34d399; --bad:#fb7185; --accent:#9b7bf0; --t1:#22c55e; --t2:#f59e0b; --t3:#f43f5e; --t4:#a78bfa; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#14112a; --surface:#201c3b; --ink:#f1effa; --mute:#a39fc0; --line:#352f5a;
-  --good:#34d399; --bad:#fb7185; --accent:#9b7bf0; --t1:#22c55e; --t2:#f59e0b; --t3:#f43f5e; color-scheme:dark}
+  --good:#34d399; --bad:#fb7185; --accent:#9b7bf0; --t1:#22c55e; --t2:#f59e0b; --t3:#f43f5e; --t4:#a78bfa; color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -157,15 +157,15 @@ canvas.sw{width:min(100%,300px);aspect-ratio:1;border-radius:50%;border:2px soli
 .tier-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
 .tier-h b{font-family:var(--f-display);font-size:1.05rem;color:var(--tc)}
 .tier-h span{font-size:.78rem;color:var(--mute);text-align:right}
-.lvrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.lvb{height:72px;border-radius:18px;background:var(--surface);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink)}
-.lvb b{font-family:var(--f-display);font-size:1.5rem;line-height:1;display:flex}
-.lvb span{color:var(--c-spd);font-size:.95rem;letter-spacing:2px;line-height:1}
+.lvrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lvb{height:64px;border-radius:18px;background:var(--surface);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink)}
+.lvb b{font-family:var(--f-display);font-size:1.3rem;line-height:1;display:flex}
+.lvb span{color:var(--c-spd);font-size:.72rem;letter-spacing:0;line-height:1}
 .lvb.sel{border-color:var(--tc);background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.25)}
 .lvb.sel span{color:#fff}
 .lvb:active{transform:translateY(3px)}
 .lvb:disabled{opacity:.4;box-shadow:none;cursor:not-allowed;transform:none}
-.lvbar{display:flex;gap:3px;position:relative}
+.lvbar{display:flex;gap:2px;position:relative}
 .lvbar i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.3)}
 .lvbar i.on{background:var(--on)}
 .ring.fail{border-color:var(--line)}
@@ -244,7 +244,7 @@ canvas.sw{width:min(100%,300px);aspect-ratio:1;border-radius:50%;border:2px soli
 .field input{font:inherit;font-family:var(--f-display);font-weight:800;font-size:1.3rem;background:transparent;color:var(--ink);border:0}
 
 /* level ladder, toast, cleared chips, pressed state */
-.ladder{display:flex;gap:4px;margin-top:12px}
+.ladder{display:flex;gap:3px;margin-top:12px}
 .ladder i{flex:1;height:7px;border-radius:4px;background:var(--line);transition:background .2s}
 .ladder i.done{background:var(--cc);opacity:.45}.ladder i.cur{background:var(--cc)}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 92px);transform:translateX(-50%);z-index:20;font-family:var(--f-display);font-weight:800;font-size:1.1rem;padding:10px 20px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);animation:pop .3s ease-out;white-space:nowrap}
@@ -353,30 +353,34 @@ const CATS={
 /* ---------- the 29 exercises ----------
    Difficulty is read from c.L at the start of EVERY round. Two correct rounds in a row move c.L up one level,
    two misses in a row move it down one (see c.trial in play()). Level 1 = easiest, 9 = hardest. */
-const lerp=(c,a,b)=>a+(b-a)*(c.L-1)/8, ilerp=(c,a,b)=>Math.round(lerp(c,a,b)), glerp=(c,a,b)=>Math.round(a*Math.pow(b/a,(c.L-1)/8)), tier=c=>c.L<=3?0:c.L<=6?1:2;
+/* difficulty progress: 0 at level 1, 1 at level 12 (Advanced max), up to 1.4 at level 17 (Expert) */
+const prog=c=>c.L<=12?(c.L-1)/11:1+(c.L-12)/5*.4;
+const lerp=(c,a,b)=>a+(b-a)*prog(c), ilerp=(c,a,b)=>Math.round(lerp(c,a,b)), glerp=(c,a,b)=>Math.round(a*Math.pow(b/a,prog(c))), tier=c=>c.L<=4?0:c.L<=8?1:c.L<=12?2:3;
+/* sequence length: +1 every two levels */
+const span=(c,s,max)=>Math.min(max,s+Math.floor((c.L-1)/2));
 const PACES={relaxed:{n:'Relaxed',f:1.4,d:'40% more time to look and answer. Good for starting out.'},normal:{n:'Normal',f:1,d:'The standard pace.'},challenge:{n:'Challenge',f:.8,d:'Shorter displays and less time to answer.'}};
 const pace=c=>{if(c&&c.noPace)return 1;try{return (PACES[store.__meta&&store.__meta.pace]||PACES.normal).f}catch(e){return 1}};
 /* timing for a level: a at level 1 down to b at level 9, scaled by the chosen pace */
-const tms=(c,a,b)=>Math.round(a*Math.pow(b/a,(c.L-1)/8)*pace(c)), rt=(c,a,b)=>lerp(c,a,b)/Math.sqrt(pace(c));
+const tms=(c,a,b,min=80)=>Math.round(Math.max(min,a*Math.pow(b/a,prog(c)))*pace(c)), rt=(c,a,b)=>lerp(c,a,b)/Math.sqrt(pace(c));
 async function fixate(c,b){const f=put(b,'+',50,50,2.4);f.style.color='var(--mute)';f.style.fontWeight='800';await c.sleep(Math.round(550*pace(c)));f.remove()}
 const GAMES=[
 /* ===== ATTENTION ===== */
 {id:'tracker',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
   const N=12,[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
-  for(let r=0;r<N;r++){const t=Math.min(7,1+Math.ceil(c.L/1.5)),d=ilerp(c,3,8),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2800,5500),show=tms(c,2200,1300);
+  for(let r=0;r<N;r++){const t=span(c,2,8),d=ilerp(c,3,8),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2800,5500),show=tms(c,2200,1300);
     ar.replaceChildren();const o=spawnOrbs(ar,t+d,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
     c.hint(`Round ${r+1}/${N} · remember these ${t}`);await c.sleep(show);o.forEach(q=>q.e.classList.remove('tgt'));c.hint('Keep your eyes on them…');
     await drift(c,o,W,H,dur,sp);c.hint(`Tap the ${t} you tracked`);let sel=0;
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;q.e.classList.add('sel');if(++sel===t)res()}));
     o.forEach(q=>{if(q.s)c.tally(q.t)});const ok=o.every(q=>!!q.s===q.t);
     o.forEach(q=>{q.e.onclick=null;q.e.classList.remove('sel');if(q.t)q.e.classList.add('tgt');else if(q.s)q.e.classList.add('no')});flash(c,ok,false);await c.sleep(700)}
-  c.finish(`Last round: ${Math.min(7,1+Math.ceil(c.L/1.5))} targets among ${Math.min(7,1+Math.ceil(c.L/1.5))+ilerp(c,3,8)} bubbles`);
+  c.finish(`Last round: ${span(c,2,8)} targets among ${span(c,2,8)+ilerp(c,3,8)} bubbles`);
 }},
 {id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. Each level up flashes faster and adds decoy signs.',async run(c){
   const N=20;
-  for(let r=0;r<N;r++){const T=tms(c,600,150),rad=lerp(c,30,44),nd=ilerp(c,0,6);const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
+  for(let r=0;r<N;r++){const T=tms(c,600,150),rad=lerp(c,30,44),nd=Math.min(7,ilerp(c,0,6));const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
     c.hint(`${r+1}/${N} · look at the +`);await fixate(c,b);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
-    shuffle([...Array(8).keys()].filter(i=>i!==pos)).slice(0,nd).forEach(i=>put(b,c.L>=7?pick(['🚧','⚠️','⛔']):'🚧',...ringXY(i,8,rad),1.9));
+    shuffle([...Array(8).keys()].filter(i=>i!==pos)).slice(0,nd).forEach(i=>put(b,tier(c)>=2?pick(['🚧','⚠️','⛔']):'🚧',...ringXY(i,8,rad),1.9));
     await c.show(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();
     c.hint('Which car was in the centre?');const pc=await ask(k,['🚗','🚙']);c.hint('Where was the 🚸 sign?');const sp=await tapOne(slots(b,8,rad));
     flash(c,pc===car&&sp===pos);await c.sleep(250)}
@@ -389,7 +393,7 @@ const GAMES=[
   const svg=o=>{const fill=o.f==='solid'?o.c:o.f==='empty'?'none':`url(#st${CO.indexOf(o.c)})`;const d={circle:'<circle cx="30" cy="30" r="24"',square:'<rect x="7" y="7" width="46" height="46"',triangle:'<polygon points="30,6 55,53 5,53"'}[o.s];return `<svg viewBox="0 0 60 60" width="90" height="90">${d} fill="${fill}" stroke="${o.c}" stroke-width="4"/></svg>`};
   const N=28;const[v,k]=lay(c);const rule=mk('div','tag');rule.style.fontSize='1rem';const show=mk('div','row');show.style.cssText='min-height:96px;display:flex;gap:14px;justify-content:center';v.append(rule,show);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
-  for(let r=0;r<N;r++){const T=tms(c,1000,300),win=Math.max(T+600,tms(c,1900,1100)),nr=[3,3,3,4,4,4,5,5,5][c.L-1],blk=c.L<=3?7:c.L<=6?5:4;
+  for(let r=0;r<N;r++){const T=tms(c,1000,300),win=Math.max(T+600,tms(c,1900,1100)),nr=[3,4,5,5][tier(c)],blk=[7,5,4,3][tier(c)];
     const R=RULES[Math.floor(r/blk)%nr];rule.textContent='Rule: '+R[0];c.hint('Tap Match only if the pair follows the rule');
     const a=rs(),want=Math.random()<.5;let b,t=0;do{b=rs()}while(R[1](a,b)!==want&&t++<300);const match=R[1](a,b);
     pressed=false;pad.classList.remove('on');await c.sleep(350);show.innerHTML=svg(a)+svg(b);live=true;await c.show(T);show.innerHTML='';await c.sleep(win-T);live=false;
@@ -400,7 +404,7 @@ const GAMES=[
   const N=28;const[v,k]=lay(c);const w=mk('div','big');w.style.letterSpacing='.1em';v.append(w);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint(hasSpeech?'Tap Match only if the sound is the MIDDLE letter':'Speech is not available, so the letter heard is written here.');
-  for(let r=0;r<N;r++){const L=c.L<=3?['A','O','I']:c.L<=6?['A','E','O','U','I']:['B','D','P','T','E','V'],inc=lerp(c,.3,.85),gap=tms(c,2500,1400);
+  for(let r=0;r<N;r++){const L=[['A','O','I'],['A','E','O','U','I'],['B','D','P','T','E','V'],['B','D','P','T','E','V','G','Z']][tier(c)],inc=Math.min(.95,lerp(c,.3,.85)),gap=tms(c,2500,1400);
     const mid=pick(L),flank=Math.random()<inc?pick(L.filter(x=>x!==mid)):mid,match=Math.random()<.5,heard=match?mid:pick(L.filter(x=>x!==mid));
     w.textContent=flank+flank+mid+flank+flank;pressed=false;pad.classList.remove('on');
     if(hasSpeech)say(heard,1.05);else c.hint('Heard: '+heard);
@@ -413,7 +417,7 @@ const GAMES=[
     [['🔺',['🔻','🔶','🔸','◀️','▶️']],['🐱',['🐯','🦁','🐈','😺','🐆']],['🌕',['🌖','🌔','🌝','🟡','🌓']]]];
   const[v,k]=lay(c);const w=mk('div','big');w.style.fontSize='6rem';v.append(w);const pad=mk('button','pad','Tap');k.append(pad);
   let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
-  for(let s=0;s<3;s++){const[tg,ds]=SETS[tier(c)][s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(1800);c.hint('Tap for everything except '+tg);
+  for(let s=0;s<3;s++){const[tg,ds]=SETS[Math.min(2,tier(c))][s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(1800);c.hint('Tap for everything except '+tg);
     let since=0;for(let i=0;i<16;i++){const dur=tms(c,1200,600),minGap=ilerp(c,2,6);since++;const isT=since>minGap&&Math.random()<.5;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
       await c.sleep(dur);live=false;w.textContent='';const good=isT?!pressed:pressed;if(!good||isT)flash(c,good);else c.tally(true);await c.sleep(140)}}
   c.finish(`Last pace: ${tms(c,1200,600)} ms per picture`);
@@ -421,7 +425,7 @@ const GAMES=[
 /* ===== BRAIN SPEED ===== */
 {id:'hawk',cat:'spd',name:'Hawk Eye',desc:'Birds flash around the screen for a split second. One of them is the hawk. Tap where it was. Each level up flashes faster, with more birds and clutter.',async run(c){
   const N=20;
-  for(let r=0;r<N;r++){const n=c.L<=3?8:c.L<=6?10:12,T=tms(c,900,200),rad=lerp(c,28,43),dis=['🐟','🐟','🐦','🐦','🐦','🦆','🦆','🕊️','🕊️'][c.L-1],cl=ilerp(c,0,16);
+  for(let r=0;r<N;r++){const n=[8,10,12,12][tier(c)],T=tms(c,900,200),rad=lerp(c,28,43),dis=['🐟','🐦','🦆','🕊️'][tier(c)],cl=ilerp(c,0,16);
     const[v]=lay(c),b=mk('div','box');v.append(b);const pos=rnd(n);
     c.hint(`${r+1}/${N} · look at the +, then find the 🦅`);await fixate(c,b);for(let i=0;i<n;i++)put(b,i===pos?'🦅':dis,...ringXY(i,n,rad),n>8?1.6:1.9);
     for(let j=0;j<cl;j++)put(b,pick(['🌿','🍃','☁️','🌱']),8+rnd(84),8+rnd(84),1.1).style.opacity=.55;
@@ -431,7 +435,7 @@ const GAMES=[
 }},
 {id:'detail',cat:'spd',name:'Eye for Detail',desc:'Arrows flash one after another in different places. Exactly two are identical. Tap the two spots where the identical ones appeared.',async run(c){
   const N=16;
-  for(let r=0;r<N;r++){const n=ilerp(c,3,5),delta=lerp(c,40,8),T=tms(c,750,220),rad=lerp(c,22,40);const[v]=lay(c),b=mk('div','box');v.append(b);
+  for(let r=0;r<N;r++){const n=Math.min(6,ilerp(c,3,5)),delta=Math.max(5,lerp(c,40,8)),T=tms(c,750,220),rad=lerp(c,22,40);const[v]=lay(c),b=mk('div','box');v.append(b);
     const A=rnd(360),angs=[A,A];let g=0;while(angs.length<n&&g++<800){const x=A+(Math.random()<.5?-1:1)*(delta+rnd(30));if(angs.every(y=>Math.abs(((x-y)%360+540)%360-180)>=delta*.9))angs.push(x)}
     const order=shuffle(angs.map((a,i)=>({a,same:i<2}))),pos=shuffle([...Array(8).keys()]).slice(0,order.length),sl=slots(b,8,rad);sl.forEach((s,i)=>{if(!pos.includes(i))s.style.visibility='hidden'});
     c.hint(`${r+1}/${N} · watch closely`);await c.sleep(450);
@@ -440,15 +444,15 @@ const GAMES=[
     await new Promise(res=>pos.forEach((p,i)=>sl[p].onclick=()=>{if(sel.includes(i))return;sel.push(i);sl[p].classList.add('lit');if(sel.length===2)res()}));
     const good=sel.every(i=>order[i].same);pos.forEach((p,i)=>{if(order[i].same)sl[p].classList.add('ok');else if(sel.includes(i))sl[p].classList.add('no')});
     flash(c,good);await c.sleep(550)}
-  c.finish(`Last round: ${ilerp(c,3,5)} arrows, ${tms(c,750,220)} ms each`);
+  c.finish(`Last round: ${Math.min(6,ilerp(c,3,5))} arrows, ${tms(c,750,220)} ms each`);
 }},
 {id:'sweeps',cat:'spd',name:'Sound Sweeps',needsAudio:1,desc:'You hear quick sounds that glide up or down in pitch. Report the direction of each one, in order. Each level up plays shorter sweeps, then more of them.',async run(c){
-  const N=18,ORD=['First','Second','Third'];
-  for(let r=0;r<N;r++){const dur=tms(c,400,60),n=c.L<=5?2:3;const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(450);
+  const N=18,ORD=['First','Second','Third','Fourth'];
+  for(let r=0;r<N;r++){const dur=tms(c,400,60,35),n=[2,2,3,4][tier(c)];const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(450);
     const d=[...Array(n)].map(()=>rnd(2));for(const x of d){x?tone(700,1300,dur):tone(1300,700,dur);await c.sleep(dur+Math.max(160,dur))}
     let all=true;for(let i=0;i<n;i++){c.hint(ORD[i]+' sound?');const a=await ask(k,['⬆ Up','⬇ Down']);if((a==='⬆ Up')!==!!d[i])all=false}
     flash(c,all)}
-  c.finish(`Last sweeps: ${tms(c,400,60)} ms`);
+  c.finish(`Last sweeps: ${tms(c,400,60,35)} ms`);
 }},
 {id:'vsweeps',cat:'spd',name:'Visual Sweeps',desc:'Striped rings move twice, each time either outward or inward. Report the direction of the first move, then the second. Each level up moves faster.',async run(c){
   const N=18,COLS=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'];
@@ -463,23 +467,23 @@ const GAMES=[
 {id:'tuning',cat:'spd',name:'Fine Tuning',needsAudio:1,desc:'You hear one word from a pair that sounds alike, like "bee" and "pea". Pick the one you heard. Each level up speaks faster and uses closer pairs.',async run(c){
   const P0=[['bee','pea'],['bay','day'],['tea','key'],['bit','pit'],['goat','coat'],['fan','van']],P2=[['fin','thin'],['sip','ship'],['vat','that'],['bun','done'],['gum','come'],['dune','tune'],['bark','park'],['zip','sip']];
   const N=20;if(!hasSpeech){c.hint('This exercise needs speech, which this device does not support.');await c.sleep(2500);c.finish('No speech on this device',0);return}
-  for(let r=0;r<N;r++){const P=[P0,P0.concat(P2),P2][tier(c)],rate=rt(c,.6,1.3);const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(350);await c.say(w,rate);
+  for(let r=0;r<N;r++){const P=[P0,P0.concat(P2),P2,P2][tier(c)],rate=rt(c,.6,1.3);const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(350);await c.say(w,rate);
     c.hint('Which did you hear?');const a=await ask(k,shuffle(pr));flash(c,a===w)}
   c.finish(`Last speed: ${rt(c,.6,1.3).toFixed(2)}×`);
 }},
 /* ===== MEMORY ===== */
 {id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one. Each level up adds an object and shortens the look.',async run(c){
   const KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'],N=16;
-  for(let r=0;r<N;r++){const n=ilerp(c,4,12),T=tms(c,2500,700),minD=lerp(c,16,11);const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
+  for(let r=0;r<N;r++){const n=Math.min(15,ilerp(c,4,12)),T=tms(c,2500,700),minD=Math.max(9,lerp(c,16,11));const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
     c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(400);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.show(T);
     b.replaceChildren();noise(b);await c.sleep(500);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.8));els.forEach(e=>e.style.cursor='pointer');
     c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m);await c.sleep(550)}
-  c.finish(`Last scene: ${ilerp(c,4,12)} objects`);
+  c.finish(`Last scene: ${Math.min(15,ilerp(c,4,12))} objects`);
 }},
 {id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a syllable when you turn it over. Find all the pairs. Clear a board in few moves twice in a row and the next board gets bigger.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti','zo','ne'],['ba','so','ki','da','me','ro','fa','ti','go','ne'],['ba','pa','da','ta','ga','ka','ma','na','fa','va']],N=5;
-  for(let r=0;r<N;r++){const pairs=[3,4,4,5,6,6,8,9,10][c.L-1],cols={3:3,4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=rt(c,.75,1.15),limit=Math.ceil(pairs*1.7);
-    const sy=shuffle(SY[tier(c)]).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false,moves=0;
+  for(let r=0;r<N;r++){const pairs=[3,3,4,4,4,5,5,6,6,6,8,8,8,9,9,10,10][c.L-1],cols={3:3,4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=rt(c,.75,1.15),limit=Math.ceil(pairs*1.7);
+    const sy=shuffle(SY[Math.min(2,tier(c))]).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false,moves=0;
     const[v]=lay(c),g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;v.append(g);
     c.hint(`Board ${r+1}/${N} · ${pairs} pairs · finish in ${limit} moves or fewer`);
     await new Promise(done=>cards.forEach(s=>{const b=mk('button','mcard','?');b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');b.textContent=hasSpeech?'🔊':s;say(s,rate);open.push([b,s]);
@@ -487,64 +491,64 @@ const GAMES=[
         if(s1===s2){c.tally(true);lock=true;setTimeout(()=>{b1.classList.add('done');b2.classList.add('done');b1.textContent=b2.textContent=s1;lock=false;if(++found===pairs)setTimeout(done,350)},400)}
         else{c.tally(false);lock=true;c.after(()=>{[b1,b2].forEach(x=>{x.classList.remove('up');x.textContent='?'});lock=false},800)}}};g.append(b)}));
     flash(c,moves<=limit,false);await c.sleep(500)}
-  c.finish(`Last board: ${[3,4,4,5,6,6,8,9,10][c.L-1]} pairs`);
+  c.finish(`Last board: ${[3,3,4,4,4,5,5,6,6,6,8,8,8,9,9,10,10][c.L-1]} pairs`);
 }},
 {id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. Get it right twice in a row and the next series is one longer.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti'],['ba','so','ki','da','me','ro','fa','ti'],['ba','pa','da','ta','ga','ka','ma','na']],N=16;
-  for(let r=0;r<N;r++){const Ls=c.L+1,rate=rt(c,.7,1.3),gap=tms(c,450,120),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[tier(c)]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
+  for(let r=0;r<N;r++){const Ls=span(c,2,10),rate=rt(c,.7,1.3),gap=tms(c,450,120),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[Math.min(2,tier(c))]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
     v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen to ${Ls} syllables`);await c.sleep(450);
     for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(650);v.innerHTML='<div class="big">·</div>'}await c.sleep(gap)}
     v.innerHTML='<div class="disp" style="font-size:2rem" id="d"></div>';c.hint('Tap them in order');const typed=[];
     await new Promise(res=>{const w=mk('div','grid3');shown.forEach(s=>{const b=mk('button','btn',s);b.onclick=()=>{typed.push(s);$('#d',v).textContent=typed.join(' ');if(typed.length===Ls)res()};w.append(b)});k.append(w)});
     seq.forEach((s,i)=>c.tally(typed[i]===s));const ok=typed.join()===seq.join();flash(c,ok,false);await c.sleep(450)}
-  c.finish(`Longest series: ${c.peak+1} syllables`);
+  c.finish(`Longest series: ${span({L:c.peak},2,10)} syllables`);
 }},
 {id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects. Get it right twice in a row and the next list is one step longer.',async run(c){
   const OBJ=[['🔴','red circle'],['🔵','blue circle'],['🟢','green circle'],['🟡','yellow circle'],['🟥','red square'],['🟦','blue square'],['🟩','green square'],['🟨','yellow square'],['🟠','orange circle'],['🟧','orange square'],['🟣','purple circle'],['🟪','purple square']];
   const N=14;
-  for(let r=0;r<N;r++){const k2=c.L+1,rate=rt(c,.85,1.2),cols=c.L<=3?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
+  for(let r=0;r<N;r++){const k2=span(c,2,9),rate=rt(c,.85,1.2),cols=tier(c)===0?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
     const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint(`${r+1}/${N} · listen to ${seq.length} steps…`);
     const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;const cells=items.map(it=>{const b=mk('button','cell',it[0]);g.append(b);return b});v.append(g);
     if(hasSpeech)await c.say(text,rate);else{c.hint(text);await c.sleep(1500+k2*1100)}
     c.hint('Now do it');const got=[];
     await new Promise(res=>cells.forEach((b,i)=>b.onclick=()=>{got.push(items[i]);b.classList.add('lit');if(got.length===seq.length)res()}));
     seq.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===seq[i]);flash(c,ok,false);await c.sleep(450)}
-  c.finish(`Longest list: ${c.peak+1} steps`);
+  c.finish(`Longest list: ${span({L:c.peak},2,9)} steps`);
 }},
 {id:'mindseye',cat:'mem',name:"Mind's Eye",desc:'A target shape is shown, then hidden. Then find it among look-alikes that differ in colour, shape or tilt. (Built from a short description, so it may differ from the original.)',async run(c){
   const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90],N=18;
   const html=o=>`<span style="display:inline-block;color:${o.c};transform:rotate(${o.r}deg)">${o.s}</span>`;
-  for(let r=0;r<N;r++){const n=ilerp(c,4,9),ch=c.L<=3?2:1,view=tms(c,2200,800),hold=glerp(c,600,2000);const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
+  for(let r=0;r<N;r++){const n=Math.min(12,ilerp(c,4,9)),ch=tier(c)===0?2:1,view=tms(c,2200,800),hold=glerp(c,600,2000);const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
     v.innerHTML=`<div class="big" style="font-size:6rem">${html(T)}</div>`;c.hint(`${r+1}/${N} · remember this one`);await c.show(view);v.innerHTML='';c.hint('Hold it in mind…');await c.sleep(hold);
     const set=[T];let g=0;while(set.length<n&&g++<500){const d={...T};shuffle(['s','c','r']).slice(0,ch).forEach(k=>{d[k]=pick(k==='s'?SH:k==='c'?CO:RO)});if(set.every(x=>x.s!==d.s||x.c!==d.c||x.r!==d.r))set.push(d)}
     const opts=shuffle(set),w=mk('div','g');w.style.gridTemplateColumns='repeat(3,1fr)';const els=opts.map(o=>{const b=mk('button','cell');b.innerHTML=html(o);b.style.fontSize='2.6rem';w.append(b);return b});v.append(w);
     c.hint('Tap the one you saw');const i=await tapOne(els),good=opts[i]===T;els[opts.indexOf(T)].classList.add('ok');if(!good)els[i].classList.add('no');flash(c,good);await c.sleep(500)}
-  c.finish(`Last round: ${ilerp(c,4,9)} choices after ${(glerp(c,600,2000)/1000).toFixed(1)} s`);
+  c.finish(`Last round: ${Math.min(12,ilerp(c,4,9))} choices after ${(glerp(c,600,2000)/1000).toFixed(1)} s`);
 }},
 {id:'hearhear',cat:'mem',name:'Hear, Hear',needsAudio:1,desc:'Learn a target sound, then listen to a stream of sounds. Tap only when you hear the target. Each level up uses decoys that sound closer to it. (Built from a short description, so it may differ from the original.)',async run(c){
-  const N=40,S={tgt:()=>tone(600,950,220),down:()=>tone(950,600,220),flat:()=>tone(780,780,220),near:()=>tone(600,950-lerp(c,350,70),220),nearlo:()=>tone(600+lerp(c,350,70)*.6,950,220),sq:()=>tone(600,950,220,.16,'square')};
+  const N=40,S={tgt:()=>tone(600,950,220),down:()=>tone(950,600,220),flat:()=>tone(780,780,220),near:()=>tone(600,950-Math.max(40,lerp(c,350,70)),220),nearlo:()=>tone(600+Math.max(40,lerp(c,350,70))*.6,950,220),sq:()=>tone(600,950,220,.16,'square')};
   const[v,k]=lay(c);v.innerHTML='<div class="big">🎧</div>';c.hint('This is the target sound');for(let i=0;i<3;i++){S.tgt();await c.sleep(650)}
   const pad=mk('button','pad','That’s it!');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint('Tap only for the target sound');
-  for(let i=0;i<N;i++){const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq']][tier(c)],gap=tms(c,1500,900),isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
+  for(let i=0;i<N;i++){const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq'],['near','nearlo','sq']][tier(c)],gap=tms(c,1500,900),isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
     await c.sleep(gap);if(pressed||isT)flash(c,pressed===isT);else c.tally(true)}
-  c.finish(`Closest decoy: ${Math.round(lerp(c,350,70))} Hz away`);
+  c.finish(`Closest decoy: ${Math.round(Math.max(40,lerp(c,350,70)))} Hz away`);
 }},
 {id:'rhythm',cat:'mem',name:'Rhythm Recall',needsAudio:1,desc:'Hear a short melody and watch its rhythm on screen, then tap the rhythm back on the pad. Get it right twice in a row and the next rhythm has one more note.',async run(c){
   const N=14;
-  for(let r=0;r<N;r++){const n=c.L+2,tol=lerp(c,.4,.18),IV=[[400,800],[300,600,900],[200,300,450,600,900]][tier(c)];const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
+  for(let r=0;r<N;r++){const n=span(c,3,10),tol=Math.max(.12,lerp(c,.4,.18)),IV=[[400,800],[300,600,900],[200,300,450,600,900],[150,250,350,450,600,800]][tier(c)];const[v,k]=lay(c),gaps=[...Array(n-1)].map(()=>pick(IV)),tot=gaps.reduce((a,b)=>a+b,0),line=mk('div','rhy');v.append(line);
     c.hint(`${r+1}/${N} · ${n} notes · listen and watch`);await c.sleep(450);let t=0;const marks=[0,...gaps.map(g=>t+=g)];
     for(let i=0;i<n;i++){const d=mk('b');d.style.left=(5+marks[i]/tot*90)+'%';line.append(d);{const f=pick([392,440,523,587,659]);tone(f,f,140,.25,'triangle')}if(i<n-1)await c.sleep(gaps[i])}
     await c.sleep(500);c.hint('Now tap it back');const pad=mk('button','pad','Tap');pad.style.minHeight='140px';k.append(pad);const taps=[];
     await new Promise(res=>pad.onpointerdown=()=>{taps.push(performance.now());tone(523,523,90,.2,'triangle');const u=mk('b','u');u.style.left=(5+(taps[taps.length-1]-taps[0])/tot*90)+'%';line.append(u);if(taps.length===n)res()});
     const got=taps.slice(1).map((x,i)=>x-taps[i]),oks=got.map((g,i)=>Math.abs(g-gaps[i])<=gaps[i]*tol+60);oks.forEach(o=>c.tally(o));const ok=oks.every(Boolean);flash(c,ok,false);await c.sleep(550)}
-  c.finish(`Longest rhythm: ${c.peak+2} notes`);
+  c.finish(`Longest rhythm: ${span({L:c.peak},3,10)} notes`);
 }},
 /* ===== PEOPLE SKILLS ===== */
 {id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job. Remember everyone twice in a row and the next group is one person bigger.',async run(c){
   const NAMES=[['Ann','Anna','Hanna','Amy'],['Ben','Ken','Len','Glen'],['Tom','Tim','Tod','Ted'],['Sara','Zara','Clara','Kara'],['Jon','Joan','Jan','Jean'],['Mia','Nia','Leah','Maya'],['Rob','Bob','Rod','Ron'],['Lily','Lucy','Lola','Luna']];
   const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'],N=8;
-  for(let r=0;r<N;r++){const k=Math.min(8,c.L+1),show=tms(c,3200,1800),sim=c.L>=4,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
+  for(let r=0;r<N;r++){const k=span(c,2,8),show=tms(c,3200,1800),sim=tier(c)>=1,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
     const names=pool.slice(0,k),jobs=shuffle(JOBS).slice(0,k),ppl=names.map((nm,i)=>({f:rface(),name:nm,job:jobs[i]}));
     for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint(`Group ${r+1}/${N} · meet ${k} people`);await c.sleep(show)}
     let all=true;for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
@@ -552,12 +556,12 @@ const GAMES=[
       const a=await ask(kk,nm);flash(c,a===p.name,true,false);c.hint('And their job?');
       const jb=shuffle([p.job,...shuffle([...new Set([...jobs,...JOBS])].filter(x=>x!==p.job)).slice(0,3)]);const b=await ask(kk,jb);flash(c,b===p.job,true,false);if(a!==p.name||b!==p.job)all=false}
     c.trial(all)}
-  c.finish(`Largest group: ${Math.min(8,c.peak+1)} people`);
+  c.finish(`Largest group: ${span({L:c.peak},2,8)} people`);
 }},
 {id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Answer them all right twice in a row and the next story is longer and faster.',async run(c){
   const NM=['Maria','Tom','Elena','Jack','Priya','Omar','Grace','Leo'],PL=['market','library','beach','station','farm','museum','bakery'],IT=['apples','books','candles','tickets','scarves','plates'],CL=['red','blue','green','yellow','white'],DY=['Monday','Tuesday','Friday','Saturday','Sunday'],TH=['umbrella','guitar','basket','camera','kite'],FD=['sandwiches','cookies','oranges','pancakes'];
   const N=7;
-  for(let r=0;r<N;r++){const ns=ilerp(c,2,5),rate=rt(c,.8,1.25),nq=c.L<=3?2:3;
+  for(let r=0;r<N;r++){const ns=Math.min(5,ilerp(c,2,5)),rate=rt(c,.8,1.25),nq=tier(c)===0?2:3;
     const A=pick(NM),B=pick(NM.filter(x=>x!==A)),p=pick(PL),p2=pick(PL.filter(x=>x!==p)),n=2+rnd(7),it=pick(IT),cl=pick(CL),d=pick(DY),th=pick(TH),n2=2+rnd(5),fd=pick(FD),n3=3+rnd(6);
     const S=[[`${A} went to the ${p} on ${d}.`,[['Where did '+A+' go?',p,PL],['On which day?',d,DY]]],[`${A} bought ${n} ${cl} ${it}.`,[['How many '+it+'?',String(n),['2','3','4','5','6','7','8']],['What colour were they?',cl,CL]]],
       [`There, ${A} met ${B}, who was carrying a ${th}.`,[['Who did '+A+' meet?',B,NM],['What was '+B+' carrying?',th,TH]]],[`Together they walked to the ${p2} and shared ${n2} ${fd}.`,[['Where did they walk to?',p2,PL],['What did they share?',fd,FD]]],
@@ -566,28 +570,28 @@ const GAMES=[
     if(hasSpeech)await c.say(story,rate);else{v.innerHTML=`<div class="story">${story}</div>`;await c.sleep(2500+story.length*40);v.innerHTML=''}
     let all=true;for(const[q,a,pool]of shuffle(S.flatMap(s=>s[1])).slice(0,nq)){c.hint(q);const ans=await ask(k,shuffle([a,...shuffle(pool.filter(x=>x!==a)).slice(0,3)]));flash(c,ans===a,true,false);if(ans!==a)all=false}
     c.trial(all)}
-  c.finish(`Longest story: ${ilerp({L:c.peak},2,5)} sentences`);
+  c.finish(`Longest story: ${Math.min(5,ilerp({L:c.peak},2,5))} sentences`);
 }},
 {id:'recog',cat:'ppl',name:'Recognition',desc:'See a face, then pick the same person out of a group. Each level up shows the group from an angle, adds faces, and makes them look more alike.',async run(c){
   const N=18;
-  for(let r=0;r<N;r++){const n=ilerp(c,3,6),diff=c.L<=3?3:c.L<=6?2:1,angled=c.L>=4,view=tms(c,2800,1200);const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
+  for(let r=0;r<N;r++){const n=Math.min(9,ilerp(c,3,6)),diff=[3,2,1,1][tier(c)],angled=tier(c)>=1,view=tms(c,2800,1200);const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
     v.innerHTML=faceSVG(p,'neutral');c.hint(`${r+1}/${N} · remember this face`);await c.show(view);v.innerHTML='';await c.sleep(400);
     const set=[p];while(set.length<n)set.push(varyFace(p,diff));const opts=shuffle(set),w=mk('div','faces');const els=opts.map(o=>{const b=mk('button');b.innerHTML=faceSVG(o,'neutral',1,ang);w.append(b);return b});v.append(w);
     c.hint('Which one is the same person?');const i=await tapOne(els);els[opts.indexOf(p)].style.outline='4px solid var(--good)';flash(c,opts[i]===p);await c.sleep(550)}
-  c.finish(`Last round: ${ilerp(c,3,6)} faces`);
+  c.finish(`Last round: ${Math.min(9,ilerp(c,3,6))} faces`);
 }},
 {id:'face2face',cat:'ppl',name:'Face to Face',desc:'A face flashes briefly. Then pick the face showing the same emotion. Each level up flashes faster, with subtler expressions and more choices.',async run(c){
   const ALL=['happy','sad','angry','surprised','afraid','disgusted','neutral','contempt','tired','proud','confused'],N=18;
-  for(let r=0;r<N;r++){const pool=ALL.slice(0,ilerp(c,5,11)),n=ilerp(c,3,6),kk=lerp(c,1,.35),T=tms(c,2000,500);const[v]=lay(c),e=pick(pool);
+  for(let r=0;r<N;r++){const pool=ALL.slice(0,Math.min(11,ilerp(c,5,11))),n=Math.min(9,ilerp(c,3,6)),kk=Math.max(.2,lerp(c,1,.35)),T=tms(c,2000,500);const[v]=lay(c),e=pick(pool);
     v.innerHTML=faceSVG(rface(),e,kk);c.hint(`${r+1}/${N} · what is this person feeling?`);await c.show(T);v.innerHTML='';await c.sleep(350);
     const em=shuffle([e,...shuffle(pool.filter(x=>x!==e)).slice(0,n-1)]),w=mk('div','faces');const els=em.map(x=>{const b=mk('button');b.innerHTML=faceSVG(rface(),x,kk);w.append(b);return b});v.append(w);
     c.hint('Tap the face with the same emotion');const i=await tapOne(els);els[em.indexOf(e)].style.outline='4px solid var(--good)';flash(c,em[i]===e);await c.sleep(550)}
-  c.finish(`Last round: ${ilerp(c,5,11)} emotions, ${tms(c,2000,500)} ms flash`);
+  c.finish(`Last round: ${Math.min(11,ilerp(c,5,11))} emotions, ${tms(c,2000,500)} ms flash`);
 }},
 /* ===== INTELLIGENCE ===== */
 {id:'bender',cat:'int',name:'Mind Bender',desc:'Two numbers appear. If they are digits, tap the HIGHER one. If they are written as words, tap the LOWER one. Each level up gives you less time.',async run(c){
   const N=30;const[v,k]=lay(c);const rule=mk('p','tag');rule.textContent='Digits → tap higher · Words → tap lower';v.append(rule);
-  for(let r=0;r<N;r++){const win=tms(c,3500,1400),max=c.L<=3?10:20,close=c.L>=7;const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
+  for(let r=0;r<N;r++){const win=tms(c,3500,1400),max=tier(c)===0?10:20,close=tier(c)>=2;const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
     const words=Math.random()<.5,lab=x=>words?NUMW[x]:String(x),want=words?Math.min(a,b):Math.max(a,b);c.hint(`${r+1}/${N} · ${(win/1000).toFixed(1)} s`);
     const got=await new Promise(res=>{k.replaceChildren();const w=mk('div','grid2');[a,b].forEach(x=>{const bt=mk('button','btn',lab(x));bt.style.minHeight='110px';bt.style.fontSize=words?'1.4rem':'2.6rem';bt.onclick=()=>res(x);w.append(bt)});k.append(w);c.after(()=>res(null),win)});
     k.replaceChildren();flash(c,got===want);await c.sleep(150)}
@@ -595,7 +599,7 @@ const GAMES=[
 }},
 {id:'cardshark',cat:'int',name:'Card Shark',desc:'Cards appear one at a time. Say whether each card matches the one shown N cards earlier. Each level up goes further back or matches on more features.',async run(c){
   const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9'],N=36,hist=[];const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,4,4][c.L-1],m=['suit','number','suit','number','both','number','both','both','both'][c.L-1],win=tms(c,3000,1600);
+  for(let r=0;r<N;r++){const n=[1,1,1,2,2,2,3,3,3,4,4,4,4,5,5,6,6][c.L-1],m=c.L>12?'both':['suit','number','both'][(c.L-1)%3],win=tms(c,3000,1600);
     const same=(x,y)=>m==='suit'?x.s===y.s:m==='number'?x.r===y.r:x.s===y.s&&x.r===y.r,prev=hist.length>=n?hist[hist.length-n]:null;let cd;
     if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&same(cd,prev)&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · match the ${m==='both'?'suit AND number':m}`);
@@ -603,11 +607,11 @@ const GAMES=[
     if(!prev){await c.sleep(1200);v.innerHTML='';await c.sleep(250);continue}
     const a=await Promise.race([ask(k,['Match','No match']),c.sleep(win).then(()=>null)]);k.replaceChildren();
     flash(c,a!==null&&(a==='Match')===same(cd,prev));v.innerHTML='';await c.sleep(200)}
-  c.finish(`Reached ${[1,1,2,2,2,3,3,4,4][c.peak-1]}-back`);
+  c.finish(`Reached ${[1,1,1,2,2,2,3,3,3,4,4,4,4,5,5,6,6][c.peak-1]}-back`);
 }},
 {id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked. Get it right twice in a row and the next round has one more ball.',async run(c){
   const N=12,[W,H]=arenaSize();
-  for(let r=0;r<N;r++){const k=Math.min(9,c.L+2),ex=ilerp(c,0,3),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2500,5000),mode=['fwd','back','mix'][tier(c)];
+  for(let r=0;r<N;r++){const k=span(c,3,10),ex=Math.min(4,ilerp(c,0,3)),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2500,5000),mode=['fwd','back','mix','mix'][tier(c)];
     const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
     const o=spawnOrbs(ar,k+ex,W,H),nums=shuffle([...Array(k)].map((_,i)=>i+1));o.forEach((q,i)=>{q.n=nums[i]||0;q.e.textContent=q.n||'';if(!q.n)q.e.style.background='var(--mute)'});
     c.hint(`Round ${r+1}/${N} · remember ${k} numbers`);await c.sleep(1300+k*350);o.forEach(q=>{q.e.textContent='';q.e.style.background=''});
@@ -615,23 +619,23 @@ const GAMES=[
     c.hint('Tap in this order: '+order.join(' → '));const got=[];
     await new Promise(res=>o.forEach(q=>q.e.onclick=()=>{if(q.s)return;q.s=1;got.push(q.n);q.e.textContent=q.n||'✕';q.e.classList.add('sel');if(got.length===k)res()}));
     order.forEach((x,i)=>c.tally(got[i]===x));const ok=got.every((x,i)=>x===order[i]);flash(c,ok,false);await c.sleep(650)}
-  c.finish(`Most balls: ${Math.min(9,c.peak+2)}`);
+  c.finish(`Most balls: ${span({L:c.peak},3,10)}`);
 }},
 {id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier. Each level up goes further back.',async run(c){
   const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'],N=30,hist=[];const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,3,4][c.L-1],rate=rt(c,.95,1.2),win=tms(c,3800,2200),prev=hist.length>=n?hist[hist.length-n]:null;let cd;
+  for(let r=0;r<N;r++){const n=[1,1,1,2,2,2,2,3,3,3,3,4,4,4,5,5,5][c.L-1],rate=rt(c,.95,1.2),win=tms(c,3800,2200),prev=hist.length>=n?hist[hist.length-n]:null;let cd;
     if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&cd.s===prev.s&&cd.r===prev.r&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · same card as ${n} before?`);v.innerHTML='<div class="big">🔊</div>';
     const text=cd.r+' of '+cd.s;if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="big" style="font-size:2rem">${text}</div>`;await c.sleep(1100)}
     if(!prev){await c.sleep(400);continue}
     const a=await Promise.race([ask(k,['Match','No match']),c.sleep(win).then(()=>null)]);k.replaceChildren();
     flash(c,a!==null&&(a==='Match')===(cd.s===prev.s&&cd.r===prev.r));await c.sleep(200)}
-  c.finish(`Reached ${[1,1,2,2,2,3,3,3,4][c.peak-1]}-back by ear`);
+  c.finish(`Reached ${[1,1,1,2,2,2,2,3,3,3,3,4,4,4,5,5,5][c.peak-1]}-back by ear`);
 }},
 /* ===== NAVIGATION ===== */
 {id:'rightturn',cat:'nav',name:'Right Turn',desc:'Two rotated shapes are shown. Decide whether they are the same shape turned, or a mirror image. Each level up gives you less time and harder shapes.',async run(c){
   const N=24;
-  for(let r=0;r<N;r++){const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15][tier(c)],win=tms(c,6000,2200);
+  for(let r=0;r<N;r++){const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15,15][tier(c)],win=tms(c,6000,2200);
     const[v,k]=lay(c),ch=pick(G),mir=Math.random()<.5,a1=rnd(360/step)*step,a2=rnd(360/step)*step;
     v.innerHTML=`<div class="rt"><div><span style="display:inline-block;transform:rotate(${a1}deg)">${ch}</span></div><div><span style="display:inline-block;transform:rotate(${a2}deg) scaleX(${mir?-1:1})">${ch}</span></div></div>`;
     c.hint(`${r+1}/${N} · same or mirror? ${(win/1000).toFixed(1)} s`);const a=await Promise.race([ask(k,['Same','Mirror']),c.sleep(win).then(()=>null)]);k.replaceChildren();
@@ -639,11 +643,11 @@ const GAMES=[
   c.finish(`Last answer window: ${(tms(c,6000,2200)/1000).toFixed(1)} s`);
 }},
 {id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory. Get a grid fully right twice in a row and the next has one more object.',async run(c){
-  const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓','🌙'],N=8;
+  const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓','🌙','🍄','🔑','🎲','🌼'],N=8;
   const TF=[['shifted one column right (wrapping around)',(r,cc,n)=>[r,(cc+1)%n]],['flipped left to right',(r,cc,n)=>[r,n-1-cc]],['flipped top to bottom',(r,cc,n)=>[n-1-r,cc]],['rotated 90° clockwise',(r,cc,n)=>[cc,n-1-r]],['rotated 90° anticlockwise',(r,cc,n)=>[n-1-cc,r]]];
-  for(let rd=0;rd<N;rd++){const n=c.L<=3?3:c.L<=6?4:5,k=Math.min(10,c.L+2),mem=tms(c,6000,3000),pool=c.L<=2?TF.slice(0,1):c.L<=5?TF.slice(0,3):TF;
+  for(let rd=0;rd<N;rd++){const n=[3,4,5,6][tier(c)],k=span(c,3,12),mem=tms(c,6000,3000),pool=c.L<=3?TF.slice(0,1):c.L<=7?TF.slice(0,3):TF;
     const cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k);let tf=pick(pool);
-    if(c.L>=8){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3);const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
+    if(c.L>=11){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3);const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
     const[v,kk]=lay(c);const grid=()=>{const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${n},1fr)`;const cs=[...Array(n*n)].map(()=>{const b=mk('button','cell');if(n>4)b.style.fontSize='1.4rem';g.append(b);return b});v.replaceChildren(g);return cs};
     let cs=grid();cells.forEach((p,i)=>cs[p].textContent=objs[i]);c.hint(`Round ${rd+1}/${N} · memorise ${k} objects`);await c.sleep(mem);cs.forEach(b=>b.textContent='');
     c.hint('The grid is '+tf[0]+'. Rebuild it: pick an object, then a cell.');await c.sleep(700);cs=grid();const placed={};let cur=null;
@@ -653,22 +657,22 @@ const GAMES=[
     await new Promise(res=>done.onclick=res);let right=0;
     cells.forEach((p,i)=>{const[r2,c2]=tf[1](Math.floor(p/n),p%n,n),q=r2*n+c2,ok=placed[q]===objs[i];c.tally(ok);if(ok){right++;cs[q].classList.add('ok')}else{cs[q].classList.add('no');cs[q].textContent=objs[i]}});
     kk.replaceChildren();flash(c,right===k,false);await c.sleep(1400)}
-  c.finish(`Most objects: ${Math.min(10,c.peak+2)}`);
+  c.finish(`Most objects: ${span({L:c.peak},3,12)}`);
 }},
 {id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing. Get both right twice in a row and the next ride has one more turn.',async run(c){
   const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'],N=12;
-  for(let r=0;r<N;r++){const L=c.L,nst=ilerp(c,3,7),rate=rt(c,.85,1.2);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
+  for(let r=0;r<N;r++){const L=span(c,1,9),nst=Math.min(8,ilerp(c,3,7)),rate=rt(c,.85,1.2);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
     const parts=[`You board the train facing ${start}.`,`The stops are ${stops.join(', ')}.`,`Get off at ${stops[off]}.`];steps.forEach(s=>{parts.push(s==='around'?'Turn around.':`Turn ${s}.`);f=(f+(s==='left'?3:s==='right'?1:2))%4});
     const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint(`${r+1}/${N} · ${L} turn${L>1?'s':''} · listen carefully`);await c.sleep(400);
     if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="story">${text}</div>`;await c.sleep(3000+text.length*40);v.innerHTML='<div class="big">🚆</div>'}
     c.hint('Which stop did you get off at?');const a1=await ask(k,shuffle([stops[off],...shuffle(stops.filter(x=>x!==stops[off])).slice(0,3)]));
     flash(c,a1===stops[off],true,false);c.hint('Which way are you facing now?');const a2=await ask(k,['North','East','South','West']);flash(c,a2.toLowerCase()===D[f],true,false);
     c.trial(a1===stops[off]&&a2.toLowerCase()===D[f]);await c.sleep(350)}
-  c.finish(`Most turns followed: ${c.peak}`);
+  c.finish(`Most turns followed: ${span({L:c.peak},1,9)}`);
 }},
 {id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. Each level up is faster and busier.',async run(c){
   const N=18;
-  for(let r=0;r<N;r++){const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']][tier(c)],IT=tier(c)===2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],D=tms(c,5000,2200),nb=ilerp(c,3,7);
+  for(let r=0;r<N;r++){const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3'],['#9aa3b3','#6b7383']][tier(c)],IT=tier(c)>=2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],D=tms(c,5000,2200),nb=Math.min(8,ilerp(c,3,7));
     const[v]=lay(c),road=mk('div','road');road.style.background=`linear-gradient(${SC[0]} 0 35%,${SC[1]} 35%)`;
     road.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="47,35 53,35 95,100 5,100" fill="#555"/><polygon points="49.6,35 50.4,35 51.5,100 48.5,100" fill="#eee"/></svg>';v.append(road);
     const target=pick(IT),batch=shuffle([target,...shuffle(IT.filter(x=>x!==target)).slice(0,nb-1)]),lanes=shuffle([-1,-.7,-.4,-.12,.15,.42,.7,1]).slice(0,batch.length);
@@ -677,7 +681,7 @@ const GAMES=[
       const f=t=>{if(!c.alive||fin)return;const p=(t-t0)/D;els.forEach(o=>{const q=Math.max(0,Math.min(1,(p-o.delay)/(1-o.delay)));o.d.style.top=(35+q*q*70)+'%';o.d.style.left=(50+o.l*q*q*55)+'%';o.d.style.fontSize=(.5+q*q*3.6)+'rem';o.d.style.opacity=q>0?1:0});
         if(p>=1.05){fin=true;done(false)}else requestAnimationFrame(f)};requestAnimationFrame(f)});
     flash(c,res);await c.sleep(300)}
-  c.finish(`Last round: ${ilerp(c,3,7)} objects, ${(tms(c,5000,2200)/1000).toFixed(1)} s`);
+  c.finish(`Last round: ${Math.min(8,ilerp(c,3,7))} objects, ${(tms(c,5000,2200)/1000).toFixed(1)} s`);
 }}
 ];
 
@@ -728,8 +732,18 @@ document.addEventListener('click',e=>{if(Date.now()-fastAt<450){e.stopPropagatio
 /* ---------- screens ---------- */
 const app=$('#app');
 let live=null;
-const TIERS=[{name:'Beginner',sub:'Slow and forgiving',c:'var(--t1)'},{name:'Medium',sub:'Faster, more to hold in mind',c:'var(--t2)'},{name:'Advanced',sub:'Split-second flashes, heavy load',c:'var(--t3)'}];
-const PASS=.7,LEVELS=9,tierOf=L=>L<=3?0:L<=6?1:2;
+const TIERS=[{name:'Beginner',sub:'Slow and forgiving',c:'var(--t1)',from:1,to:4},{name:'Medium',sub:'Faster, more to hold in mind',c:'var(--t2)',from:5,to:8},{name:'Advanced',sub:'Split-second flashes, heavy load',c:'var(--t3)',from:9,to:12},{name:'Expert',sub:'The hardest: fastest, longest, most alike',c:'var(--t4)',from:13,to:17}];
+const PASS=.7,LEVELS=17,tierOf=L=>L<=4?0:L<=8?1:L<=12?2:3;
+/* move progress saved on the old 9-level scale onto the 17-level scale (old 9 = new 12) */
+const toNew=L=>Math.max(1,Math.min(12,Math.round(1+(L-1)*11/8)));
+function migrateLevels(){let changed=false;Object.entries(store).forEach(([k,e])=>{if(k==='__meta'||!e||typeof e!=='object'||e.lvv===2)return;
+  if(e.lv)e.lv=toNew(e.lv);if(e.peak)e.peak=toNew(e.peak);
+  ['stars','acc'].forEach(f=>{if(e[f]&&typeof e[f]==='object'){const o={};Object.entries(e[f]).forEach(([l,v])=>{const n=toNew(+l);o[n]=Math.max(o[n]||0,v)});e[f]=o}});
+  if(Array.isArray(e.hist))e.hist.forEach(h=>{h.L=toNew(h.L);if(h.peak)h.peak=toNew(h.peak)});
+  e.lvv=2;changed=true});
+  const m=store.__meta;if(m&&m.plan&&Array.isArray(m.plan.items)&&!m.plan.lvv){m.plan.items.forEach(it=>it.L=toNew(it.L));m.plan.lvv=2;changed=true}
+  if(changed)save()}
+migrateLevels();
 const starsFor=acc=>acc>=.95?3:acc>=.85?2:acc>=PASS?1:0;
 const LOCK=SVG('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',18);
 const CHECKI=SVG('<path d="M5 12.5l4.5 4.5L19 7.5"/>',18);
@@ -791,7 +805,7 @@ function todayPlan(){const m=meta();if(!m.plan||m.plan.d!==today()){m.plan=makeP
 const planDone=p=>p.res.filter(r=>r!=null).length;
 
 /* ---------- brain check (baseline + monthly re-test) ---------- */
-const CHECK=[['double','att'],['hawk','spd'],['scene','mem'],['face2face','ppl'],['cardshark','int'],['rightturn','nav']],CHECK_L=4,CHECK_EVERY=30;
+const CHECK=[['double','att'],['hawk','spd'],['scene','mem'],['face2face','ppl'],['cardshark','int'],['rightturn','nav']],CHECK_L=5,CHECK_EVERY=30;
 function checkState(){const m=meta(),last=m.checks[m.checks.length-1];
   if(m.check&&m.check.acc)return {inProgress:true,done:Object.keys(m.check.acc).length};
   if(!last)return {due:true,first:true};const ago=dayDiff(last.d,today());return {due:ago>=CHECK_EVERY,ago,next:Math.max(0,CHECK_EVERY-ago)}}
@@ -868,7 +882,7 @@ function intro(g,selL){
     <div><p class="eyebrow" style="margin-bottom:12px">How to play</p><ol class="steps">${stepsOf(g).map(s=>`<li><span>${s}</span></li>`).join('')}</ol></div>
     ${g.needsAudio?`<p class="note">${SPK(18)} Turn your sound on for this one.</p>`:''}${paren?`<p class="note">${paren}</p>`:''}
    </div><div class="dock"><button class="cta" id="go"></button></div>`;
-  const draw=()=>{$('#lvls').innerHTML=TIERS.map((T,ti)=>`<div class="tier" style="--tc:${T.c}"><div class="tier-h"><b>${T.name}</b><span>${T.sub}</span></div><div class="lvrow">${[1,2,3].map(j=>{const L=ti*3+j,lock=L>e.lv,s=e.stars[L]||0;
+  const draw=()=>{$('#lvls').innerHTML=TIERS.map((T,ti)=>`<div class="tier" style="--tc:${T.c}"><div class="tier-h"><b>${T.name} · ${T.from}–${T.to}</b><span>${T.sub}</span></div><div class="lvrow" style="grid-template-columns:repeat(${T.to-T.from+1},1fr)">${[...Array(T.to-T.from+1)].map((_,j)=>{const L=T.from+j,lock=L>e.lv,s=e.stars[L]||0;
       return `<button class="lvb${L===sel?' sel':''}" data-l="${L}" ${lock?`disabled aria-label="Level ${L} locked"`:`aria-label="Level ${L}, ${s} stars"`}><b>${lock?LOCK:L}</b><span>${lock?'&nbsp;':starRow(s)}</span></button>`}).join('')}</div></div>`).join('');
     $('#lvls').querySelectorAll('.lvb:not([disabled])').forEach(b=>b.onclick=()=>{sel=+b.dataset.l;draw()});
     $('#go').textContent=`Start level ${sel} · ${TIERS[tierOf(sel)].name}`};

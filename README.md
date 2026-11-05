@@ -1,6 +1,6 @@
 # Mind Gym
 
-29 brain-training exercises in six areas (Attention, Brain Speed, Memory, People Skills, Intelligence, Navigation), packaged as an Android app. Each exercise has 9 levels (Beginner 1–3, Medium 4–6, Advanced 7–9). Difficulty adapts while you play: two right in a row moves you up a level, two misses in a row moves you down. A daily 15-minute workout targets your weak areas, a monthly brain check measures change, the brain report charts your progress, and the Android app can send a daily reminder.
+29 brain-training exercises in six areas (Attention, Brain Speed, Memory, People Skills, Intelligence, Navigation), packaged as an Android app. Each exercise has 17 levels (Beginner 1–4, Medium 5–8, Advanced 9–12, Expert 13–17). Difficulty adapts while you play: two right in a row moves you up a level, two misses in a row moves you down. A daily 15-minute workout targets your weak areas, a monthly brain check measures change, the brain report charts your progress, and the Android app can send a daily reminder.
 
 ## Install on Android
 
