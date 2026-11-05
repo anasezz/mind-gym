@@ -254,6 +254,13 @@ canvas.sw{width:min(100%,300px);aspect-ratio:1;border-radius:50%;border:2px soli
 .cchip b{color:var(--ink);font-family:var(--f-display)}
 .cchip.new{border-color:var(--cc)}
 button.pressed{transform:translateY(3px);filter:brightness(.93)}
+
+.paces{display:flex;flex-direction:column;gap:10px}
+.pace{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;gap:3px;box-shadow:0 3px 0 var(--line)}
+.pace b{font-family:var(--f-display);font-size:1.05rem}
+.pace span{font-size:.84rem;color:var(--mute);line-height:1.35}
+.pace.sel{border-color:var(--accent);box-shadow:0 3px 0 var(--accent)}
+.pace.sel b::after{content:" ✓";color:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <div id="app"></div>
@@ -347,11 +354,16 @@ const CATS={
    Difficulty is read from c.L at the start of EVERY round. Two correct rounds in a row move c.L up one level,
    two misses in a row move it down one (see c.trial in play()). Level 1 = easiest, 9 = hardest. */
 const lerp=(c,a,b)=>a+(b-a)*(c.L-1)/8, ilerp=(c,a,b)=>Math.round(lerp(c,a,b)), glerp=(c,a,b)=>Math.round(a*Math.pow(b/a,(c.L-1)/8)), tier=c=>c.L<=3?0:c.L<=6?1:2;
+const PACES={relaxed:{n:'Relaxed',f:1.4,d:'40% more time to look and answer. Good for starting out.'},normal:{n:'Normal',f:1,d:'The standard pace.'},challenge:{n:'Challenge',f:.8,d:'Shorter displays and less time to answer.'}};
+const pace=c=>{if(c&&c.noPace)return 1;try{return (PACES[store.__meta&&store.__meta.pace]||PACES.normal).f}catch(e){return 1}};
+/* timing for a level: a at level 1 down to b at level 9, scaled by the chosen pace */
+const tms=(c,a,b)=>Math.round(a*Math.pow(b/a,(c.L-1)/8)*pace(c)), rt=(c,a,b)=>lerp(c,a,b)/Math.sqrt(pace(c));
+async function fixate(c,b){const f=put(b,'+',50,50,2.4);f.style.color='var(--mute)';f.style.fontWeight='800';await c.sleep(Math.round(550*pace(c)));f.remove()}
 const GAMES=[
 /* ===== ATTENTION ===== */
 {id:'tracker',cat:'att',name:'Target Tracker',desc:'Some bubbles light up. Then look-alikes join and everything drifts around. When it stops, tap the bubbles you were tracking.',async run(c){
   const N=12,[W,H]=arenaSize(),[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
-  for(let r=0;r<N;r++){const t=Math.min(7,1+Math.ceil(c.L/1.5)),d=ilerp(c,3,8),sp=lerp(c,70,250),dur=lerp(c,2800,6000),show=glerp(c,2000,1000);
+  for(let r=0;r<N;r++){const t=Math.min(7,1+Math.ceil(c.L/1.5)),d=ilerp(c,3,8),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2800,5500),show=tms(c,2200,1300);
     ar.replaceChildren();const o=spawnOrbs(ar,t+d,W,H);o.forEach((q,i)=>{q.t=i<t;if(q.t)q.e.classList.add('tgt')});
     c.hint(`Round ${r+1}/${N} · remember these ${t}`);await c.sleep(show);o.forEach(q=>q.e.classList.remove('tgt'));c.hint('Keep your eyes on them…');
     await drift(c,o,W,H,dur,sp);c.hint(`Tap the ${t} you tracked`);let sel=0;
@@ -362,13 +374,13 @@ const GAMES=[
 }},
 {id:'double',cat:'att',name:'Double Decision',desc:'A car flashes in the centre while a road sign flashes at the edge. Pick the car you saw, then tap where the sign was. Each level up flashes faster and adds decoy signs.',async run(c){
   const N=20;
-  for(let r=0;r<N;r++){const T=glerp(c,520,40),rad=lerp(c,30,44),nd=ilerp(c,0,7);const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
-    c.hint(`${r+1}/${N} · watch the centre`);await c.sleep(450);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
+  for(let r=0;r<N;r++){const T=tms(c,600,150),rad=lerp(c,30,44),nd=ilerp(c,0,6);const[v,k]=lay(c),b=mk('div','box');v.append(b);const car=pick(['🚗','🚙']),pos=rnd(8);
+    c.hint(`${r+1}/${N} · look at the +`);await fixate(c,b);put(b,car,50,50,2.6);put(b,'🚸',...ringXY(pos,8,rad),1.9);
     shuffle([...Array(8).keys()].filter(i=>i!==pos)).slice(0,nd).forEach(i=>put(b,c.L>=7?pick(['🚧','⚠️','⛔']):'🚧',...ringXY(i,8,rad),1.9));
-    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();
+    await c.show(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();
     c.hint('Which car was in the centre?');const pc=await ask(k,['🚗','🚙']);c.hint('Where was the 🚸 sign?');const sp=await tapOne(slots(b,8,rad));
     flash(c,pc===car&&sp===pos);await c.sleep(250)}
-  c.finish(`Last flash: ${glerp(c,520,40)} ms`);
+  c.finish(`Last flash: ${tms(c,600,150)} ms`);
 }},
 {id:'divided',cat:'att',name:'Divided Attention',desc:'Two shapes flash. Tap Match only when they follow the rule on screen (same colour, same shape, same fill, or a combination). The rule keeps changing.',async run(c){
   const SH=['circle','square','triangle'],CO=['#e5483d','#2f7de1','#2fa84f'],FI=['solid','striped','empty'];
@@ -377,23 +389,23 @@ const GAMES=[
   const svg=o=>{const fill=o.f==='solid'?o.c:o.f==='empty'?'none':`url(#st${CO.indexOf(o.c)})`;const d={circle:'<circle cx="30" cy="30" r="24"',square:'<rect x="7" y="7" width="46" height="46"',triangle:'<polygon points="30,6 55,53 5,53"'}[o.s];return `<svg viewBox="0 0 60 60" width="90" height="90">${d} fill="${fill}" stroke="${o.c}" stroke-width="4"/></svg>`};
   const N=28;const[v,k]=lay(c);const rule=mk('div','tag');rule.style.fontSize='1rem';const show=mk('div','row');show.style.cssText='min-height:96px;display:flex;gap:14px;justify-content:center';v.append(rule,show);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
-  for(let r=0;r<N;r++){const T=glerp(c,900,150),win=Math.max(T+450,glerp(c,1700,850)),nr=[3,3,3,4,4,4,5,5,5][c.L-1],blk=c.L<=3?7:c.L<=6?5:4;
+  for(let r=0;r<N;r++){const T=tms(c,1000,300),win=Math.max(T+600,tms(c,1900,1100)),nr=[3,3,3,4,4,4,5,5,5][c.L-1],blk=c.L<=3?7:c.L<=6?5:4;
     const R=RULES[Math.floor(r/blk)%nr];rule.textContent='Rule: '+R[0];c.hint('Tap Match only if the pair follows the rule');
     const a=rs(),want=Math.random()<.5;let b,t=0;do{b=rs()}while(R[1](a,b)!==want&&t++<300);const match=R[1](a,b);
-    pressed=false;pad.classList.remove('on');await c.sleep(350);show.innerHTML=svg(a)+svg(b);live=true;await c.sleep(T);show.innerHTML='';await c.sleep(win-T);live=false;
+    pressed=false;pad.classList.remove('on');await c.sleep(350);show.innerHTML=svg(a)+svg(b);live=true;await c.show(T);show.innerHTML='';await c.sleep(win-T);live=false;
     flash(c,pressed===match)}
-  c.finish(`Last flash: ${glerp(c,900,150)} ms`);
+  c.finish(`Last flash: ${tms(c,1000,300)} ms`);
 }},
 {id:'mixed',cat:'att',name:'Mixed Signals',needsAudio:1,desc:'You see a row of letters and hear one letter. Tap Match only when the letter you hear is the same as the middle letter on screen.',async run(c){
   const N=28;const[v,k]=lay(c);const w=mk('div','big');w.style.letterSpacing='.1em';v.append(w);
   const pad=mk('button','pad','Match');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint(hasSpeech?'Tap Match only if the sound is the MIDDLE letter':'Speech is not available, so the letter heard is written here.');
-  for(let r=0;r<N;r++){const L=c.L<=3?['A','O','I']:c.L<=6?['A','E','O','U','I']:['B','D','P','T','E','V'],inc=lerp(c,.3,.85),gap=glerp(c,2300,1100);
+  for(let r=0;r<N;r++){const L=c.L<=3?['A','O','I']:c.L<=6?['A','E','O','U','I']:['B','D','P','T','E','V'],inc=lerp(c,.3,.85),gap=tms(c,2500,1400);
     const mid=pick(L),flank=Math.random()<inc?pick(L.filter(x=>x!==mid)):mid,match=Math.random()<.5,heard=match?mid:pick(L.filter(x=>x!==mid));
     w.textContent=flank+flank+mid+flank+flank;pressed=false;pad.classList.remove('on');
     if(hasSpeech)say(heard,1.05);else c.hint('Heard: '+heard);
     await c.sleep(gap);flash(c,pressed===match);w.textContent='';await c.sleep(200)}
-  c.finish(`Last pace: ${(glerp(c,2300,1100)/1000).toFixed(1)} s per letter`);
+  c.finish(`Last pace: ${(tms(c,2500,1400)/1000).toFixed(1)} s per letter`);
 }},
 {id:'freeze',cat:'att',name:'Freeze Frame',desc:'First you see a target picture. Then pictures stream past. Tap for every picture that is NOT the target, and freeze when the target appears.',async run(c){
   const SETS=[[['⭐',['🍎','🐟','🚲','🌂','🎈','🔑']],['🐱',['🚗','🌵','🍩','📚','⚽']],['🔔',['🍌','🧦','🪁','🌻','🧲']]],
@@ -402,71 +414,71 @@ const GAMES=[
   const[v,k]=lay(c);const w=mk('div','big');w.style.fontSize='6rem';v.append(w);const pad=mk('button','pad','Tap');k.append(pad);
   let pressed=false,live=false;pad.onpointerdown=()=>{if(live&&!pressed){pressed=true;pad.classList.add('on')}};
   for(let s=0;s<3;s++){const[tg,ds]=SETS[tier(c)][s];c.hint('This is the target. Do NOT tap when you see it.');w.textContent=tg;live=false;await c.sleep(1800);c.hint('Tap for everything except '+tg);
-    let since=0;for(let i=0;i<16;i++){const dur=glerp(c,1100,420),minGap=ilerp(c,2,6);since++;const isT=since>minGap&&Math.random()<.5;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
+    let since=0;for(let i=0;i<16;i++){const dur=tms(c,1200,600),minGap=ilerp(c,2,6);since++;const isT=since>minGap&&Math.random()<.5;if(isT)since=0;w.textContent=isT?tg:pick(ds);pressed=false;pad.classList.remove('on');live=true;
       await c.sleep(dur);live=false;w.textContent='';const good=isT?!pressed:pressed;if(!good||isT)flash(c,good);else c.tally(true);await c.sleep(140)}}
-  c.finish(`Last pace: ${glerp(c,1100,420)} ms per picture`);
+  c.finish(`Last pace: ${tms(c,1200,600)} ms per picture`);
 }},
 /* ===== BRAIN SPEED ===== */
 {id:'hawk',cat:'spd',name:'Hawk Eye',desc:'Birds flash around the screen for a split second. One of them is the hawk. Tap where it was. Each level up flashes faster, with more birds and clutter.',async run(c){
   const N=20;
-  for(let r=0;r<N;r++){const n=c.L<=3?8:c.L<=6?10:12,T=glerp(c,650,40),rad=lerp(c,28,43),dis=['🐟','🐟','🐦','🐦','🐦','🦆','🦆','🕊️','🕊️'][c.L-1],cl=ilerp(c,0,22);
+  for(let r=0;r<N;r++){const n=c.L<=3?8:c.L<=6?10:12,T=tms(c,900,200),rad=lerp(c,28,43),dis=['🐟','🐟','🐦','🐦','🐦','🦆','🦆','🕊️','🕊️'][c.L-1],cl=ilerp(c,0,16);
     const[v]=lay(c),b=mk('div','box');v.append(b);const pos=rnd(n);
-    c.hint(`${r+1}/${N} · find the 🦅 hawk`);await c.sleep(450);for(let i=0;i<n;i++)put(b,i===pos?'🦅':dis,...ringXY(i,n,rad),n>8?1.6:1.9);
+    c.hint(`${r+1}/${N} · look at the +, then find the 🦅`);await fixate(c,b);for(let i=0;i<n;i++)put(b,i===pos?'🦅':dis,...ringXY(i,n,rad),n>8?1.6:1.9);
     for(let j=0;j<cl;j++)put(b,pick(['🌿','🍃','☁️','🌱']),8+rnd(84),8+rnd(84),1.1).style.opacity=.55;
-    await c.sleep(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();c.hint('Where was the hawk?');
+    await c.show(T);b.replaceChildren();noise(b);await c.sleep(250);b.replaceChildren();c.hint('Where was the hawk?');
     const sp=await tapOne(slots(b,n,rad));flash(c,sp===pos);await c.sleep(250)}
-  c.finish(`Last flash: ${glerp(c,650,40)} ms`);
+  c.finish(`Last flash: ${tms(c,900,200)} ms`);
 }},
 {id:'detail',cat:'spd',name:'Eye for Detail',desc:'Arrows flash one after another in different places. Exactly two are identical. Tap the two spots where the identical ones appeared.',async run(c){
   const N=16;
-  for(let r=0;r<N;r++){const n=ilerp(c,3,5),delta=lerp(c,40,8),T=glerp(c,650,90),rad=lerp(c,22,40);const[v]=lay(c),b=mk('div','box');v.append(b);
+  for(let r=0;r<N;r++){const n=ilerp(c,3,5),delta=lerp(c,40,8),T=tms(c,750,220),rad=lerp(c,22,40);const[v]=lay(c),b=mk('div','box');v.append(b);
     const A=rnd(360),angs=[A,A];let g=0;while(angs.length<n&&g++<800){const x=A+(Math.random()<.5?-1:1)*(delta+rnd(30));if(angs.every(y=>Math.abs(((x-y)%360+540)%360-180)>=delta*.9))angs.push(x)}
     const order=shuffle(angs.map((a,i)=>({a,same:i<2}))),pos=shuffle([...Array(8).keys()]).slice(0,order.length),sl=slots(b,8,rad);sl.forEach((s,i)=>{if(!pos.includes(i))s.style.visibility='hidden'});
     c.hint(`${r+1}/${N} · watch closely`);await c.sleep(450);
-    for(let i=0;i<order.length;i++){const[x,y]=ringXY(pos[i],8,rad);const e=put(b,'➤',x,y,2.2,order[i].a);await c.sleep(T);e.remove();await c.sleep(130)}
+    for(let i=0;i<order.length;i++){const[x,y]=ringXY(pos[i],8,rad);const e=put(b,'➤',x,y,2.2,order[i].a);await c.show(T);e.remove();await c.sleep(200)}
     c.hint('Tap the TWO spots that showed the same arrow');const sel=[];
     await new Promise(res=>pos.forEach((p,i)=>sl[p].onclick=()=>{if(sel.includes(i))return;sel.push(i);sl[p].classList.add('lit');if(sel.length===2)res()}));
     const good=sel.every(i=>order[i].same);pos.forEach((p,i)=>{if(order[i].same)sl[p].classList.add('ok');else if(sel.includes(i))sl[p].classList.add('no')});
     flash(c,good);await c.sleep(550)}
-  c.finish(`Last round: ${ilerp(c,3,5)} arrows, ${glerp(c,650,90)} ms each`);
+  c.finish(`Last round: ${ilerp(c,3,5)} arrows, ${tms(c,750,220)} ms each`);
 }},
 {id:'sweeps',cat:'spd',name:'Sound Sweeps',needsAudio:1,desc:'You hear quick sounds that glide up or down in pitch. Report the direction of each one, in order. Each level up plays shorter sweeps, then more of them.',async run(c){
   const N=18,ORD=['First','Second','Third'];
-  for(let r=0;r<N;r++){const dur=glerp(c,350,25),n=c.L<=4?2:3;const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(450);
-    const d=[...Array(n)].map(()=>rnd(2));for(const x of d){x?tone(700,1300,dur):tone(1300,700,dur);await c.sleep(dur+Math.max(90,dur))}
+  for(let r=0;r<N;r++){const dur=tms(c,400,60),n=c.L<=5?2:3;const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen…`);await c.sleep(450);
+    const d=[...Array(n)].map(()=>rnd(2));for(const x of d){x?tone(700,1300,dur):tone(1300,700,dur);await c.sleep(dur+Math.max(160,dur))}
     let all=true;for(let i=0;i<n;i++){c.hint(ORD[i]+' sound?');const a=await ask(k,['⬆ Up','⬇ Down']);if((a==='⬆ Up')!==!!d[i])all=false}
     flash(c,all)}
-  c.finish(`Last sweeps: ${glerp(c,350,25)} ms`);
+  c.finish(`Last sweeps: ${tms(c,400,60)} ms`);
 }},
 {id:'vsweeps',cat:'spd',name:'Visual Sweeps',desc:'Striped rings move twice, each time either outward or inward. Report the direction of the first move, then the second. Each level up moves faster.',async run(c){
   const N=18,COLS=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'];
-  for(let r=0;r<N;r++){const dur=glerp(c,850,60);const[v,k]=lay(c),cv=mk('canvas','sw');cv.width=cv.height=300;v.append(cv);const x=cv.getContext('2d'),col=pick(COLS),sp=14+rnd(14);
+  for(let r=0;r<N;r++){const dur=tms(c,900,150);const[v,k]=lay(c),cv=mk('canvas','sw');cv.width=cv.height=300;v.append(cv);const x=cv.getContext('2d'),col=pick(COLS),sp=14+rnd(14);
     const draw=ph=>{x.clearRect(0,0,300,300);x.strokeStyle=col;x.lineWidth=sp/2;for(let rr=((ph%sp)+sp)%sp;rr<150;rr+=sp){x.beginPath();x.arc(150,150,rr,0,6.283);x.stroke()}};
     const d=[rnd(2),rnd(2)];let ph=0;draw(ph);c.hint(`${r+1}/${N} · watch the rings`);await c.sleep(550);
     for(const dir of d){await new Promise(res=>{const t0=performance.now(),s=ph;const f=t=>{if(!c.alive)return;const p=Math.min(1,(t-t0)/dur);ph=s+(dir?1:-1)*sp*.42*p;draw(ph);p<1?requestAnimationFrame(f):res()};requestAnimationFrame(f)});await c.sleep(300)}
     x.clearRect(0,0,300,300);c.hint('First move?');const a1=await ask(k,['Outward','Inward']);c.hint('Second move?');const a2=await ask(k,['Outward','Inward']);
     flash(c,(a1==='Outward')===!!d[0]&&(a2==='Outward')===!!d[1])}
-  c.finish(`Last move: ${glerp(c,850,60)} ms`);
+  c.finish(`Last move: ${tms(c,900,150)} ms`);
 }},
 {id:'tuning',cat:'spd',name:'Fine Tuning',needsAudio:1,desc:'You hear one word from a pair that sounds alike, like "bee" and "pea". Pick the one you heard. Each level up speaks faster and uses closer pairs.',async run(c){
   const P0=[['bee','pea'],['bay','day'],['tea','key'],['bit','pit'],['goat','coat'],['fan','van']],P2=[['fin','thin'],['sip','ship'],['vat','that'],['bun','done'],['gum','come'],['dune','tune'],['bark','park'],['zip','sip']];
   const N=20;if(!hasSpeech){c.hint('This exercise needs speech, which this device does not support.');await c.sleep(2500);c.finish('No speech on this device',0);return}
-  for(let r=0;r<N;r++){const P=[P0,P0.concat(P2),P2][tier(c)],rate=lerp(c,.6,1.5);const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(350);await c.say(w,rate);
+  for(let r=0;r<N;r++){const P=[P0,P0.concat(P2),P2][tier(c)],rate=rt(c,.6,1.3);const[v,k]=lay(c);v.innerHTML='<div class="big">🔊</div>';const pr=pick(P),w=pick(pr);c.hint(`${r+1}/${N} · listen…`);await c.sleep(350);await c.say(w,rate);
     c.hint('Which did you hear?');const a=await ask(k,shuffle(pr));flash(c,a===w)}
-  c.finish(`Last speed: ${lerp(c,.6,1.5).toFixed(2)}×`);
+  c.finish(`Last speed: ${rt(c,.6,1.3).toFixed(2)}×`);
 }},
 /* ===== MEMORY ===== */
 {id:'scene',cat:'mem',name:'Scene Crasher',desc:'A scene of objects flashes, then static wipes it. The scene comes back with one extra object. Tap the new one. Each level up adds an object and shortens the look.',async run(c){
   const KINDS=['🐑','🔑','🍄','🐟','⭐','🌼'],N=16;
-  for(let r=0;r<N;r++){const n=ilerp(c,4,13),T=glerp(c,2200,350),minD=lerp(c,16,11);const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
-    c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(400);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.sleep(T);
+  for(let r=0;r<N;r++){const n=ilerp(c,4,12),T=tms(c,2500,700),minD=lerp(c,16,11);const[v]=lay(c),b=mk('div','box');v.append(b);const kind=KINDS[r%KINDS.length];let pos=scatter(n+1,minD,8);if(pos.length<n+1)pos=scatter(n+1,minD*.8,6);const m=pos.length-1;
+    c.hint(`${r+1}/${N} · memorise the scene`);await c.sleep(400);pos.slice(0,m).forEach(([x,y])=>put(b,kind,x,y,1.8));await c.show(T);
     b.replaceChildren();noise(b);await c.sleep(500);b.replaceChildren();const els=pos.map(([x,y])=>put(b,kind,x,y,1.8));els.forEach(e=>e.style.cursor='pointer');
     c.hint('Tap the new one');const i=await tapOne(els);els[m].style.filter='drop-shadow(0 0 6px var(--good))';if(i!==m)els[i].style.opacity=.3;flash(c,i===m);await c.sleep(550)}
-  c.finish(`Last scene: ${ilerp(c,4,13)} objects`);
+  c.finish(`Last scene: ${ilerp(c,4,12)} objects`);
 }},
 {id:'mgrid',cat:'mem',name:'Memory Grid',needsAudio:1,desc:'Each card plays a syllable when you turn it over. Find all the pairs. Clear a board in few moves twice in a row and the next board gets bigger.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti','zo','ne'],['ba','so','ki','da','me','ro','fa','ti','go','ne'],['ba','pa','da','ta','ga','ka','ma','na','fa','va']],N=5;
-  for(let r=0;r<N;r++){const pairs=[3,4,4,5,6,6,8,9,10][c.L-1],cols={3:3,4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=lerp(c,.75,1.2),limit=Math.ceil(pairs*1.7);
+  for(let r=0;r<N;r++){const pairs=[3,4,4,5,6,6,8,9,10][c.L-1],cols={3:3,4:4,5:5,6:4,8:4,9:6,10:5}[pairs],rate=rt(c,.75,1.15),limit=Math.ceil(pairs*1.7);
     const sy=shuffle(SY[tier(c)]).slice(0,pairs),cards=shuffle([...sy,...sy]);let open=[],found=0,lock=false,moves=0;
     const[v]=lay(c),g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;v.append(g);
     c.hint(`Board ${r+1}/${N} · ${pairs} pairs · finish in ${limit} moves or fewer`);
@@ -479,7 +491,7 @@ const GAMES=[
 }},
 {id:'stacks',cat:'mem',name:'Syllable Stacks',needsAudio:1,desc:'Listen to a series of syllables, then tap them back in the same order. Get it right twice in a row and the next series is one longer.',async run(c){
   const SY=[['ma','so','ki','lu','be','ro','fa','ti'],['ba','so','ki','da','me','ro','fa','ti'],['ba','pa','da','ta','ga','ka','ma','na']],N=16;
-  for(let r=0;r<N;r++){const Ls=c.L+1,rate=lerp(c,.7,1.45),gap=glerp(c,400,40),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[tier(c)]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
+  for(let r=0;r<N;r++){const Ls=c.L+1,rate=rt(c,.7,1.3),gap=tms(c,450,120),nb=Math.min(8,Ls+2);const[v,k]=lay(c),shown=shuffle(SY[tier(c)]).slice(0,nb),seq=[...Array(Ls)].map(()=>pick(shown));
     v.innerHTML='<div class="big">🔊</div>';c.hint(`${r+1}/${N} · listen to ${Ls} syllables`);await c.sleep(450);
     for(const s of seq){if(hasSpeech)await c.say(s,rate);else{v.innerHTML=`<div class="big">${s}</div>`;await c.sleep(650);v.innerHTML='<div class="big">·</div>'}await c.sleep(gap)}
     v.innerHTML='<div class="disp" style="font-size:2rem" id="d"></div>';c.hint('Tap them in order');const typed=[];
@@ -490,7 +502,7 @@ const GAMES=[
 {id:'todo',cat:'mem',name:'To-Do List Training',needsAudio:1,desc:'Listen to a list of instructions, then carry them out in order by tapping the right objects. Get it right twice in a row and the next list is one step longer.',async run(c){
   const OBJ=[['🔴','red circle'],['🔵','blue circle'],['🟢','green circle'],['🟡','yellow circle'],['🟥','red square'],['🟦','blue square'],['🟩','green square'],['🟨','yellow square'],['🟠','orange circle'],['🟧','orange square'],['🟣','purple circle'],['🟪','purple square']];
   const N=14;
-  for(let r=0;r<N;r++){const k2=c.L+1,rate=lerp(c,.85,1.3),cols=c.L<=3?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
+  for(let r=0;r<N;r++){const k2=c.L+1,rate=rt(c,.85,1.2),cols=c.L<=3?3:4;const[v,k]=lay(c),items=shuffle(OBJ).slice(0,cols*3),seq=shuffle(items).slice(0,Math.min(k2,items.length));
     const text='Tap the '+seq.map(x=>x[1]).join(', then the ')+'.';c.hint(`${r+1}/${N} · listen to ${seq.length} steps…`);
     const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${cols},1fr)`;const cells=items.map(it=>{const b=mk('button','cell',it[0]);g.append(b);return b});v.append(g);
     if(hasSpeech)await c.say(text,rate);else{c.hint(text);await c.sleep(1500+k2*1100)}
@@ -502,19 +514,19 @@ const GAMES=[
 {id:'mindseye',cat:'mem',name:"Mind's Eye",desc:'A target shape is shown, then hidden. Then find it among look-alikes that differ in colour, shape or tilt. (Built from a short description, so it may differ from the original.)',async run(c){
   const SH=['▲','■','●','◆','★'],CO=['#e5483d','#2f7de1','#2fa84f','#e8b800','#8a4fd1'],RO=[0,20,45,90],N=18;
   const html=o=>`<span style="display:inline-block;color:${o.c};transform:rotate(${o.r}deg)">${o.s}</span>`;
-  for(let r=0;r<N;r++){const n=ilerp(c,4,9),ch=c.L<=3?2:1,view=glerp(c,2000,500),hold=glerp(c,500,2200);const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
-    v.innerHTML=`<div class="big" style="font-size:6rem">${html(T)}</div>`;c.hint(`${r+1}/${N} · remember this one`);await c.sleep(view);v.innerHTML='';c.hint('Hold it in mind…');await c.sleep(hold);
+  for(let r=0;r<N;r++){const n=ilerp(c,4,9),ch=c.L<=3?2:1,view=tms(c,2200,800),hold=glerp(c,600,2000);const[v]=lay(c),T={s:pick(SH),c:pick(CO),r:pick(RO)};
+    v.innerHTML=`<div class="big" style="font-size:6rem">${html(T)}</div>`;c.hint(`${r+1}/${N} · remember this one`);await c.show(view);v.innerHTML='';c.hint('Hold it in mind…');await c.sleep(hold);
     const set=[T];let g=0;while(set.length<n&&g++<500){const d={...T};shuffle(['s','c','r']).slice(0,ch).forEach(k=>{d[k]=pick(k==='s'?SH:k==='c'?CO:RO)});if(set.every(x=>x.s!==d.s||x.c!==d.c||x.r!==d.r))set.push(d)}
     const opts=shuffle(set),w=mk('div','g');w.style.gridTemplateColumns='repeat(3,1fr)';const els=opts.map(o=>{const b=mk('button','cell');b.innerHTML=html(o);b.style.fontSize='2.6rem';w.append(b);return b});v.append(w);
     c.hint('Tap the one you saw');const i=await tapOne(els),good=opts[i]===T;els[opts.indexOf(T)].classList.add('ok');if(!good)els[i].classList.add('no');flash(c,good);await c.sleep(500)}
-  c.finish(`Last round: ${ilerp(c,4,9)} choices after ${(glerp(c,500,2200)/1000).toFixed(1)} s`);
+  c.finish(`Last round: ${ilerp(c,4,9)} choices after ${(glerp(c,600,2000)/1000).toFixed(1)} s`);
 }},
 {id:'hearhear',cat:'mem',name:'Hear, Hear',needsAudio:1,desc:'Learn a target sound, then listen to a stream of sounds. Tap only when you hear the target. Each level up uses decoys that sound closer to it. (Built from a short description, so it may differ from the original.)',async run(c){
   const N=40,S={tgt:()=>tone(600,950,220),down:()=>tone(950,600,220),flat:()=>tone(780,780,220),near:()=>tone(600,950-lerp(c,350,70),220),nearlo:()=>tone(600+lerp(c,350,70)*.6,950,220),sq:()=>tone(600,950,220,.16,'square')};
   const[v,k]=lay(c);v.innerHTML='<div class="big">🎧</div>';c.hint('This is the target sound');for(let i=0;i<3;i++){S.tgt();await c.sleep(650)}
   const pad=mk('button','pad','That’s it!');k.append(pad);let pressed=false;pad.onpointerdown=()=>{if(!pressed){pressed=true;pad.classList.add('on')}};
   c.hint('Tap only for the target sound');
-  for(let i=0;i<N;i++){const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq']][tier(c)],gap=glerp(c,1400,700),isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
+  for(let i=0;i<N;i++){const pool=[['down','flat'],['down','flat','near'],['near','nearlo','sq']][tier(c)],gap=tms(c,1500,900),isT=Math.random()<.3;pressed=false;pad.classList.remove('on');(isT?S.tgt:S[pick(pool)])();
     await c.sleep(gap);if(pressed||isT)flash(c,pressed===isT);else c.tally(true)}
   c.finish(`Closest decoy: ${Math.round(lerp(c,350,70))} Hz away`);
 }},
@@ -532,7 +544,7 @@ const GAMES=[
 {id:'facefacts',cat:'ppl',name:'Face Facts',desc:'Meet a few people, each with a name and a job. Then see each face again and pick their name and job. Remember everyone twice in a row and the next group is one person bigger.',async run(c){
   const NAMES=[['Ann','Anna','Hanna','Amy'],['Ben','Ken','Len','Glen'],['Tom','Tim','Tod','Ted'],['Sara','Zara','Clara','Kara'],['Jon','Joan','Jan','Jean'],['Mia','Nia','Leah','Maya'],['Rob','Bob','Rod','Ron'],['Lily','Lucy','Lola','Luna']];
   const JOBS=['baker','pilot','nurse','painter','farmer','tailor','chef','dentist','teacher','plumber','singer','vet'],N=8;
-  for(let r=0;r<N;r++){const k=Math.min(8,c.L+1),show=glerp(c,3000,1400),sim=c.L>=4,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
+  for(let r=0;r<N;r++){const k=Math.min(8,c.L+1),show=tms(c,3200,1800),sim=c.L>=4,fam=shuffle(NAMES),pool=sim?shuffle([...fam[0],...fam[1]]):shuffle(fam.map(f=>f[0]));
     const names=pool.slice(0,k),jobs=shuffle(JOBS).slice(0,k),ppl=names.map((nm,i)=>({f:rface(),name:nm,job:jobs[i]}));
     for(const p of ppl){const[v]=lay(c);v.innerHTML=faceSVG(p.f,'happy',.6)+`<div class="big" style="font-size:2rem">${p.name}</div><p class="tag" style="font-size:1rem">is a ${p.job}</p>`;c.hint(`Group ${r+1}/${N} · meet ${k} people`);await c.sleep(show)}
     let all=true;for(const p of shuffle(ppl)){const[v,kk]=lay(c);v.innerHTML=faceSVG(p.f,'neutral');c.hint('What is their name?');
@@ -545,7 +557,7 @@ const GAMES=[
 {id:'inknow',cat:'ppl',name:'In the Know',needsAudio:1,desc:'Listen to a short story, then answer questions about the details. Answer them all right twice in a row and the next story is longer and faster.',async run(c){
   const NM=['Maria','Tom','Elena','Jack','Priya','Omar','Grace','Leo'],PL=['market','library','beach','station','farm','museum','bakery'],IT=['apples','books','candles','tickets','scarves','plates'],CL=['red','blue','green','yellow','white'],DY=['Monday','Tuesday','Friday','Saturday','Sunday'],TH=['umbrella','guitar','basket','camera','kite'],FD=['sandwiches','cookies','oranges','pancakes'];
   const N=7;
-  for(let r=0;r<N;r++){const ns=ilerp(c,2,5),rate=lerp(c,.8,1.4),nq=c.L<=3?2:3;
+  for(let r=0;r<N;r++){const ns=ilerp(c,2,5),rate=rt(c,.8,1.25),nq=c.L<=3?2:3;
     const A=pick(NM),B=pick(NM.filter(x=>x!==A)),p=pick(PL),p2=pick(PL.filter(x=>x!==p)),n=2+rnd(7),it=pick(IT),cl=pick(CL),d=pick(DY),th=pick(TH),n2=2+rnd(5),fd=pick(FD),n3=3+rnd(6);
     const S=[[`${A} went to the ${p} on ${d}.`,[['Where did '+A+' go?',p,PL],['On which day?',d,DY]]],[`${A} bought ${n} ${cl} ${it}.`,[['How many '+it+'?',String(n),['2','3','4','5','6','7','8']],['What colour were they?',cl,CL]]],
       [`There, ${A} met ${B}, who was carrying a ${th}.`,[['Who did '+A+' meet?',B,NM],['What was '+B+' carrying?',th,TH]]],[`Together they walked to the ${p2} and shared ${n2} ${fd}.`,[['Where did they walk to?',p2,PL],['What did they share?',fd,FD]]],
@@ -558,32 +570,32 @@ const GAMES=[
 }},
 {id:'recog',cat:'ppl',name:'Recognition',desc:'See a face, then pick the same person out of a group. Each level up shows the group from an angle, adds faces, and makes them look more alike.',async run(c){
   const N=18;
-  for(let r=0;r<N;r++){const n=ilerp(c,3,6),diff=c.L<=3?3:c.L<=6?2:1,angled=c.L>=4,view=glerp(c,2600,700);const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
-    v.innerHTML=faceSVG(p,'neutral');c.hint(`${r+1}/${N} · remember this face`);await c.sleep(view);v.innerHTML='';await c.sleep(400);
+  for(let r=0;r<N;r++){const n=ilerp(c,3,6),diff=c.L<=3?3:c.L<=6?2:1,angled=c.L>=4,view=tms(c,2800,1200);const[v]=lay(c),p=rface(),ang=angled?(Math.random()<.5?-.8:.8):0;
+    v.innerHTML=faceSVG(p,'neutral');c.hint(`${r+1}/${N} · remember this face`);await c.show(view);v.innerHTML='';await c.sleep(400);
     const set=[p];while(set.length<n)set.push(varyFace(p,diff));const opts=shuffle(set),w=mk('div','faces');const els=opts.map(o=>{const b=mk('button');b.innerHTML=faceSVG(o,'neutral',1,ang);w.append(b);return b});v.append(w);
     c.hint('Which one is the same person?');const i=await tapOne(els);els[opts.indexOf(p)].style.outline='4px solid var(--good)';flash(c,opts[i]===p);await c.sleep(550)}
   c.finish(`Last round: ${ilerp(c,3,6)} faces`);
 }},
 {id:'face2face',cat:'ppl',name:'Face to Face',desc:'A face flashes briefly. Then pick the face showing the same emotion. Each level up flashes faster, with subtler expressions and more choices.',async run(c){
   const ALL=['happy','sad','angry','surprised','afraid','disgusted','neutral','contempt','tired','proud','confused'],N=18;
-  for(let r=0;r<N;r++){const pool=ALL.slice(0,ilerp(c,5,11)),n=ilerp(c,3,6),kk=lerp(c,1,.35),T=glerp(c,1800,250);const[v]=lay(c),e=pick(pool);
-    v.innerHTML=faceSVG(rface(),e,kk);c.hint(`${r+1}/${N} · what is this person feeling?`);await c.sleep(T);v.innerHTML='';await c.sleep(350);
+  for(let r=0;r<N;r++){const pool=ALL.slice(0,ilerp(c,5,11)),n=ilerp(c,3,6),kk=lerp(c,1,.35),T=tms(c,2000,500);const[v]=lay(c),e=pick(pool);
+    v.innerHTML=faceSVG(rface(),e,kk);c.hint(`${r+1}/${N} · what is this person feeling?`);await c.show(T);v.innerHTML='';await c.sleep(350);
     const em=shuffle([e,...shuffle(pool.filter(x=>x!==e)).slice(0,n-1)]),w=mk('div','faces');const els=em.map(x=>{const b=mk('button');b.innerHTML=faceSVG(rface(),x,kk);w.append(b);return b});v.append(w);
     c.hint('Tap the face with the same emotion');const i=await tapOne(els);els[em.indexOf(e)].style.outline='4px solid var(--good)';flash(c,em[i]===e);await c.sleep(550)}
-  c.finish(`Last round: ${ilerp(c,5,11)} emotions, ${glerp(c,1800,250)} ms flash`);
+  c.finish(`Last round: ${ilerp(c,5,11)} emotions, ${tms(c,2000,500)} ms flash`);
 }},
 /* ===== INTELLIGENCE ===== */
 {id:'bender',cat:'int',name:'Mind Bender',desc:'Two numbers appear. If they are digits, tap the HIGHER one. If they are written as words, tap the LOWER one. Each level up gives you less time.',async run(c){
   const N=30;const[v,k]=lay(c);const rule=mk('p','tag');rule.textContent='Digits → tap higher · Words → tap lower';v.append(rule);
-  for(let r=0;r<N;r++){const win=glerp(c,3200,850),max=c.L<=3?10:20,close=c.L>=7;const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
+  for(let r=0;r<N;r++){const win=tms(c,3500,1400),max=c.L<=3?10:20,close=c.L>=7;const a=rnd(max)+1;let b;do{b=close?a+(Math.random()<.5?-1:1)*(1+rnd(2)):rnd(max)+1}while(b===a||b<1||b>max);
     const words=Math.random()<.5,lab=x=>words?NUMW[x]:String(x),want=words?Math.min(a,b):Math.max(a,b);c.hint(`${r+1}/${N} · ${(win/1000).toFixed(1)} s`);
     const got=await new Promise(res=>{k.replaceChildren();const w=mk('div','grid2');[a,b].forEach(x=>{const bt=mk('button','btn',lab(x));bt.style.minHeight='110px';bt.style.fontSize=words?'1.4rem':'2.6rem';bt.onclick=()=>res(x);w.append(bt)});k.append(w);c.after(()=>res(null),win)});
     k.replaceChildren();flash(c,got===want);await c.sleep(150)}
-  c.finish(`Last answer window: ${(glerp(c,3200,850)/1000).toFixed(1)} s`);
+  c.finish(`Last answer window: ${(tms(c,3500,1400)/1000).toFixed(1)} s`);
 }},
 {id:'cardshark',cat:'int',name:'Card Shark',desc:'Cards appear one at a time. Say whether each card matches the one shown N cards earlier. Each level up goes further back or matches on more features.',async run(c){
   const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9'],N=36,hist=[];const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,4,4][c.L-1],m=['suit','number','suit','number','both','number','both','both','both'][c.L-1],win=glerp(c,2800,1100);
+  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,4,4][c.L-1],m=['suit','number','suit','number','both','number','both','both','both'][c.L-1],win=tms(c,3000,1600);
     const same=(x,y)=>m==='suit'?x.s===y.s:m==='number'?x.r===y.r:x.s===y.s&&x.r===y.r,prev=hist.length>=n?hist[hist.length-n]:null;let cd;
     if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&same(cd,prev)&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · match the ${m==='both'?'suit AND number':m}`);
@@ -595,7 +607,7 @@ const GAMES=[
 }},
 {id:'juggle',cat:'int',name:'Juggle Factor',desc:'Numbers appear on balls, then the balls move around. When they stop, tap the balls in the order asked. Get it right twice in a row and the next round has one more ball.',async run(c){
   const N=12,[W,H]=arenaSize();
-  for(let r=0;r<N;r++){const k=Math.min(9,c.L+2),ex=ilerp(c,0,3),sp=lerp(c,70,220),dur=lerp(c,2500,5000),mode=['fwd','back','mix'][tier(c)];
+  for(let r=0;r<N;r++){const k=Math.min(9,c.L+2),ex=ilerp(c,0,3),sp=lerp(c,70,190)/pace(c),dur=lerp(c,2500,5000),mode=['fwd','back','mix'][tier(c)];
     const[v]=lay(c),ar=mk('div','arena');ar.style.width=W+'px';ar.style.height=H+'px';v.append(ar);
     const o=spawnOrbs(ar,k+ex,W,H),nums=shuffle([...Array(k)].map((_,i)=>i+1));o.forEach((q,i)=>{q.n=nums[i]||0;q.e.textContent=q.n||'';if(!q.n)q.e.style.background='var(--mute)'});
     c.hint(`Round ${r+1}/${N} · remember ${k} numbers`);await c.sleep(1300+k*350);o.forEach(q=>{q.e.textContent='';q.e.style.background=''});
@@ -607,7 +619,7 @@ const GAMES=[
 }},
 {id:'ace',cat:'int',name:'Auditory Ace',needsAudio:1,desc:'Like Card Shark, but the cards are spoken out loud. Say whether each card matches the one heard N cards earlier. Each level up goes further back.',async run(c){
   const SU=['spades','hearts','diamonds','clubs'],RK=['ace','two','three','four','five','six','seven','eight','nine'],N=30,hist=[];const[v,k]=lay(c);
-  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,3,4][c.L-1],rate=lerp(c,.95,1.3),win=glerp(c,3500,1800),prev=hist.length>=n?hist[hist.length-n]:null;let cd;
+  for(let r=0;r<N;r++){const n=[1,1,2,2,2,3,3,3,4][c.L-1],rate=rt(c,.95,1.2),win=tms(c,3800,2200),prev=hist.length>=n?hist[hist.length-n]:null;let cd;
     if(prev&&Math.random()<.35)cd={...prev};else{let g=0;do{cd={s:pick(SU),r:pick(RK)}}while(prev&&cd.s===prev.s&&cd.r===prev.r&&g++<60)}
     hist.push(cd);c.hint(`${n}-back · same card as ${n} before?`);v.innerHTML='<div class="big">🔊</div>';
     const text=cd.r+' of '+cd.s;if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="big" style="font-size:2rem">${text}</div>`;await c.sleep(1100)}
@@ -619,17 +631,17 @@ const GAMES=[
 /* ===== NAVIGATION ===== */
 {id:'rightturn',cat:'nav',name:'Right Turn',desc:'Two rotated shapes are shown. Decide whether they are the same shape turned, or a mirror image. Each level up gives you less time and harder shapes.',async run(c){
   const N=24;
-  for(let r=0;r<N;r++){const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15][tier(c)],win=glerp(c,5000,1300);
+  for(let r=0;r<N;r++){const G=[['F','R','L','P','J'],['F','R','G','J','L','P','Q','4','7'],['F','R','G','J','4','7','k','h','y','Q']][tier(c)],step=[90,45,15][tier(c)],win=tms(c,6000,2200);
     const[v,k]=lay(c),ch=pick(G),mir=Math.random()<.5,a1=rnd(360/step)*step,a2=rnd(360/step)*step;
     v.innerHTML=`<div class="rt"><div><span style="display:inline-block;transform:rotate(${a1}deg)">${ch}</span></div><div><span style="display:inline-block;transform:rotate(${a2}deg) scaleX(${mir?-1:1})">${ch}</span></div></div>`;
     c.hint(`${r+1}/${N} · same or mirror? ${(win/1000).toFixed(1)} s`);const a=await Promise.race([ask(k,['Same','Mirror']),c.sleep(win).then(()=>null)]);k.replaceChildren();
     flash(c,a!==null&&(a==='Mirror')===mir);await c.sleep(180)}
-  c.finish(`Last answer window: ${(glerp(c,5000,1300)/1000).toFixed(1)} s`);
+  c.finish(`Last answer window: ${(tms(c,6000,2200)/1000).toFixed(1)} s`);
 }},
 {id:'mentalmap',cat:'nav',name:'Mental Map',desc:'Memorise where objects sit on a grid. The grid is then rotated, flipped or shifted. Rebuild it from memory. Get a grid fully right twice in a row and the next has one more object.',async run(c){
   const EM=['🍎','🚗','🏠','🐟','⭐','🔔','🌵','🎈','⚓','🌙'],N=8;
   const TF=[['shifted one column right (wrapping around)',(r,cc,n)=>[r,(cc+1)%n]],['flipped left to right',(r,cc,n)=>[r,n-1-cc]],['flipped top to bottom',(r,cc,n)=>[n-1-r,cc]],['rotated 90° clockwise',(r,cc,n)=>[cc,n-1-r]],['rotated 90° anticlockwise',(r,cc,n)=>[n-1-cc,r]]];
-  for(let rd=0;rd<N;rd++){const n=c.L<=3?3:c.L<=6?4:5,k=Math.min(10,c.L+2),mem=glerp(c,5000,2500),pool=c.L<=2?TF.slice(0,1):c.L<=5?TF.slice(0,3):TF;
+  for(let rd=0;rd<N;rd++){const n=c.L<=3?3:c.L<=6?4:5,k=Math.min(10,c.L+2),mem=tms(c,6000,3000),pool=c.L<=2?TF.slice(0,1):c.L<=5?TF.slice(0,3):TF;
     const cells=shuffle([...Array(n*n).keys()]).slice(0,k),objs=shuffle(EM).slice(0,k);let tf=pick(pool);
     if(c.L>=8){const inv=(a,b)=>a===b||(TF.indexOf(a)>=3&&TF.indexOf(b)>=3);const t1=pick(TF),t2=pick(TF.filter(x=>!inv(t1,x)));tf=[t1[0]+', then '+t2[0],(r,cc,n)=>{const[a,b]=t1[1](r,cc,n);return t2[1](a,b,n)}]}
     const[v,kk]=lay(c);const grid=()=>{const g=mk('div','g');g.style.gridTemplateColumns=`repeat(${n},1fr)`;const cs=[...Array(n*n)].map(()=>{const b=mk('button','cell');if(n>4)b.style.fontSize='1.4rem';g.append(b);return b});v.replaceChildren(g);return cs};
@@ -645,7 +657,7 @@ const GAMES=[
 }},
 {id:'truenorth',cat:'nav',name:'True North',needsAudio:1,desc:'Listen to directions on a train ride: which way you face, the stops, and your turns. Then say where you got off and which way you are facing. Get both right twice in a row and the next ride has one more turn.',async run(c){
   const D=['north','east','south','west'],ST=['Oak Street','Harbor','Central','Mill Lane','Park Gate','Riverside','Hill Top','Old Town'],N=12;
-  for(let r=0;r<N;r++){const L=c.L,nst=ilerp(c,3,7),rate=lerp(c,.85,1.3);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
+  for(let r=0;r<N;r++){const L=c.L,nst=ilerp(c,3,7),rate=rt(c,.85,1.2);const[v,k]=lay(c);let f=rnd(4);const start=D[f],steps=[...Array(L)].map(()=>pick(['left','right','around'])),stops=shuffle(ST).slice(0,nst),off=rnd(nst);
     const parts=[`You board the train facing ${start}.`,`The stops are ${stops.join(', ')}.`,`Get off at ${stops[off]}.`];steps.forEach(s=>{parts.push(s==='around'?'Turn around.':`Turn ${s}.`);f=(f+(s==='left'?3:s==='right'?1:2))%4});
     const text=parts.join(' ');v.innerHTML='<div class="big">🚆</div>';c.hint(`${r+1}/${N} · ${L} turn${L>1?'s':''} · listen carefully`);await c.sleep(400);
     if(hasSpeech)await c.say(text,rate);else{v.innerHTML=`<div class="story">${text}</div>`;await c.sleep(3000+text.length*40);v.innerHTML='<div class="big">🚆</div>'}
@@ -656,7 +668,7 @@ const GAMES=[
 }},
 {id:'opticflow',cat:'nav',name:'Optic Flow',desc:'You are driving. Vehicles and roadside objects come toward you. Tap the one that matches the target before it passes. Each level up is faster and busier.',async run(c){
   const N=18;
-  for(let r=0;r<N;r++){const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']][tier(c)],IT=tier(c)===2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],D=glerp(c,4500,1400),nb=ilerp(c,3,7);
+  for(let r=0;r<N;r++){const SC=[['#e9c98f','#c9a66b'],['#bfe0a5','#8fbf7a'],['#b9c3cf','#8995a3']][tier(c)],IT=tier(c)===2?['🚗','🚙','🚕','🚓','🚐','🚌','🚎','🚑']:['🚗','🚚','🚌','🛵','🚲','🐄','🌳','⛽','🚜','🏍️'],D=tms(c,5000,2200),nb=ilerp(c,3,7);
     const[v]=lay(c),road=mk('div','road');road.style.background=`linear-gradient(${SC[0]} 0 35%,${SC[1]} 35%)`;
     road.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="47,35 53,35 95,100 5,100" fill="#555"/><polygon points="49.6,35 50.4,35 51.5,100 48.5,100" fill="#eee"/></svg>';v.append(road);
     const target=pick(IT),batch=shuffle([target,...shuffle(IT.filter(x=>x!==target)).slice(0,nb-1)]),lanes=shuffle([-1,-.7,-.4,-.12,.15,.42,.7,1]).slice(0,batch.length);
@@ -665,7 +677,7 @@ const GAMES=[
       const f=t=>{if(!c.alive||fin)return;const p=(t-t0)/D;els.forEach(o=>{const q=Math.max(0,Math.min(1,(p-o.delay)/(1-o.delay)));o.d.style.top=(35+q*q*70)+'%';o.d.style.left=(50+o.l*q*q*55)+'%';o.d.style.fontSize=(.5+q*q*3.6)+'rem';o.d.style.opacity=q>0?1:0});
         if(p>=1.05){fin=true;done(false)}else requestAnimationFrame(f)};requestAnimationFrame(f)});
     flash(c,res);await c.sleep(300)}
-  c.finish(`Last round: ${ilerp(c,3,7)} objects, ${(glerp(c,4500,1400)/1000).toFixed(1)} s`);
+  c.finish(`Last round: ${ilerp(c,3,7)} objects, ${(tms(c,5000,2200)/1000).toFixed(1)} s`);
 }}
 ];
 
@@ -829,7 +841,7 @@ function home(){
     ${cs.due||cs.inProgress?`<button class="rcard" id="chk"><span class="gic2" style="--cc:var(--accent);--on:#fff">${SVG('<path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/>',22)}</span>
       <span class="rtx"><span class="eyebrow">Brain check</span><span>${cs.inProgress?`Continue your check (${cs.done} of ${CHECK.length} done)`:cs.first?'Take your baseline test: 6 short tests, about 10 minutes':'Your monthly re-test is due'}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>`:''}
     ${reportCard()}
-    ${window.AndroidApp?`<button class="rcard" id="rem"><span class="gic2" style="--cc:var(--accent);--on:#fff">${SVG('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',22)}</span><span class="rtx"><span class="eyebrow">Daily reminder</span><span>${reminderLabel()}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>`:''}
+    <button class="rcard" id="rem"><span class="gic2" style="--cc:var(--accent);--on:#fff">${SVG('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',22)}</span><span class="rtx"><span class="eyebrow">Settings</span><span>Pace: <b>${(PACES[meta().pace]||PACES.normal).n}</b>${window.AndroidApp?` · Reminder: <b>${reminderLabel()}</b>`:''}</span></span><span class="rgo">${SVG('<path d="M9 5l7 7-7 7"/>',20)}</span></button>
   </div>`;
   $('#wo').onclick=()=>done>=plan.items.length?workoutSummary():stepScreen('workout',plan.res.findIndex(r=>r==null));
   $('#rep').onclick=report;if($('#chk'))$('#chk').onclick=startCheck;if($('#rem'))$('#rem').onclick=settings;
@@ -888,10 +900,11 @@ function play(g,L,opts){
    <div class="ladder" id="ladder" aria-hidden="true">${[...Array(LEVELS)].map((_,i)=>`<i data-l="${i+1}"></i>`).join('')}</div>
    <p id="hint"></p><div id="stage"></div><div class="toast" id="toast" hidden></div>`;
   const timers=new Set();let done=false;
-  const c={alive:true,stage:$('#stage'),L,start:L,peak:L,right:0,wrong:0,run:{ok:0,bad:0},cleared:{},miss:{},
+  const c={alive:true,noPace:!adaptive,stage:$('#stage'),L,start:L,peak:L,right:0,wrong:0,run:{ok:0,bad:0},cleared:{},miss:{},
     clear(){timers.forEach(clearTimeout);timers.clear()},
     after(fn,ms){const id=setTimeout(()=>{timers.delete(id);if(c.alive)fn()},ms);timers.add(id);return id},
     sleep(ms){return new Promise(r=>c.after(r,ms))},
+    show(ms){return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>{if(c.alive)c.after(r,ms)})))},
     say(t,rate){return say(t,rate).then(()=>new Promise(r=>{if(c.alive)r()}))},
     tally(ok){ok?c.right++:c.wrong++;const s=$('#st');if(s)s.textContent=`${c.right}/${c.right+c.wrong}`},
     trial(ok){if(!adaptive||!c.alive)return;const cur=c.L;
@@ -1002,21 +1015,25 @@ function report(){
   const chEl=app.querySelector('.chart');if(chEl)wireChart(chEl,wk);
 }
 
-/* ---------- reminder settings (Android app only) ---------- */
+/* ---------- settings: game pace + daily reminder ---------- */
 function settings(){
-  stopLive();atHome=false;app.removeAttribute('style');const A=window.AndroidApp;let on=false,h=19,m=0;
-  try{const r=A.getReminder().split(',');on=r[0]==='1';h=+r[1];m=+r[2]}catch(e){}
-  const pad=n=>String(n).padStart(2,'0');
-  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>Settings</small>Daily reminder</h2></div>
-   <div class="intro">${A?`<p class="note">A daily notification reminds you to do your workout. It is skipped on days you've already finished it.</p>
-     <label class="toggle" for="ron"><span><b>Remind me every day</b><em>One notification a day</em></span><input type="checkbox" id="ron" ${on?'checked':''}><i></i></label>
-     <label class="field" for="rt"><b>Time</b><input type="time" id="rt" value="${pad(h)}:${pad(m)}"></label>
-     <p class="note" id="rst"></p>`:'<p class="note">Reminders work in the Android app.</p>'}
-   </div>${A?'<div class="dock"><button class="cta" id="sv">Save</button></div>':''}`;
+  stopLive();atHome=false;app.removeAttribute('style');const M=meta(),A=window.AndroidApp;let on=false,h=19,mi=0;
+  try{const r=A.getReminder().split(',');on=r[0]==='1';h=+r[1];mi=+r[2]}catch(e){}
+  const pad=n=>String(n).padStart(2,'0'),cur=PACES[M.pace]?M.pace:'normal';
+  app.innerHTML=`<div class="top"><button class="ib" id="bk" aria-label="Back">${BACK}</button><h2><small>Settings</small>Mind Gym</h2></div>
+   <div class="intro">
+    <section><h3 class="sec-h">Game pace</h3><p class="note" style="margin:-4px 0 12px">Sets how long pictures stay on screen and how much time you get to answer, at every level. Brain checks always use Normal so your results stay comparable.</p>
+     <div class="paces">${Object.entries(PACES).map(([k,p])=>`<button class="pace${k===cur?' sel':''}" data-k="${k}" aria-pressed="${k===cur}"><b>${p.n}</b><span>${p.d}</span></button>`).join('')}</div></section>
+    ${A?`<section><h3 class="sec-h">Daily reminder</h3><div style="display:flex;flex-direction:column;gap:10px">
+     <label class="toggle" for="ron"><span><b>Remind me every day</b><em>Skipped on days you've already done your workout</em></span><input type="checkbox" id="ron" ${on?'checked':''}><i></i></label>
+     <label class="field" for="rt"><b>Time</b><input type="time" id="rt" value="${pad(h)}:${pad(mi)}"></label>
+     <button class="ghost" id="sv">Save reminder</button><p class="note" id="rst"></p></div></section>`:'<p class="note">Daily reminders are available in the Android app.</p>'}
+   </div>`;
   $('#bk').onclick=home;
+  app.querySelectorAll('.pace').forEach(b=>b.onclick=()=>{M.pace=b.dataset.k;save();app.querySelectorAll('.pace').forEach(x=>{x.classList.toggle('sel',x===b);x.setAttribute('aria-pressed',x===b)})});
   if(A)$('#sv').onclick=()=>{const v=($('#rt').value||'19:00').split(':'),onv=$('#ron').checked;let ok=true;
     try{A.setReminder(onv,+v[0],+v[1]);ok=A.notificationsAllowed()}catch(e){}
-    $('#rst').textContent=onv?(ok?`Saved. You'll be reminded every day at ${pad(+v[0])}:${pad(+v[1])}.`:'Saved, but notifications are blocked. Allow notifications for Mind Gym when your phone asks, or in your phone’s Settings → Apps → Mind Gym → Notifications.'):'Saved. Reminders are off.'};
+    $('#rst').textContent=onv?(ok?`Saved. You'll be reminded every day at ${pad(+v[0])}:${pad(+v[1])}.`:'Saved, but notifications are blocked. Allow notifications for Mind Gym when your phone asks, or in Settings → Apps → Mind Gym → Notifications.'):'Saved. Reminders are off.'};
 }
 home();
 </script>
